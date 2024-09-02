@@ -86,7 +86,7 @@ namespace TestFormsApp_Planning
                     tsa.EndTime = task.EndTime;
                     tsa.Id = task.TaskId.ToString();
                     tsa.Contacts.Add(contact);
-                   
+
                     calendar1.Schedule.Items.Add(tsa);
 
                 }
@@ -127,7 +127,7 @@ namespace TestFormsApp_Planning
 
             TaskAllocation tsa = new TaskAllocation();
             tsa.StartTime = e.Date;
-            AddTask form = new AddTask(tsa,holidays);
+            AddTask form = new AddTask(tsa, holidays);
             form.FormClosed += (s, args) => loadTasks();
             form.StartPosition = FormStartPosition.CenterScreen;
             form.Show();
@@ -142,28 +142,38 @@ namespace TestFormsApp_Planning
             //        MessageBoxIcon.Warning                         // Icon (Warning)
             //        );
 
-            using (var context = new ScheduleDBContext())
+            foreach (var task in tasks)
             {
-                foreach (var task in tasks)
+                if (task.TaskName.ToString() == e.Item.HeaderText)
                 {
-                    if (task.TaskName.ToString() == e.Item.HeaderText)
-                    {
-                        //MessageBox.Show("Task Name " + task.TaskId + "item id " + e.Item.Task.Name);
-                        task.StartTime = e.Item.StartTime;
-                        task.EndTime = e.Item.EndTime;
-                        context.Tasks.Update(task);
-                        await context.SaveChangesAsync();
-
-                        break;
-                    }
-
+                    task.StartTime = e.Item.StartTime;
+                    task.EndTime = e.Item.EndTime;
                 }
-                //MessageBox.Show("New Start Time is: " + e.Item.StartTime + " & New End time is: " + e.Item.EndTime);
             }
+
+
+            //using (var context = new ScheduleDBContext())
+            //{
+            //    foreach (var task in tasks)
+            //    {
+            //        if (task.TaskName.ToString() == e.Item.HeaderText)
+            //        {
+            //            //MessageBox.Show("Task Name " + task.TaskId + "item id " + e.Item.Task.Name);
+            //            task.StartTime = e.Item.StartTime;
+            //            task.EndTime = e.Item.EndTime;
+            //            context.Tasks.Update(task);
+            //            await context.SaveChangesAsync();
+
+            //            break;
+            //        }
+
+            //    }
+            //    //MessageBox.Show("New Start Time is: " + e.Item.StartTime + " & New End time is: " + e.Item.EndTime);
+            //}
 
         }
 
-        
+
 
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -171,13 +181,13 @@ namespace TestFormsApp_Planning
             var form = new AddHoliday();
             form.StartPosition = FormStartPosition.CenterScreen;
             // form.FormClosed += (s, args) => loadContacts();
-            
+
             form.Show();
         }
 
         private void calendar1_ItemDrawing(object sender, MindFusion.Scheduling.WinForms.DrawEventArgs e)
         {
-            
+
         }
 
         private void calendar1_Draw(object sender, DrawEventArgs e)
@@ -243,6 +253,19 @@ namespace TestFormsApp_Planning
                             }
                         }
                     }
+                }
+            }
+        }
+
+        private async void button4_Click(object sender, EventArgs e)
+        {
+            using (var context = new ScheduleDBContext())
+            {
+                foreach (var task in tasks)
+                {
+                    context.Tasks.Update(task);
+                    await context.SaveChangesAsync();
+
                 }
             }
         }

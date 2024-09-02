@@ -204,12 +204,12 @@ namespace TestFormsApp_Planning
             decimal qty = numericUpDown1.Value;
 
 
-           var machine =  _machines.Where(m => m.MachineId == Id).FirstOrDefault();
+            var machine =  _machines.Where(m => m.MachineId == Id).FirstOrDefault();
             
            
-               var capacity =  decimal.Parse(machine.CapacityPerDay);
-               decimal duration = qty / capacity;
-               MessageBox.Show(duration.ToString());
+            var capacity =  decimal.Parse(machine.CapacityPerDay);
+            decimal duration = qty / capacity;
+            MessageBox.Show(duration.ToString());
             DateTime endDate = StartTime.AddDays(double.Parse(duration.ToString()));
 
             DateTime endTime = CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(duration.ToString()));

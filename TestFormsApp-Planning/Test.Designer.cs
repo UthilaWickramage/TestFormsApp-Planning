@@ -33,12 +33,14 @@
             button3 = new MindFusion.UI.WinForms.Button();
             button2 = new MindFusion.UI.WinForms.Button();
             calendar1 = new MindFusion.Scheduling.WinForms.Calendar();
+            button4 = new Button();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)calendar1).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Controls.Add(button4);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(button3);
             panel1.Controls.Add(button2);
@@ -52,7 +54,7 @@
             // button1
             // 
             button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.Location = new Point(412, 455);
+            button1.Location = new Point(197, 459);
             button1.Name = "button1";
             button1.Size = new Size(221, 54);
             button1.TabIndex = 4;
@@ -76,7 +78,7 @@
             button3.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button3.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button3.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button3.Location = new Point(639, 455);
+            button3.Location = new Point(424, 459);
             button3.Name = "button3";
             button3.Size = new Size(236, 54);
             button3.TabIndex = 3;
@@ -99,7 +101,7 @@
             button2.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button2.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button2.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button2.Location = new Point(881, 455);
+            button2.Location = new Point(666, 459);
             button2.Name = "button2";
             button2.Size = new Size(211, 54);
             button2.TabIndex = 2;
@@ -121,11 +123,21 @@
             calendar1.ShowToolTips = true;
             calendar1.Size = new Size(1104, 431);
             calendar1.TabIndex = 0;
-            calendar1.Theme = MindFusion.Scheduling.WinForms.ThemeType.Light;
+            calendar1.Theme = MindFusion.Scheduling.WinForms.ThemeType.Vista;
             calendar1.DateClick += calendar1_DateClick;
             calendar1.ItemModified += calendar1_ItemModified;
             calendar1.ItemDrawing += calendar1_ItemDrawing;
             calendar1.Draw += calendar1_Draw;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(883, 459);
+            button4.Name = "button4";
+            button4.Size = new Size(209, 54);
+            button4.TabIndex = 5;
+            button4.Text = "Save All";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // Scheduler
             // 
@@ -147,5 +159,6 @@
         private MindFusion.UI.WinForms.Button button2;
         private MindFusion.UI.WinForms.Button button3;
         private Button button1;
+        private Button button4;
     }
 }
