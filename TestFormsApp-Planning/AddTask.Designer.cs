@@ -99,7 +99,7 @@
             label1.Name = "label1";
             label1.Size = new Size(109, 28);
             label1.TabIndex = 17;
-            label1.Text = "Task Name:";
+            label1.Text = "Order Name:";
             // 
             // label5
             // 
@@ -138,7 +138,7 @@
             button1.Name = "button1";
             button1.Size = new Size(218, 42);
             button1.TabIndex = 14;
-            button1.Text = "Add Task";
+            button1.Text = "Add Order";
             button1.Click += button1_Click;
             // 
             // label4
@@ -185,7 +185,7 @@
             label2.Name = "label2";
             label2.Size = new Size(170, 41);
             label2.TabIndex = 8;
-            label2.Text = "Add a Task";
+            label2.Text = "Add a Order";
             // 
             // AddTask
             // 
@@ -196,7 +196,7 @@
             Controls.Add(dockPanel1);
             Name = "AddTask";
             Text = "AddTask";
-            Load += AddTask_Load;
+    
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();

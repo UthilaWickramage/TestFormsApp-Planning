@@ -34,12 +34,12 @@ namespace TestFormsApp_Planning
 
                 if (nameText.Length > 0)
                 {
-                    Machine machine = new Machine();
-                    machine.MachineName = nameText;
-                    machine.CapacityPerDay = value;
-                    _dbContext.Machines.Add(machine);
+                    WorkStation machine = new WorkStation();
+                    machine.WorkStationName = nameText;
+                    machine.CapacityPerHour = value;
+                    _dbContext.WorkStations.Add(machine);
                     await _dbContext.SaveChangesAsync();
-                    MessageBox.Show("Machine Added Successfully");
+                    MessageBox.Show("WorkStation Added Successfully");
                 }
             }
         }

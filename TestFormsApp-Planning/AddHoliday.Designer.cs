@@ -72,7 +72,7 @@
             label4.Name = "label4";
             label4.Size = new Size(95, 28);
             label4.TabIndex = 7;
-            label4.Text = "Machine :";
+            label4.Text = "WorkStation :";
             // 
             // button1
             // 

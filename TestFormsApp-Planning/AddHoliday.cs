@@ -20,10 +20,10 @@ namespace TestFormsApp_Planning
         public AddHoliday()
         {
             InitializeComponent();
-            List<Machine> contacts = new List<Machine>();
+            List<WorkStation> contacts = new List<WorkStation>();
             using (var context = new Entities.ScheduleDBContext())
             {
-                context.Machines.ToList().ForEach(contact =>
+                context.WorkStations.ToList().ForEach(contact =>
                 {
                     contacts.Add(contact);
 
@@ -33,8 +33,8 @@ namespace TestFormsApp_Planning
 
             comboBox1.DataSource = contacts;
 
-            comboBox1.DisplayMember = "MachineName";
-            comboBox1.ValueMember = "MachineId";
+            comboBox1.DisplayMember = "WorkStationName";
+            comboBox1.ValueMember = "WorkStationId";
         }
 
        
@@ -51,7 +51,7 @@ namespace TestFormsApp_Planning
                 {
                     HolidayName = name,
                     HolidayDate = dateTime,
-                    MachineId = Id
+                    WorkStationId = Id
                 };
                 context.Holidays.Add(holiday);
                 await context.SaveChangesAsync();

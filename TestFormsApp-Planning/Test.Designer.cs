@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            button4 = new Button();
             button1 = new Button();
             button3 = new MindFusion.UI.WinForms.Button();
             button2 = new MindFusion.UI.WinForms.Button();
             calendar1 = new MindFusion.Scheduling.WinForms.Calendar();
-            button4 = new Button();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)calendar1).BeginInit();
             SuspendLayout();
@@ -48,13 +48,24 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1104, 584);
+            panel1.Size = new Size(1362, 695);
             panel1.TabIndex = 0;
+            // 
+            // button4
+            // 
+            button4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            button4.Location = new Point(1145, 629);
+            button4.Name = "button4";
+            button4.Size = new Size(209, 54);
+            button4.TabIndex = 5;
+            button4.Text = "Save All";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
             // 
             // button1
             // 
             button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            button1.Location = new Point(197, 459);
+            button1.Location = new Point(459, 629);
             button1.Name = "button1";
             button1.Size = new Size(221, 54);
             button1.TabIndex = 4;
@@ -78,11 +89,11 @@
             button3.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button3.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button3.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button3.Location = new Point(424, 459);
+            button3.Location = new Point(686, 629);
             button3.Name = "button3";
             button3.Size = new Size(236, 54);
             button3.TabIndex = 3;
-            button3.Text = "Create Machine";
+            button3.Text = "Create WorkStation";
             button3.Click += button3_Click;
             // 
             // button2
@@ -101,11 +112,11 @@
             button2.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button2.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button2.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button2.Location = new Point(666, 459);
+            button2.Location = new Point(928, 629);
             button2.Name = "button2";
             button2.Size = new Size(211, 54);
             button2.TabIndex = 2;
-            button2.Text = "Create Task";
+            button2.Text = "Create Order";
             button2.Click += button2_Click;
             // 
             // calendar1
@@ -118,10 +129,11 @@
             calendar1.GroupType = MindFusion.Scheduling.WinForms.GroupType.GroupByContacts;
             calendar1.ItemSettings.MoveBandSize = 2;
             calendar1.LicenseKey = null;
-            calendar1.Location = new Point(-12, 0);
+            calendar1.Location = new Point(3, 0);
             calendar1.Name = "calendar1";
+            calendar1.ResourceViewSettings.SnapUnit = MindFusion.Scheduling.WinForms.TimeUnit.Hour;
             calendar1.ShowToolTips = true;
-            calendar1.Size = new Size(1104, 431);
+            calendar1.Size = new Size(1356, 315);
             calendar1.TabIndex = 0;
             calendar1.Theme = MindFusion.Scheduling.WinForms.ThemeType.Vista;
             calendar1.DateClick += calendar1_DateClick;
@@ -129,21 +141,11 @@
             calendar1.ItemDrawing += calendar1_ItemDrawing;
             calendar1.Draw += calendar1_Draw;
             // 
-            // button4
-            // 
-            button4.Location = new Point(883, 459);
-            button4.Name = "button4";
-            button4.Size = new Size(209, 54);
-            button4.TabIndex = 5;
-            button4.Text = "Save All";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
-            // 
             // Scheduler
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1104, 584);
+            ClientSize = new Size(1362, 695);
             Controls.Add(panel1);
             Name = "Scheduler";
             Text = "Scheduler";

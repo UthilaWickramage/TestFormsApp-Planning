@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace TestFormsApp_Planning.Classes
 {
-    public class TaskAllocation:Appointment
+    public class OrderAllocation:Appointment
     {
-        public int TaskId { get; set; }
-        public string TaskName { get; set; }
+        public int OrderAllocationId { get; set; }
+        public string OrderTitle { get; set; }
 
 
        

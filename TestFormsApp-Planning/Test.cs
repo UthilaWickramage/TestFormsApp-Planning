@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.Windows.Forms;
 using Entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace TestFormsApp_Planning
 {
     public partial class Scheduler : Form
     {
-        private List<Entities.Machine> machines = new List<Entities.Machine>();
-        private List<Entities.Task> tasks = new List<Entities.Task>();
+        private List<Entities.WorkStation> machines = new List<Entities.WorkStation>();
+        private List<Entities.Order> tasks = new List<Entities.Order>();
         private List<Entities.Holiday> holidays = new List<Entities.Holiday>();
         private CustomHolidayProvider holidayProvider;
         DateTime _startTime;
@@ -21,13 +22,16 @@ namespace TestFormsApp_Planning
         bool isDragging;
         public Scheduler()
         {
+
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
             calendar1.ResourceViewSettings.LaneSize = 25;
+
             holidayProvider = new CustomHolidayProvider();
             loadContacts();
             loadTasks();
             loadHolidays();
+
 
             // Add resources
         }
@@ -37,11 +41,11 @@ namespace TestFormsApp_Planning
 
             using (var context = new ScheduleDBContext())
             {
-
                 context.Holidays.ToList().ForEach(h =>
                 {
                     holidays.Add(h);
                 });
+
 
 
             }
@@ -53,13 +57,13 @@ namespace TestFormsApp_Planning
 
             using (var context = new ScheduleDBContext())
             {
-                machines = context.Machines.ToList();
+                machines = context.WorkStations.ToList();
                 foreach (var machine in machines)
                 {
                     MindFusion.Scheduling.Contact calenderMachine = new MindFusion.Scheduling.Contact();
-                    calenderMachine.FirstName = machine.MachineName;
-                    calenderMachine.Id = machine.MachineName;
-                    calenderMachine.Name = machine.MachineName;
+                    calenderMachine.FirstName = machine.WorkStationName;
+                    calenderMachine.Id = machine.WorkStationName;
+                    calenderMachine.Name = machine.WorkStationName;
                     calendar1.Contacts.Add(calenderMachine);
                 }
             }
@@ -72,19 +76,19 @@ namespace TestFormsApp_Planning
 
             using (var context = new ScheduleDBContext())
             {
-                tasks = context.Tasks.Include(t => t.Machine).ToList();
+                tasks = context.Orders.Include(t => t.Machine).ToList();
                 foreach (var task in tasks)
                 {
-                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == task.Machine.MachineName.Trim()).FirstOrDefault();
+                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == task.Machine.WorkStationName.Trim()).FirstOrDefault();
 
-                    contact.Name = task.Machine.MachineName;
-                    contact.Id = task.Machine.MachineId.ToString();
-                    TaskAllocation tsa = new TaskAllocation();
-                    tsa.TaskName = task.TaskName;
-                    tsa.HeaderText = task.TaskName;
+                    contact.Name = task.Machine.WorkStationName;
+                    contact.Id = task.Machine.WorkStationId.ToString();
+                    OrderAllocation tsa = new OrderAllocation();
+                    tsa.OrderTitle = task.OrderTitle;
+                    tsa.HeaderText = task.OrderTitle;
                     tsa.StartTime = task.StartTime;
                     tsa.EndTime = task.EndTime;
-                    tsa.Id = task.TaskId.ToString();
+                    tsa.Id = task.OrderId.ToString();
                     tsa.Contacts.Add(contact);
 
                     calendar1.Schedule.Items.Add(tsa);
@@ -115,7 +119,7 @@ namespace TestFormsApp_Planning
             }
 
 
-            //var resource1 = new Machine();
+            //var resource1 = new WorkStation();
             //resource1.Name = "Computer 1";
             //resource1.FirstName = "Computer 1";
             //resource1.Id = "Computer 1";
@@ -125,7 +129,7 @@ namespace TestFormsApp_Planning
         private void calendar1_DateClick(object sender, MindFusion.Scheduling.WinForms.ResourceDateEventArgs e)
         {
 
-            TaskAllocation tsa = new TaskAllocation();
+            OrderAllocation tsa = new OrderAllocation();
             tsa.StartTime = e.Date;
             AddTask form = new AddTask(tsa, holidays);
             form.FormClosed += (s, args) => loadTasks();
@@ -144,7 +148,7 @@ namespace TestFormsApp_Planning
 
             foreach (var task in tasks)
             {
-                if (task.TaskName.ToString() == e.Item.HeaderText)
+                if (task.OrderTitle.ToString() == e.Item.HeaderText)
                 {
                     task.StartTime = e.Item.StartTime;
                     task.EndTime = e.Item.EndTime;
@@ -158,7 +162,7 @@ namespace TestFormsApp_Planning
             //    {
             //        if (task.TaskName.ToString() == e.Item.HeaderText)
             //        {
-            //            //MessageBox.Show("Task Name " + task.TaskId + "item id " + e.Item.Task.Name);
+            //            //MessageBox.Show("Order Name " + task.OrderAllocationId + "item id " + e.Item.Order.Name);
             //            task.StartTime = e.Item.StartTime;
             //            task.EndTime = e.Item.EndTime;
             //            context.Tasks.Update(task);
@@ -263,11 +267,12 @@ namespace TestFormsApp_Planning
             {
                 foreach (var task in tasks)
                 {
-                    context.Tasks.Update(task);
+                    context.Orders.Update(task);
                     await context.SaveChangesAsync();
 
                 }
             }
         }
+     
     }
 }

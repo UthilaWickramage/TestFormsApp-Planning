@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            numericUpDown1 = new NumericUpDown();
+            label3 = new Label();
             button1 = new MindFusion.UI.WinForms.Button();
             textBox1 = new TextBox();
             label2 = new Label();
             label1 = new Label();
-            label3 = new Label();
-            numericUpDown1 = new NumericUpDown();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
@@ -52,6 +52,23 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(703, 237);
             panel1.TabIndex = 0;
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new Point(198, 148);
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(493, 27);
+            numericUpDown1.TabIndex = 5;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Location = new Point(12, 148);
+            label3.Name = "label3";
+            label3.Size = new Size(172, 28);
+            label3.TabIndex = 4;
+            label3.Text = "Capacity Per Hour:";
             // 
             // button1
             // 
@@ -72,7 +89,7 @@
             button1.Name = "button1";
             button1.Size = new Size(175, 29);
             button1.TabIndex = 3;
-            button1.Text = "Add Machine";
+            button1.Text = "Add WorkStation";
             button1.Click += button1_Click;
             // 
             // textBox1
@@ -88,9 +105,9 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(12, 9);
             label2.Name = "label2";
-            label2.Size = new Size(229, 41);
+            label2.Size = new Size(286, 41);
             label2.TabIndex = 1;
-            label2.Text = "Add a Machine";
+            label2.Text = "Add a WorkStation";
             // 
             // label1
             // 
@@ -98,26 +115,9 @@
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label1.Location = new Point(12, 89);
             label1.Name = "label1";
-            label1.Size = new Size(152, 28);
+            label1.Size = new Size(187, 28);
             label1.TabIndex = 0;
-            label1.Text = "Machine Name :";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(12, 148);
-            label3.Name = "label3";
-            label3.Size = new Size(167, 28);
-            label3.TabIndex = 4;
-            label3.Text = "Capacity Per Day :";
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(198, 148);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(493, 27);
-            numericUpDown1.TabIndex = 5;
+            label1.Text = "WorkStation Name :";
             // 
             // AddContact
             // 

@@ -14,23 +14,34 @@ namespace Entities
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Machine>()
-                .HasKey(c => c.MachineId);
+            modelBuilder.Entity<WorkStation>()
+                .HasKey(c => c.WorkStationId);
 
-            modelBuilder.Entity<Task>()
-                .HasKey(t => t.TaskId);
+            modelBuilder.Entity<Order>()
+                .HasKey(t => t.OrderId);
 
             modelBuilder.Entity<Holiday>()
              .HasKey(t => t.HolidayId);
+
+            modelBuilder.Entity<SpecialDay>()
+   .HasKey(t => t.SpecialDayId);
+
+            modelBuilder.Entity<PendingOrder>()
+   .HasKey(t => t.PendingOrderId);
         }
 
         public ScheduleDBContext()
         {
             
         }
-        public virtual DbSet<Machine> Machines { get; set; }
-        public virtual DbSet<Task> Tasks { get; set; }
+        public virtual DbSet<WorkStation> WorkStations { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Holiday> Holidays { get; set; }
+        public virtual DbSet<Holiday> SpecialDays { get; set; }
+
+        public virtual DbSet<PendingOrder> PendingOrders { get; set; }
+
+
 
     }
 }

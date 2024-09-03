@@ -16,9 +16,9 @@ namespace TestFormsApp_Planning
 {
     public partial class AddTask : Form
     {
-        private TaskAllocation _tsa;
+        private OrderAllocation _tsa;
         private List<Entities.Holiday> _holidays;
-        List<Machine> _machines;
+        List<WorkStation> _machines;
 
         public AddTask(List<Entities.Holiday> holidays)
         {
@@ -26,10 +26,10 @@ namespace TestFormsApp_Planning
             _holidays = holidays;
             dateTimePicker1.Format = DateTimePickerFormat.Custom;
             dateTimePicker1.CustomFormat = "dddd, dd MMM yyyy - hh:mm tt";
-            _machines = new List<Machine>();
+            _machines = new List<WorkStation>();
             using (var context = new ScheduleDBContext())
             {
-                context.Machines.ToList().ForEach(machine =>
+                context.WorkStations.ToList().ForEach(machine =>
                 {
                     _machines.Add(machine);
 
@@ -37,19 +37,19 @@ namespace TestFormsApp_Planning
             }
 
             comboBox1.DataSource = _machines;
-            comboBox1.DisplayMember = "MachineName";
-            comboBox1.ValueMember = "MachineId";
+            comboBox1.DisplayMember = "WorkStationName";
+            comboBox1.ValueMember = "WorkStationId";
         }
 
-        public AddTask(TaskAllocation tsa, List<Entities.Holiday> holidays)
+        public AddTask(OrderAllocation tsa, List<Entities.Holiday> holidays)
         {
             InitializeComponent();
             _holidays = holidays;
-            _machines = new List<Machine>();
+            _machines = new List<WorkStation>();
 
             using (var context = new ScheduleDBContext())
             {
-                context.Machines.ToList().ForEach(contact =>
+                context.WorkStations.ToList().ForEach(contact =>
                 {
                     _machines.Add(contact);
 
@@ -59,11 +59,11 @@ namespace TestFormsApp_Planning
             _tsa = tsa;
             dateTimePicker1.Value = _tsa.StartTime;
             comboBox1.DataSource = _machines;
-            comboBox1.DisplayMember = "MachineName";
-            comboBox1.ValueMember = "MachineId";
+            comboBox1.DisplayMember = "WorkStationName";
+            comboBox1.ValueMember = "WorkStationId";
         }
 
-        private bool isHoliday(DateTime tstartDate, TaskAllocation tsk)
+        private bool isHoliday(DateTime tstartDate, OrderAllocation tsk)
         {
             if (tstartDate.DayOfWeek == DayOfWeek.Saturday || tstartDate.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -71,7 +71,7 @@ namespace TestFormsApp_Planning
             }
             else
             {
-                if (_holidays.Where(a => a.HolidayDate.Date == tstartDate.Date && a.Machine.MachineName == tsk.Contacts[0].FirstName).FirstOrDefault() != null)
+                if (_holidays.Where(a => a.HolidayDate.Date == tstartDate.Date && a.WorkStation.WorkStationName == tsk.Contacts[0].FirstName).FirstOrDefault() != null)
                 {
                     return true; 
                 }
@@ -204,60 +204,61 @@ namespace TestFormsApp_Planning
             decimal qty = numericUpDown1.Value;
 
 
-            var machine =  _machines.Where(m => m.MachineId == Id).FirstOrDefault();
+            var machine =  _machines.Where(m => m.WorkStationId == Id).FirstOrDefault();
             
            
-            var capacity =  decimal.Parse(machine.CapacityPerDay);
-            decimal duration = qty / capacity;
-            MessageBox.Show(duration.ToString());
-            DateTime endDate = StartTime.AddDays(double.Parse(duration.ToString()));
+            var capacity =  decimal.Parse(machine.CapacityPerHour);
+            decimal durationInHours = qty / capacity;
+            MessageBox.Show(durationInHours.ToString());
+            decimal Days = durationInHours / 8;
+            MessageBox.Show(Days.ToString());
+            DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
 
-            DateTime endTime = CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(duration.ToString()));
+            DateTime endTime = CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
 
-            //while (isHoliday(StartTime, _tsa))
-            //{
-            //    StartTime = StartTime.AddDays(1);
 
-            //}
-            //while (isHoliday(EndTime, _tsa))
-            //{
-            //    foreach (var holiday in _holidays)
-            //    {
-            //        if(holiday.HolidayDateTime.Date < EndTime.Date)
-            //        {
-            //           var gap =  EndTime.Date- holiday.HolidayDateTime.Date;
-            //            EndTime = EndTime.AddDays(gap.Days);
-            //            break;
-            //        }
-            //    }
-            //}
+            TimeSpan visibleStart = TimeSpan.FromHours(8); // 8 AM visible start
+            TimeSpan visibleEnd = TimeSpan.FromHours(16);
 
-            //TaskAllocation tsa = new TaskAllocation();
-            Entities.Task task = new Entities.Task();
+            DateTime visibleStartDateTime = MapToVisibleRange(StartTime, visibleStart, visibleEnd);
+            DateTime visibleEndDateTime = MapToVisibleRange(endTime, visibleStart, visibleEnd);
+
+            MessageBox.Show(visibleStartDateTime.ToString()+" To "+visibleEndDateTime.ToString());
+            
+            //OrderAllocation tsa = new OrderAllocation();
+            Entities.Order task = new Entities.Order();
             task.StartTime = StartTime;
             task.EndTime = endTime;
-            task.TaskName = TaskName;
+            task.VisibleStartTime = visibleStartDateTime;
+            task.VisibleEndTime = visibleEndDateTime;   
+            task.OrderTitle = TaskName;
+            task.OrderDescription = TaskName;
             task.MachineId = Id;
-            task.Capacity = qty.ToString();
-            task.Duration = double.Parse(duration.ToString());
+            task.Qty = qty.ToString();
+            task.DurationInHours = double.Parse(durationInHours.ToString());
 
             using (var context = new ScheduleDBContext())
             {
-                context.Tasks.Add(task);
+                context.Orders.Add(task);
                 await context.SaveChangesAsync();
 
             }
-            MessageBox.Show("Task added Successfully");
+            MessageBox.Show("Order added Successfully");
         }
-
-        private void label1_Click(object sender, EventArgs e)
+        DateTime MapToVisibleRange(DateTime dateTime, TimeSpan visibleStart, TimeSpan visibleEnd)
         {
+            TimeSpan originalTime = dateTime.TimeOfDay;
+            TimeSpan dayStart = TimeSpan.FromHours(0); // Start of 24-hour day
+            TimeSpan dayEnd = TimeSpan.FromHours(24);  // End of 24-hour day
 
-        }
+            // Calculate proportion in the 24-hour range
+            double proportion = (originalTime.TotalMinutes - dayStart.TotalMinutes) / (dayEnd.TotalMinutes - dayStart.TotalMinutes);
 
-        private void AddTask_Load(object sender, EventArgs e)
-        {
+            // Map proportion to the visible time range
+            TimeSpan visibleDuration = visibleEnd - visibleStart;
+            TimeSpan visibleTime = visibleStart + TimeSpan.FromMinutes(proportion * visibleDuration.TotalMinutes);
 
+            return dateTime.Date + visibleTime; // Preserve the date part
         }
     }
 }
