@@ -11,8 +11,15 @@ namespace TestFormsApp_Planning.Classes
     {
         public int OrderAllocationId { get; set; }
         public string OrderTitle { get; set; }
+        public string OrderDescription { get; set; }
+      
+        public DateTime VisibleStartTime { get; set; }
 
+        public DateTime VisibleEndTime { get; set; }
 
-       
+        public int WorkstationId { get; set; }
+        public string Qty { get; set; }
+        public double DurationInHours { get; set; }
+
     }
 }

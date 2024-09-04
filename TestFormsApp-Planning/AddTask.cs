@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TestFormsApp_Planning.Classes;
+using TestFormsApp_Planning.Helpers;
 
 namespace TestFormsApp_Planning
 {
@@ -19,11 +20,12 @@ namespace TestFormsApp_Planning
         private OrderAllocation _tsa;
         private List<Entities.Holiday> _holidays;
         List<WorkStation> _machines;
-
+        private ScheduleUtil _util;
         public AddTask(List<Entities.Holiday> holidays)
         {
             InitializeComponent();
             _holidays = holidays;
+            _util = new ScheduleUtil(_holidays);
             dateTimePicker1.Format = DateTimePickerFormat.Custom;
             dateTimePicker1.CustomFormat = "dddd, dd MMM yyyy - hh:mm tt";
             _machines = new List<WorkStation>();
@@ -46,6 +48,7 @@ namespace TestFormsApp_Planning
             InitializeComponent();
             _holidays = holidays;
             _machines = new List<WorkStation>();
+            _util = new ScheduleUtil(_holidays);
 
             using (var context = new ScheduleDBContext())
             {
@@ -63,21 +66,7 @@ namespace TestFormsApp_Planning
             comboBox1.ValueMember = "WorkStationId";
         }
 
-        private bool isHoliday(DateTime tstartDate, OrderAllocation tsk)
-        {
-            if (tstartDate.DayOfWeek == DayOfWeek.Saturday || tstartDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                return true;
-            }
-            else
-            {
-                if (_holidays.Where(a => a.HolidayDate.Date == tstartDate.Date && a.WorkStation.WorkStationName == tsk.Contacts[0].FirstName).FirstOrDefault() != null)
-                {
-                    return true; 
-                }
-            }
-            return false;
-        }
+       
 
         //private TimeSpan ConvertDecimalDaysToTimeSpan(decimal decimalDays)
         //{
@@ -154,47 +143,8 @@ namespace TestFormsApp_Planning
         //    return adjustedEndTime;
         //}
 
-        private DateTime CalculateEndDateConsideringHolidays(DateTime startTime, DateTime endTime, double duration)
-        {
-            DateTime adjustedEndTime = endTime;
-            DateTime currentDate = startTime;
-            int daysAdded = 0;
-
-            while (daysAdded < duration)
-            {
-                // Check if the current endTime is a weekend or holiday
-                if (IsWeekend(currentDate) || IsHoliday(currentDate))
-                {
-                    // If it's a weekend or holiday, just move to the next day
-                    adjustedEndTime = adjustedEndTime.AddDays(1);
-                }
-                else
-                {
-                    // Count only valid working days
-                    daysAdded++;
-                }
-
-                // Move to the next day
-                currentDate = currentDate.AddDays(1);
-            }
-
-            return adjustedEndTime;
-        }
-
-        private bool IsWeekend(DateTime date)
-        {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
-        }
-
-        private bool IsHoliday(DateTime date)
-        {
-            return _holidays.Any(holiday => holiday.HolidayDate.Date == date.Date);
-        }
-
-        private static bool IsDateInRange(DateTime holiday, DateTime startTime, DateTime endTime)
-        {
-            return holiday.Date >= startTime.Date && holiday.Date <= endTime.Date;
-        }
+      
+    
 
         private async void button1_Click(object sender, EventArgs e)
         {
@@ -214,14 +164,14 @@ namespace TestFormsApp_Planning
             MessageBox.Show(Days.ToString());
             DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
 
-            DateTime endTime = CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
+            DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
 
 
             TimeSpan visibleStart = TimeSpan.FromHours(8); // 8 AM visible start
             TimeSpan visibleEnd = TimeSpan.FromHours(16);
 
-            DateTime visibleStartDateTime = MapToVisibleRange(StartTime, visibleStart, visibleEnd);
-            DateTime visibleEndDateTime = MapToVisibleRange(endTime, visibleStart, visibleEnd);
+            DateTime visibleStartDateTime = _util.MapToVisibleRange(StartTime, visibleStart, visibleEnd);
+            DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
 
             MessageBox.Show(visibleStartDateTime.ToString()+" To "+visibleEndDateTime.ToString());
             
@@ -245,20 +195,6 @@ namespace TestFormsApp_Planning
             }
             MessageBox.Show("Order added Successfully");
         }
-        DateTime MapToVisibleRange(DateTime dateTime, TimeSpan visibleStart, TimeSpan visibleEnd)
-        {
-            TimeSpan originalTime = dateTime.TimeOfDay;
-            TimeSpan dayStart = TimeSpan.FromHours(0); // Start of 24-hour day
-            TimeSpan dayEnd = TimeSpan.FromHours(24);  // End of 24-hour day
-
-            // Calculate proportion in the 24-hour range
-            double proportion = (originalTime.TotalMinutes - dayStart.TotalMinutes) / (dayEnd.TotalMinutes - dayStart.TotalMinutes);
-
-            // Map proportion to the visible time range
-            TimeSpan visibleDuration = visibleEnd - visibleStart;
-            TimeSpan visibleTime = visibleStart + TimeSpan.FromMinutes(proportion * visibleDuration.TotalMinutes);
-
-            return dateTime.Date + visibleTime; // Preserve the date part
-        }
+        
     }
 }
