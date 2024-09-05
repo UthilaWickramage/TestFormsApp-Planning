@@ -42,6 +42,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.Lavender;
             panel1.Controls.Add(comboBox1);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(button1);
@@ -70,7 +71,7 @@
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label4.Location = new Point(12, 227);
             label4.Name = "label4";
-            label4.Size = new Size(95, 28);
+            label4.Size = new Size(130, 28);
             label4.TabIndex = 7;
             label4.Text = "WorkStation :";
             // 
@@ -147,8 +148,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(650, 370);
             Controls.Add(panel1);
+            MaximizeBox = false;
             Name = "AddHoliday";
-            Text = "AddHoliday";
+            Text = "Add Holiday";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

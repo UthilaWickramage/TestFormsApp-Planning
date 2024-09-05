@@ -17,9 +17,13 @@ namespace TestFormsApp_Planning.Classes
 
         public DateTime VisibleEndTime { get; set; }
 
+        public string Customer {  get; set; }
+
+        public string WorkStationName { get; set; }
         public int WorkstationId { get; set; }
         public string Qty { get; set; }
         public double DurationInHours { get; set; }
 
+        public DateTime deliveryDate { get; set; }
     }
 }

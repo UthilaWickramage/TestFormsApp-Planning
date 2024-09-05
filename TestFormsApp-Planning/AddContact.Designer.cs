@@ -41,6 +41,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.Lavender;
             panel1.Controls.Add(numericUpDown1);
             panel1.Controls.Add(label3);
             panel1.Controls.Add(button1);
@@ -85,9 +86,9 @@
             button1.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button1.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button1.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button1.Location = new Point(516, 196);
+            button1.Location = new Point(516, 186);
             button1.Name = "button1";
-            button1.Size = new Size(175, 29);
+            button1.Size = new Size(175, 44);
             button1.TabIndex = 3;
             button1.Text = "Add WorkStation";
             button1.Click += button1_Click;
@@ -105,9 +106,9 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(12, 9);
             label2.Name = "label2";
-            label2.Size = new Size(286, 41);
+            label2.Size = new Size(283, 41);
             label2.TabIndex = 1;
-            label2.Text = "Add a WorkStation";
+            label2.Text = "Add a Workstation";
             // 
             // label1
             // 
@@ -125,8 +126,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(703, 237);
             Controls.Add(panel1);
+            MaximizeBox = false;
             Name = "AddContact";
-            Text = "AddContact";
+            Text = "Add Workstation";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();

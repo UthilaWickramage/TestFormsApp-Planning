@@ -24,7 +24,13 @@ namespace TestFormsApp_Planning
         private ScheduleUtil _util;
         private List<OrderAllocation> OrderAllocations = new List<OrderAllocation>();
         private List<OrderAllocation> UnsavedOrderAllocations = new List<OrderAllocation>();
+        private DateTime _pointedDate;
+        private Item lastClickedItem;
+        private DateTime lastClickTime = DateTime.MinValue;
+        private ToolTip toolTip;
+        private int index = 0;
 
+        Point client;
         public Scheduler()
         {
             InitializeComponent();
@@ -34,12 +40,34 @@ namespace TestFormsApp_Planning
             //loadTasks();
             loadHolidays();
 
+          
 
             loadProducts();
             _util = new ScheduleUtil(holidays);
             dataGridView1.DataSource = dataSource1;
             AddToOrdersToView();
+            calendar1.Draw += new EventHandler<DrawEventArgs>(this.calendar1_Draw);
+            setupToolTips();
             // Add resources
+        }
+
+        private void setupToolTips()
+        {
+            toolTip = new ToolTip();
+
+            // Set ToolTip properties
+            toolTip.AutoPopDelay = 3000;
+            toolTip.InitialDelay = 1000;
+            toolTip.ReshowDelay = 500;
+            toolTip.ShowAlways = true;
+
+            // Set ToolTips for buttons
+            toolTip.SetToolTip(button5, "Maximize the Schedule View");
+            toolTip.SetToolTip(button1, "Create a Holiday");
+            toolTip.SetToolTip(button2, "Schedule an Order");
+            toolTip.SetToolTip(button3, "Create Workstation");
+            toolTip.SetToolTip(button4, "Save Changes");
+            // fullScreenBtnTT.SetToolTip(button2, "This is a tooltip for button2");
         }
 
         private void loadProducts()
@@ -81,11 +109,12 @@ namespace TestFormsApp_Planning
                 }
             }
             loadTasks();
+            AddToOrdersToView();
         }
 
         private void loadTasks()
         {
-            MessageBox.Show("Load tasks called");
+            // MessageBox.Show("Load tasks called");
 
             using (var context = new ScheduleDBContext())
             {
@@ -101,6 +130,13 @@ namespace TestFormsApp_Planning
                     tsa.HeaderText = task.OrderTitle;
                     tsa.StartTime = task.StartTime;
                     tsa.EndTime = task.EndTime;
+                    tsa.VisibleEndTime = task.VisibleEndTime;
+                    tsa.VisibleStartTime = task.VisibleStartTime;
+                    tsa.Qty = task.Qty;
+                    tsa.DurationInHours = task.DurationInHours;
+                    tsa.WorkStationName = contact.Name;
+                    tsa.deliveryDate = task.VisibleEndTime;
+
                     tsa.Id = task.OrderId.ToString();
                     tsa.Contacts.Add(contact);
 
@@ -112,8 +148,8 @@ namespace TestFormsApp_Planning
 
         private void AddToOrdersToView()
         {
-            MessageBox.Show("Add to Orders called called");
-
+            // MessageBox.Show("Add to Orders called called");
+            calendar1.Schedule.Items.Clear();
             foreach (var orderAllocation in OrderAllocations)
             {
                 calendar1.Schedule.Items.Add(orderAllocation);
@@ -222,68 +258,55 @@ namespace TestFormsApp_Planning
 
         private void calendar1_Draw(object sender, DrawEventArgs e)
         {
-            MessageBox.Show("This is called");
-            if (e.Element == CustomDrawElements.CellHeader)
+            //MessageBox.Show("This is called");
+            if (e.Element == CustomDrawElements.ResourceViewCell)
             {
-                MessageBox.Show("This is called");
 
-                Rectangle bounds = e.Bounds;
-                if (e.Date.Date == DateTime.Today)
+                if (_pointedDate != DateTime.MinValue)
                 {
-                    using (Brush brush = new SolidBrush(Color.FromArgb(100, Color.White)))
-                    {
-                        e.Graphics.FillRectangle(brush, bounds);
-                    }
 
-                    using (Pen pen = new Pen(Color.Red, 3))
+                    DateTime cellStart = e.Date + e.StartTime;
+                    DateTime cellEnd = e.Date + e.EndTime;
+
+
+                    Contact contact = calendar1.GetContactAt(client);
+
+                    if (e.Resource == contact)
                     {
-                        pen.Alignment = PenAlignment.Inset;
-                        e.Graphics.DrawRectangle(pen, bounds);
-                    }
-                }
-                else
-                {
-                    if (holidays != null && holidays.Count > 0)
-                    {
-                        bool isHoliday = false;
-                        foreach (Entities.Holiday holiday in holidays)
+                        Rectangle bounds = e.Bounds;
+                        bounds.Width -= 1;
+                        bounds.Height -= 1;
+
+                        // Fill the cell
+                        if (cellStart <= _pointedDate && _pointedDate < cellEnd)
                         {
-                            if (holiday.HolidayDate <= e.Date.Date)
+                            // It is the first cell
+                            e.Graphics.FillRectangle(Brushes.LightGreen, bounds);
+
+                            // Draw lines on the left, top and right
+                            bounds.Y += 1;
+                            bounds.Height -= 1;
+                            e.Graphics.DrawLines(Pens.Green,
+                                new Point[]
                             {
-                                isHoliday = true;
-                                break;
-                            }
+                                new Point(bounds.Left, bounds.Bottom),
+                                new Point(bounds.Left, bounds.Top),
+                                new Point(bounds.Right, bounds.Top),
+                                new Point(bounds.Right, bounds.Bottom)
+                            });
+
+                            // Draw the time interval
+                            //string interval = cellStart.ToString("hh:mm tt");
+                            // e.Graphics.DrawString(interval, Font, Brushes.Black,
+                            //bounds.Left + 2, bounds.Top + 2);
                         }
 
-                        if (isHoliday)
-                        {
-                            using (Brush brush = new SolidBrush(Color.FromArgb(128, Color.LightSteelBlue)))
-                            {
-                                e.Graphics.FillRectangle(brush, bounds);
-                            }
-
-                            using (Pen pen = new Pen(Color.FromArgb(192, Color.SlateGray)))
-                            {
-                                Rectangle borderBounds = bounds;
-                                borderBounds.Width -= 1;
-                                borderBounds.Height -= 1;
-                                e.Graphics.DrawRectangle(pen, borderBounds);
-                            }
-
-                            using (StringFormat format = new StringFormat())
-                            {
-                                format.Alignment = StringAlignment.Center;
-                                format.LineAlignment = StringAlignment.Center;
-
-                                using (Brush brush = new SolidBrush(Color.FromArgb(192, 0, 0)))
-                                {
-                                    e.Graphics.DrawString(e.Text, e.Style.HeaderFont, brush,
-                                        new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height), format);
-                                }
-                            }
-                        }
                     }
+
+
                 }
+
+
             }
         }
 
@@ -313,17 +336,6 @@ namespace TestFormsApp_Planning
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox1.Checked)
-            {
-                splitContainer1.Panel2Collapsed = true;
-            }
-            else
-            {
-                splitContainer1.Panel2Collapsed = false;
-            }
-        }
 
         private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -343,7 +355,7 @@ namespace TestFormsApp_Planning
             }
         }
 
-    
+
 
         private async void calendar1_DragDrop(object sender, DragEventArgs e)
         {
@@ -353,7 +365,7 @@ namespace TestFormsApp_Planning
                 PendingOrder order = (PendingOrder)e.Data.GetData(typeof(PendingOrder));
 
                 DateTime dropDateTime = calendar1.GetDateAt(dropPoint);
-                MessageBox.Show(dropDateTime.ToString() + "   " + order.PendingOrderTitle);
+                // MessageBox.Show(dropDateTime.ToString() + "   " + order.PendingOrderTitle);
                 Contact contact = calendar1.GetContactAt(dropPoint);
                 WorkStation workStation;
 
@@ -369,8 +381,18 @@ namespace TestFormsApp_Planning
 
                 using (var context = new ScheduleDBContext())
                 {
-                   
-                   workStation = await context.WorkStations.Where(w=>w.WorkStationName == contact.Name).FirstOrDefaultAsync();
+                    try
+                    {
+                        workStation = await context.WorkStations.Where(w => w.WorkStationName == contact.Name).FirstOrDefaultAsync();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("No Date Selected");
+                        return;
+                    }
+
+
                 }
 
                 var capacity = decimal.Parse(workStation.CapacityPerHour);
@@ -396,31 +418,128 @@ namespace TestFormsApp_Planning
                 orderAllocation.OrderDescription = order.PendingOrderDescription;
                 orderAllocation.DurationInHours = double.Parse(durationInHours.ToString());
                 orderAllocation.WorkstationId = workStation.WorkStationId;
-               // calendar1.Schedule.Items.Add(orderAllocation);
+                orderAllocation.Customer = order.Client;
+                orderAllocation.WorkStationName = workStation.WorkStationName;
+                orderAllocation.deliveryDate = order.ExpectedDeliveryDate;
+                // calendar1.Schedule.Items.Add(orderAllocation);
                 UnsavedOrderAllocations.Add(orderAllocation);
                 AddToOrdersToView();
-               // calendar1.Invalidate();
+                index++;
+                var addItemCommand = new AddItemCommand(calendar1.Schedule, orderAllocation,index);
+                
+                // Execute the command
+                calendar1.Schedule.ExecuteCommand(addItemCommand);
+                // calendar1.Invalidate();
             }
             catch (NullReferenceException ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-                
-           
+
+
         }
 
         private void calendar1_DragOver(object sender, DragEventArgs e)
         {
-            
+
             if (e.Data.GetDataPresent(typeof(PendingOrder)))
             {
+                client = calendar1.PointToClient(new Point(e.X, e.Y));
+
+                _pointedDate = calendar1.GetDateAt(client);
+
                 e.Effect = DragDropEffects.Move;
+                calendar1.Invalidate();
             }
             else
             {
                 e.Effect = DragDropEffects.None;
             }
         }
+
+
+
+        private void calendar1_ItemSelecting(object sender, ItemConfirmEventArgs e)
+        {
+            var orderItem = e.Item as OrderAllocation;
+
+            OrderAllocation orderAllocation = (OrderAllocation)e.Item;
+            label9.Text = orderAllocation.OrderTitle;
+            label8.Text = orderAllocation.Qty;
+            label7.Text = orderAllocation.Customer;
+            label10.Text = orderAllocation.WorkStationName;
+            label16.Text = orderAllocation.DurationInHours.ToString();
+            DateOnly date1 = new DateOnly(orderAllocation.deliveryDate.Year, orderAllocation.deliveryDate.Month, orderAllocation.deliveryDate.Day);
+            DateOnly date2 = new DateOnly(orderAllocation.VisibleStartTime.Year, orderAllocation.VisibleStartTime.Month, orderAllocation.VisibleStartTime.Day);
+            DateOnly date3 = new DateOnly(orderAllocation.VisibleEndTime.Year, orderAllocation.VisibleEndTime.Month, orderAllocation.VisibleEndTime.Day);
+            TimeOnly endTime = new TimeOnly(orderAllocation.VisibleEndTime.Hour, orderAllocation.VisibleEndTime.Minute);
+            label6.Text = date1.ToString();
+            label12.Text = date2.ToString();
+            label14.Text = date3.ToString();
+            label18.Text = endTime.ToString();
+        }
+
+
+
+        private void calendar1_ItemClick(object sender, ItemMouseEventArgs e)
+        {
+            var currentTime = DateTime.Now;
+            var timeSinceLastClick = (currentTime - lastClickTime).TotalMilliseconds;
+
+            // If the time between two clicks is within 500 ms, it's considered a double-click
+            if (timeSinceLastClick <= 500 && lastClickedItem == e.Item)
+            {
+                // This is a double-click, enable dragging
+                calendar1.AllowDrag = true;
+            }
+            else
+            {
+                // This is a single click, disable dragging
+                calendar1.AllowDrag = false;
+            }
+        }
+
+        bool isCollapsed = false;
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (isCollapsed)
+            {
+                isCollapsed = false;
+                splitContainer1.Panel2Collapsed = false;
+                button5.BackColor = Color.DodgerBlue;
+                button5.Image = Properties.Resources.icons8_full_screen_24;
+                button5.FlatStyle = FlatStyle.Flat;
+                button5.FlatAppearance.BorderSize = 0;
+                toolTip.SetToolTip(button5, "Maximize the Schedule View");
+
+            }
+            else
+            {
+                isCollapsed = true;
+                splitContainer1.Panel2Collapsed = true;
+                button5.FlatStyle = FlatStyle.Flat;
+                button5.FlatAppearance.BorderSize = 0;
+                button5.BackColor = Color.MediumSeaGreen;
+                toolTip.SetToolTip(button5, "View the Order List");
+
+                button5.Image = Properties.Resources.icons8_exit_full_screen_25__1_;
+
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Undoing");
+            calendar1.Schedule.Undo();
+            
+        }
+
+
+
+
+
+
+
 
 
 

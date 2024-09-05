@@ -67,6 +67,7 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.Lavender;
             panel1.Controls.Add(numericUpDown1);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(label5);
@@ -97,7 +98,7 @@
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label1.Location = new Point(12, 90);
             label1.Name = "label1";
-            label1.Size = new Size(109, 28);
+            label1.Size = new Size(124, 28);
             label1.TabIndex = 17;
             label1.Text = "Order Name:";
             // 
@@ -121,6 +122,7 @@
             // 
             // button1
             // 
+            button1.BackColor = Color.DodgerBlue;
             button1.BackgroundBrush = new MindFusion.Drawing.SolidBrush("#FFF0F0F0");
             button1.BackgroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FFDEDEDE");
             button1.BackgroundBrushDown = new MindFusion.Drawing.SolidBrush("#FFAEAEAE");
@@ -134,7 +136,7 @@
             button1.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button1.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button1.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button1.Location = new Point(342, 383);
+            button1.Location = new Point(362, 384);
             button1.Name = "button1";
             button1.Size = new Size(218, 42);
             button1.TabIndex = 14;
@@ -183,7 +185,7 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(12, 9);
             label2.Name = "label2";
-            label2.Size = new Size(170, 41);
+            label2.Size = new Size(191, 41);
             label2.TabIndex = 8;
             label2.Text = "Add a Order";
             // 
@@ -194,9 +196,9 @@
             ClientSize = new Size(612, 450);
             Controls.Add(panel1);
             Controls.Add(dockPanel1);
+            MaximizeBox = false;
             Name = "AddTask";
-            Text = "AddTask";
-    
+            Text = "Add Order";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
