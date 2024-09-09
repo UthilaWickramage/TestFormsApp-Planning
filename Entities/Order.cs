@@ -14,16 +14,15 @@ namespace Entities
 
         public string OrderTitle { get; set; }
         public string OrderDescription { get; set; }
-        public DateTime StartTime   { get; set; }
-        public DateTime EndTime { get; set; }
 
-        public DateTime VisibleStartTime { get; set; }
+        public string CustomerName { get; set; }
 
-        public DateTime VisibleEndTime { get; set; }
+        public OrderStatus Status { get; set; }
+        public double Qty { get; set; }
+        public DateTime ExpectedDeliveryDate { get; set; }
 
-        public string Qty { get; set; }
-        public double DurationInHours { get; set; }
-        public WorkStation Machine { get; set; }
-        public int MachineId { get; set; }
+        public int ProductId { get; set; }
+        public Product Product { get; set; }
+
     }
 }

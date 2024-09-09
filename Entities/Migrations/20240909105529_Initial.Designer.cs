@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(ScheduleDBContext))]
-    [Migration("20240903065155_Initial")]
+    [Migration("20240909105529_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,34 @@ namespace Entities.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Entities.CustomDay", b =>
+                {
+                    b.Property<int>("CustomDay_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomDay_Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WorkstationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomDay_Id");
+
+                    b.HasIndex("WorkstationId");
+
+                    b.ToTable("CustomDays");
+                });
 
             modelBuilder.Entity("Entities.Holiday", b =>
                 {
@@ -40,14 +68,14 @@ namespace Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkStationId")
+                    b.Property<int?>("WorkStationId")
                         .HasColumnType("int");
 
                     b.HasKey("HolidayId");
 
                     b.HasIndex("WorkStationId");
 
-                    b.ToTable("Holiday");
+                    b.ToTable("Holidays");
                 });
 
             modelBuilder.Entity("Entities.Order", b =>
@@ -58,14 +86,12 @@ namespace Entities.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<double>("DurationInHours")
-                        .HasColumnType("float");
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<DateTime>("ExpectedDeliveryDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("MachineId")
-                        .HasColumnType("int");
 
                     b.Property<string>("OrderDescription")
                         .IsRequired()
@@ -75,9 +101,58 @@ namespace Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Qty")
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Qty")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Entities.Product", b =>
+                {
+                    b.Property<int>("Product_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_Id"));
+
+                    b.Property<double>("CapacityInHour")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Product_Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Product_Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Entities.ScheduleDetails", b =>
+                {
+                    b.Property<int>("ScheduleDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleDetailsId"));
+
+                    b.Property<double>("DurationInHours")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
@@ -88,73 +163,16 @@ namespace Entities.Migrations
                     b.Property<DateTime>("VisibleStartTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("MachineId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Entities.PendingOrder", b =>
-                {
-                    b.Property<int>("PendingOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PendingOrderId"));
-
-                    b.Property<string>("Client")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpectedDeliveryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PendingOrderDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PendingOrderQty")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PendingOrderTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PendingOrderId");
-
-                    b.ToTable("PendingOrders");
-                });
-
-            modelBuilder.Entity("Entities.SpecialDay", b =>
-                {
-                    b.Property<int>("SpecialDayId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SpecialDayId"));
-
-                    b.Property<int>("SpecialDayCapacityPerHour")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SpecialDayDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SpecialDayEndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("SpecialDayStartTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("WorkStationId")
                         .HasColumnType("int");
 
-                    b.HasKey("SpecialDayId");
+                    b.HasKey("ScheduleDetailsId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("WorkStationId");
 
-                    b.ToTable("SpecialDay");
+                    b.ToTable("ScheduleDetails");
                 });
 
             modelBuilder.Entity("Entities.WorkStation", b =>
@@ -165,10 +183,6 @@ namespace Entities.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkStationId"));
 
-                    b.Property<string>("CapacityPerHour")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("WorkStationName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -178,46 +192,66 @@ namespace Entities.Migrations
                     b.ToTable("WorkStations");
                 });
 
-            modelBuilder.Entity("Entities.Holiday", b =>
+            modelBuilder.Entity("Entities.CustomDay", b =>
                 {
                     b.HasOne("Entities.WorkStation", "WorkStation")
-                        .WithMany("Holidays")
-                        .HasForeignKey("WorkStationId")
+                        .WithMany("CustomDays")
+                        .HasForeignKey("WorkstationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WorkStation");
+                });
+
+            modelBuilder.Entity("Entities.Holiday", b =>
+                {
+                    b.HasOne("Entities.WorkStation", null)
+                        .WithMany("Holidays")
+                        .HasForeignKey("WorkStationId");
                 });
 
             modelBuilder.Entity("Entities.Order", b =>
                 {
-                    b.HasOne("Entities.WorkStation", "Machine")
+                    b.HasOne("Entities.Product", "Product")
                         .WithMany("Orders")
-                        .HasForeignKey("MachineId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Machine");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Entities.SpecialDay", b =>
+            modelBuilder.Entity("Entities.ScheduleDetails", b =>
                 {
+                    b.HasOne("Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Entities.WorkStation", "WorkStation")
-                        .WithMany("SpecialDays")
+                        .WithMany("ScheduleDetails")
                         .HasForeignKey("WorkStationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Order");
+
                     b.Navigation("WorkStation");
+                });
+
+            modelBuilder.Entity("Entities.Product", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Entities.WorkStation", b =>
                 {
+                    b.Navigation("CustomDays");
+
                     b.Navigation("Holidays");
 
-                    b.Navigation("Orders");
-
-                    b.Navigation("SpecialDays");
+                    b.Navigation("ScheduleDetails");
                 });
 #pragma warning restore 612, 618
         }

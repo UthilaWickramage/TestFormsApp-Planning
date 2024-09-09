@@ -14,12 +14,11 @@ namespace Entities
 
         public string WorkStationName { get; set; }
 
-        public string CapacityPerHour { get; set; }
 
-        public virtual List<Order> Orders { get; set; }
+        public virtual List<ScheduleDetails> ScheduleDetails { get; set; }
 
         public virtual List<Holiday> Holidays { get; set; }
 
-        public virtual List<SpecialDay> SpecialDays { get; set; }
+        public virtual List<CustomDay> CustomDays { get; set; }
     }
 }

@@ -16,9 +16,6 @@ namespace Entities
 
         public DateTime HolidayDate { get; set; }
 
-        public int WorkStationId { get; set; }
-
-        public WorkStation WorkStation { get; set; }
     }
 
 }

@@ -51,7 +51,6 @@ namespace TestFormsApp_Planning
                 {
                     HolidayName = name,
                     HolidayDate = dateTime,
-                    WorkStationId = Id
                 };
                 context.Holidays.Add(holiday);
                 await context.SaveChangesAsync();

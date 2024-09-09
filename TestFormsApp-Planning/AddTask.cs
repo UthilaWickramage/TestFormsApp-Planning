@@ -157,35 +157,35 @@ namespace TestFormsApp_Planning
             var machine =  _machines.Where(m => m.WorkStationId == Id).FirstOrDefault();
             
            
-            var capacity =  decimal.Parse(machine.CapacityPerHour);
-            decimal durationInHours = qty / capacity;
-            MessageBox.Show(durationInHours.ToString());
-            decimal Days = durationInHours / 8;
-            MessageBox.Show(Days.ToString());
-            DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
+            //var capacity =  decimal.Parse(machine.CapacityPerHour);
+            //decimal durationInHours = qty / capacity;
+           // MessageBox.Show(durationInHours.ToString());
+           // decimal Days = durationInHours / 8;
+            //MessageBox.Show(Days.ToString());
+            //DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
 
-            DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
+           // DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
 
 
             TimeSpan visibleStart = TimeSpan.FromHours(8); // 8 AM visible start
             TimeSpan visibleEnd = TimeSpan.FromHours(16);
 
             DateTime visibleStartDateTime = _util.MapToVisibleRange(StartTime, visibleStart, visibleEnd);
-            DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
+            //DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
 
-            MessageBox.Show(visibleStartDateTime.ToString()+" To "+visibleEndDateTime.ToString());
+            //MessageBox.Show(visibleStartDateTime.ToString()+" To "+visibleEndDateTime.ToString());
             
             //OrderAllocation tsa = new OrderAllocation();
             Entities.Order task = new Entities.Order();
-            task.StartTime = StartTime;
-            task.EndTime = endTime;
-            task.VisibleStartTime = visibleStartDateTime;
-            task.VisibleEndTime = visibleEndDateTime;   
-            task.OrderTitle = TaskName;
-            task.OrderDescription = TaskName;
-            task.MachineId = Id;
-            task.Qty = qty.ToString();
-            task.DurationInHours = double.Parse(durationInHours.ToString());
+            //task.StartTime = StartTime;
+            //task.EndTime = endTime;
+            //task.VisibleStartTime = visibleStartDateTime;
+            //task.VisibleEndTime = visibleEndDateTime;   
+            //task.OrderTitle = TaskName;
+            //task.OrderDescription = TaskName;
+            //task.MachineId = Id;
+            //task.Qty = qty.ToString();
+            //task.DurationInHours = double.Parse(durationInHours.ToString());
 
             using (var context = new ScheduleDBContext())
             {

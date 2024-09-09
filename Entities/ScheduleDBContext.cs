@@ -23,11 +23,14 @@ namespace Entities
             modelBuilder.Entity<Holiday>()
              .HasKey(t => t.HolidayId);
 
-            modelBuilder.Entity<SpecialDay>()
-   .HasKey(t => t.SpecialDayId);
+            modelBuilder.Entity<CustomDay>()
+   .HasKey(t => t.CustomDay_Id);
 
-            modelBuilder.Entity<PendingOrder>()
-   .HasKey(t => t.PendingOrderId);
+            modelBuilder.Entity<ScheduleDetails>()
+   .HasKey(t => t.ScheduleDetailsId);
+
+            modelBuilder.Entity<Product>()
+   .HasKey(t => t.Product_Id);
         }
 
         public ScheduleDBContext()
@@ -37,9 +40,10 @@ namespace Entities
         public virtual DbSet<WorkStation> WorkStations { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Holiday> Holidays { get; set; }
-        public virtual DbSet<Holiday> SpecialDays { get; set; }
+        public virtual DbSet<CustomDay> CustomDays { get; set; }
 
-        public virtual DbSet<PendingOrder> PendingOrders { get; set; }
+        public virtual DbSet<ScheduleDetails> ScheduleDetails { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
 
 
 

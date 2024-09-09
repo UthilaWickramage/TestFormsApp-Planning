@@ -36,7 +36,7 @@ namespace TestFormsApp_Planning
                 {
                     WorkStation machine = new WorkStation();
                     machine.WorkStationName = nameText;
-                    machine.CapacityPerHour = value;
+                    //machine.CapacityPerHour = value;
                     _dbContext.WorkStations.Add(machine);
                     await _dbContext.SaveChangesAsync();
                     MessageBox.Show("WorkStation Added Successfully");

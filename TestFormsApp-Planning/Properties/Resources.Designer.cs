@@ -143,6 +143,16 @@ namespace TestFormsApp_Planning.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icons8_redo_25 {
+            get {
+                object obj = ResourceManager.GetObject("icons8-redo-25", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icons8_save_25 {
             get {
                 object obj = ResourceManager.GetObject("icons8-save-25", resourceCulture);

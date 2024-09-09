@@ -33,7 +33,8 @@
             splitter1 = new Splitter();
             splitContainer1 = new SplitContainer();
             panel2 = new Panel();
-            button7 = new Button();
+            redo = new Button();
+            undo = new Button();
             button5 = new Button();
             button4 = new Button();
             button1 = new Button();
@@ -59,7 +60,19 @@
             label1 = new Label();
             label2 = new Label();
             calendar1 = new MindFusion.Scheduling.WinForms.Calendar();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            createOrderToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            createWorkstationToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            createHolidayToolStripMenuItem = new ToolStripMenuItem();
+            undoToolStripMenuItem = new ToolStripMenuItem();
+            redoToolStripMenuItem = new ToolStripMenuItem();
+            preferencesToolStripMenuItem = new ToolStripMenuItem();
             panel3 = new Panel();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
             dataGridView1 = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             pendingOrderTitleDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
@@ -68,6 +81,15 @@
             clientDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             expectedDeliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             pendingOrderBindingSource = new BindingSource(components);
+            tabPage2 = new TabPage();
+            dataGridView2 = new DataGridView();
+            OrderTitle = new DataGridViewTextBoxColumn();
+            OrderDescription = new DataGridViewTextBoxColumn();
+            VisibleStartTime = new DataGridViewTextBoxColumn();
+            VisibleEndTime = new DataGridViewTextBoxColumn();
+            Qty = new DataGridViewTextBoxColumn();
+            DurationInHours = new DataGridViewTextBoxColumn();
+            MachineName = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -75,9 +97,14 @@
             splitContainer1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)calendar1).BeginInit();
+            contextMenuStrip1.SuspendLayout();
             panel3.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pendingOrderBindingSource).BeginInit();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -121,7 +148,8 @@
             // panel2
             // 
             panel2.BackColor = Color.AliceBlue;
-            panel2.Controls.Add(button7);
+            panel2.Controls.Add(redo);
+            panel2.Controls.Add(undo);
             panel2.Controls.Add(button5);
             panel2.Controls.Add(button4);
             panel2.Controls.Add(button1);
@@ -152,18 +180,31 @@
             panel2.Size = new Size(1362, 150);
             panel2.TabIndex = 0;
             // 
-            // button7
+            // redo
             // 
-            button7.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button7.BackColor = Color.FromArgb(224, 224, 224);
-            button7.FlatStyle = FlatStyle.Flat;
-            button7.Image = Properties.Resources.icons8_undo_25;
-            button7.Location = new Point(1091, 4);
-            button7.Name = "button7";
-            button7.Size = new Size(40, 40);
-            button7.TabIndex = 28;
-            button7.UseVisualStyleBackColor = false;
-            button7.Click += button7_Click;
+            redo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            redo.BackColor = Color.FromArgb(224, 224, 224);
+            redo.FlatStyle = FlatStyle.Popup;
+            redo.Image = Properties.Resources.icons8_redo_25;
+            redo.Location = new Point(1048, 4);
+            redo.Name = "redo";
+            redo.Size = new Size(40, 40);
+            redo.TabIndex = 29;
+            redo.UseVisualStyleBackColor = false;
+            redo.Click += redo_Click;
+            // 
+            // undo
+            // 
+            undo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            undo.BackColor = Color.FromArgb(224, 224, 224);
+            undo.FlatStyle = FlatStyle.Flat;
+            undo.Image = Properties.Resources.icons8_undo_25;
+            undo.Location = new Point(1091, 4);
+            undo.Name = "undo";
+            undo.Size = new Size(40, 40);
+            undo.TabIndex = 28;
+            undo.UseVisualStyleBackColor = false;
+            undo.Click += undo_Click;
             // 
             // button5
             // 
@@ -488,6 +529,7 @@
             calendar1.AllowInplaceEdit = false;
             calendar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             calendar1.ContactNameFormat = "F";
+            calendar1.ContextMenuStrip = contextMenuStrip1;
             calendar1.CurrentView = MindFusion.Scheduling.WinForms.CalendarView.ResourceView;
             calendar1.CustomDraw = MindFusion.Scheduling.WinForms.CustomDrawElements.ResourceViewCell;
             calendar1.Date = new DateTime(2024, 8, 27, 0, 0, 0, 0);
@@ -506,18 +548,119 @@
             calendar1.ItemClick += calendar1_ItemClick;
             calendar1.ItemModified += calendar1_ItemModified;
             calendar1.ItemDrawing += calendar1_ItemDrawing;
+            calendar1.ItemTooltipDisplaying += calendar1_ItemTooltipDisplaying;
             calendar1.ItemSelecting += calendar1_ItemSelecting;
             calendar1.DragDrop += calendar1_DragDrop;
             calendar1.DragOver += calendar1_DragOver;
             // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new Size(20, 20);
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem3, toolStripMenuItem2, undoToolStripMenuItem, redoToolStripMenuItem, preferencesToolStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(168, 160);
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { createOrderToolStripMenuItem });
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(167, 26);
+            toolStripMenuItem1.Text = "Orders";
+            // 
+            // createOrderToolStripMenuItem
+            // 
+            createOrderToolStripMenuItem.Name = "createOrderToolStripMenuItem";
+            createOrderToolStripMenuItem.Size = new Size(177, 26);
+            createOrderToolStripMenuItem.Text = "Create Order";
+            createOrderToolStripMenuItem.Click += createOrderToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { createWorkstationToolStripMenuItem });
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(167, 26);
+            toolStripMenuItem3.Text = "Workstations";
+            // 
+            // createWorkstationToolStripMenuItem
+            // 
+            createWorkstationToolStripMenuItem.Name = "createWorkstationToolStripMenuItem";
+            createWorkstationToolStripMenuItem.Size = new Size(218, 26);
+            createWorkstationToolStripMenuItem.Text = "Create Workstation";
+            createWorkstationToolStripMenuItem.Click += createWorkstationToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { createHolidayToolStripMenuItem });
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(167, 26);
+            toolStripMenuItem2.Text = "Holidays";
+            toolStripMenuItem2.Click += toolStripMenuItem2_Click;
+            // 
+            // createHolidayToolStripMenuItem
+            // 
+            createHolidayToolStripMenuItem.Name = "createHolidayToolStripMenuItem";
+            createHolidayToolStripMenuItem.Size = new Size(191, 26);
+            createHolidayToolStripMenuItem.Text = "Create Holiday";
+            createHolidayToolStripMenuItem.Click += createHolidayToolStripMenuItem_Click;
+            // 
+            // undoToolStripMenuItem
+            // 
+            undoToolStripMenuItem.Enabled = false;
+            undoToolStripMenuItem.Image = Properties.Resources.icons8_undo_25;
+            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            undoToolStripMenuItem.Size = new Size(167, 26);
+            undoToolStripMenuItem.Text = "Undo";
+            undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
+            // 
+            // redoToolStripMenuItem
+            // 
+            redoToolStripMenuItem.Enabled = false;
+            redoToolStripMenuItem.Image = Properties.Resources.icons8_redo_25;
+            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            redoToolStripMenuItem.Size = new Size(167, 26);
+            redoToolStripMenuItem.Text = "Redo";
+            redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
+            // 
+            // preferencesToolStripMenuItem
+            // 
+            preferencesToolStripMenuItem.Image = Properties.Resources.icons8_settings_50;
+            preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
+            preferencesToolStripMenuItem.Size = new Size(167, 26);
+            preferencesToolStripMenuItem.Text = "Preferences";
+            // 
             // panel3
             // 
-            panel3.Controls.Add(dataGridView1);
+            panel3.Controls.Add(tabControl1);
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
             panel3.Size = new Size(1362, 224);
             panel3.TabIndex = 7;
+            // 
+            // tabControl1
+            // 
+            tabControl1.Appearance = TabAppearance.FlatButtons;
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.HotTrack = true;
+            tabControl1.Location = new Point(0, 0);
+            tabControl1.Multiline = true;
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(1362, 224);
+            tabControl1.TabIndex = 7;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(dataGridView1);
+            tabPage1.Location = new Point(4, 32);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(1354, 188);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Pending Orders";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
@@ -531,10 +674,10 @@
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, pendingOrderTitleDataGridViewTextBoxColumn, pendingOrderDescriptionDataGridViewTextBoxColumn, pendingOrderQtyDataGridViewTextBoxColumn, clientDataGridViewTextBoxColumn, expectedDeliveryDateDataGridViewTextBoxColumn });
             dataGridView1.DataSource = pendingOrderBindingSource;
             dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
+            dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1362, 224);
+            dataGridView1.Size = new Size(1348, 182);
             dataGridView1.TabIndex = 6;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
             // 
@@ -589,7 +732,88 @@
             // 
             // pendingOrderBindingSource
             // 
-            pendingOrderBindingSource.DataSource = typeof(Entities.PendingOrder);
+            pendingOrderBindingSource.DataSource = typeof(Entities.ScheduleDetails);
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(dataGridView2);
+            tabPage2.Location = new Point(4, 32);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1354, 188);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Schedule Orders";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView2
+            // 
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { OrderTitle, OrderDescription, VisibleStartTime, VisibleEndTime, Qty, DurationInHours, MachineName });
+            dataGridView2.Dock = DockStyle.Fill;
+            dataGridView2.Location = new Point(3, 3);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(1348, 182);
+            dataGridView2.TabIndex = 0;
+            // 
+            // OrderTitle
+            // 
+            OrderTitle.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            OrderTitle.HeaderText = "Order Title";
+            OrderTitle.MinimumWidth = 6;
+            OrderTitle.Name = "OrderTitle";
+            OrderTitle.ReadOnly = true;
+            // 
+            // OrderDescription
+            // 
+            OrderDescription.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            OrderDescription.HeaderText = "Order Description";
+            OrderDescription.MinimumWidth = 6;
+            OrderDescription.Name = "OrderDescription";
+            OrderDescription.ReadOnly = true;
+            // 
+            // VisibleStartTime
+            // 
+            VisibleStartTime.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            VisibleStartTime.HeaderText = "Start Time";
+            VisibleStartTime.MinimumWidth = 6;
+            VisibleStartTime.Name = "VisibleStartTime";
+            VisibleStartTime.ReadOnly = true;
+            // 
+            // VisibleEndTime
+            // 
+            VisibleEndTime.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            VisibleEndTime.HeaderText = "End Time";
+            VisibleEndTime.MinimumWidth = 6;
+            VisibleEndTime.Name = "VisibleEndTime";
+            VisibleEndTime.ReadOnly = true;
+            // 
+            // Qty
+            // 
+            Qty.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Qty.HeaderText = "Qty";
+            Qty.MinimumWidth = 6;
+            Qty.Name = "Qty";
+            Qty.ReadOnly = true;
+            // 
+            // DurationInHours
+            // 
+            DurationInHours.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            DurationInHours.HeaderText = "Duration In Hours";
+            DurationInHours.MinimumWidth = 6;
+            DurationInHours.Name = "DurationInHours";
+            DurationInHours.ReadOnly = true;
+            // 
+            // MachineName
+            // 
+            MachineName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            MachineName.HeaderText = "Workstation";
+            MachineName.MinimumWidth = 6;
+            MachineName.Name = "MachineName";
+            MachineName.ReadOnly = true;
             // 
             // Scheduler
             // 
@@ -607,9 +831,14 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)calendar1).EndInit();
+            contextMenuStrip1.ResumeLayout(false);
             panel3.ResumeLayout(false);
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)pendingOrderBindingSource).EndInit();
+            tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
         }
 
@@ -653,6 +882,28 @@
         private Label label18;
         private Label label19;
         private Button button5;
-        private Button button7;
+        private Button undo;
+        private Button redo;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem createOrderToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem undoToolStripMenuItem;
+        private ToolStripMenuItem redoToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripMenuItem createWorkstationToolStripMenuItem;
+        private ToolStripMenuItem createHolidayToolStripMenuItem;
+        private ToolStripMenuItem preferencesToolStripMenuItem;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private DataGridView dataGridView2;
+        private DataGridViewTextBoxColumn OrderTitle;
+        private DataGridViewTextBoxColumn OrderDescription;
+        private DataGridViewTextBoxColumn VisibleStartTime;
+        private DataGridViewTextBoxColumn VisibleEndTime;
+        private DataGridViewTextBoxColumn Qty;
+        private DataGridViewTextBoxColumn DurationInHours;
+        private DataGridViewTextBoxColumn MachineName;
     }
 }

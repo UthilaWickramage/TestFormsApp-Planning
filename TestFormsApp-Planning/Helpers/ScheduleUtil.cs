@@ -75,7 +75,7 @@ namespace TestFormsApp_Planning.Helpers
             }
             else
             {
-                if (_holidays.Where(a => a.HolidayDate.Date == tstartDate.Date && a.WorkStation.WorkStationName == tsk.Contacts[0].FirstName).FirstOrDefault() != null)
+                if (_holidays.Where(a => a.HolidayDate.Date == tstartDate.Date).FirstOrDefault() != null)
                 {
                     return true;
                 }

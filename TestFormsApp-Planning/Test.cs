@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using MindFusion.HolidayProviders;
 using MindFusion.Scheduling;
 using MindFusion.Scheduling.WinForms;
+using Syncfusion.Windows.Forms.Tools.Win32API;
 using TestFormsApp_Planning.Classes;
 using TestFormsApp_Planning.Helpers;
 
@@ -20,17 +21,21 @@ namespace TestFormsApp_Planning
         private List<Entities.WorkStation> machines = new List<Entities.WorkStation>();
         private List<Entities.Order> tasks = new List<Entities.Order>();
         private List<Entities.Holiday> holidays = new List<Entities.Holiday>();
-        BindingList<PendingOrder> dataSource1;
+        BindingList<Order> dataSource1;
+        BindingList<Order> dataSource2;
         private ScheduleUtil _util;
         private List<OrderAllocation> OrderAllocations = new List<OrderAllocation>();
-        private List<OrderAllocation> UnsavedOrderAllocations = new List<OrderAllocation>();
+        private Stack<OrderAllocation> UnsavedOrderAllocations = new Stack<OrderAllocation>();
+        private Stack<OrderAllocation> UndoneOrderAllocations = new Stack<OrderAllocation>();
         private DateTime _pointedDate;
         private Item lastClickedItem;
         private DateTime lastClickTime = DateTime.MinValue;
         private ToolTip toolTip;
         private int index = 0;
-
+        bool isDraggingOver = false;  // Indicate the drag is in progress
+        ToolTip toolTip2;
         Point client;
+
         public Scheduler()
         {
             InitializeComponent();
@@ -39,15 +44,23 @@ namespace TestFormsApp_Planning
             loadContacts();
             //loadTasks();
             loadHolidays();
-
-          
-
             loadProducts();
             _util = new ScheduleUtil(holidays);
             dataGridView1.DataSource = dataSource1;
-            AddToOrdersToView();
+            dataGridView2.DataSource = dataSource2;
+            //AddToOrdersToView();
             calendar1.Draw += new EventHandler<DrawEventArgs>(this.calendar1_Draw);
             setupToolTips();
+            calendar1.Schedule.UndoEnabled = true;
+            redo.Enabled = false;
+            undo.Enabled = false;
+            calendar1.ShowToolTips = false;
+            toolTip2 = new ToolTip();
+            toolTip2.AutoPopDelay = 100;
+            toolTip2.InitialDelay = 100;
+            toolTip2.ReshowDelay = 100;
+            toolTip2.ShowAlways = false;
+            
             // Add resources
         }
 
@@ -67,6 +80,8 @@ namespace TestFormsApp_Planning
             toolTip.SetToolTip(button2, "Schedule an Order");
             toolTip.SetToolTip(button3, "Create Workstation");
             toolTip.SetToolTip(button4, "Save Changes");
+            toolTip.SetToolTip(redo, "Redo Changes");
+            toolTip.SetToolTip(undo, "Undo Changes");
             // fullScreenBtnTT.SetToolTip(button2, "This is a tooltip for button2");
         }
 
@@ -74,9 +89,12 @@ namespace TestFormsApp_Planning
         {
             using (var context = new ScheduleDBContext())
             {
-                var orderList = context.PendingOrders.ToList();
-                dataSource1 = new BindingList<PendingOrder>(orderList);
+                //var orderList = context.ScheduleDetails.ToList();
+                var orders = context.Orders.Where(o=>o.Status==OrderStatus.PENDING).ToList();
+                dataSource1 = new BindingList<Order>(orders);
+                //dataSource2 = new BindingList<Order>(orders);
                 dataGridView1.AutoGenerateColumns = false;
+                dataGridView2.AutoGenerateColumns = false;
             }
         }
 
@@ -118,29 +136,29 @@ namespace TestFormsApp_Planning
 
             using (var context = new ScheduleDBContext())
             {
-                tasks = context.Orders.Include(t => t.Machine).ToList();
+                //tasks = context.Orders.Include(t => t.).ToList();
                 foreach (var task in tasks)
                 {
-                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == task.Machine.WorkStationName.Trim()).FirstOrDefault();
+                  //  MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == task.Machine.WorkStationName.Trim()).FirstOrDefault();
 
-                    contact.Name = task.Machine.WorkStationName;
-                    contact.Id = task.Machine.WorkStationId.ToString();
-                    OrderAllocation tsa = new OrderAllocation();
-                    tsa.OrderTitle = task.OrderTitle;
-                    tsa.HeaderText = task.OrderTitle;
-                    tsa.StartTime = task.StartTime;
-                    tsa.EndTime = task.EndTime;
-                    tsa.VisibleEndTime = task.VisibleEndTime;
-                    tsa.VisibleStartTime = task.VisibleStartTime;
-                    tsa.Qty = task.Qty;
-                    tsa.DurationInHours = task.DurationInHours;
-                    tsa.WorkStationName = contact.Name;
-                    tsa.deliveryDate = task.VisibleEndTime;
+                    //contact.Name = task.Machine.WorkStationName;
+                    //contact.Id = task.Machine.WorkStationId.ToString();
+                    //OrderAllocation tsa = new OrderAllocation();
+                    //tsa.OrderTitle = task.OrderTitle;
+                    //tsa.HeaderText = task.OrderTitle;
+                    //tsa.StartTime = task.StartTime;
+                    //tsa.EndTime = task.EndTime;
+                    //tsa.VisibleEndTime = task.VisibleEndTime;
+                    //tsa.VisibleStartTime = task.VisibleStartTime;
+                    //tsa.Qty = task.Qty;
+                    //tsa.DurationInHours = task.DurationInHours;
+                    //tsa.WorkStationName = contact.Name;
+                    //tsa.deliveryDate = task.VisibleEndTime;
 
-                    tsa.Id = task.OrderId.ToString();
-                    tsa.Contacts.Add(contact);
+                    //tsa.Id = task.OrderId.ToString();
+                    //tsa.Contacts.Add(contact);
 
-                    OrderAllocations.Add(tsa);
+                    //OrderAllocations.Add(tsa);
                 }
             }
 
@@ -148,7 +166,7 @@ namespace TestFormsApp_Planning
 
         private void AddToOrdersToView()
         {
-            // MessageBox.Show("Add to Orders called called");
+            MessageBox.Show("Add to Orders called called");
             calendar1.Schedule.Items.Clear();
             foreach (var orderAllocation in OrderAllocations)
             {
@@ -165,7 +183,6 @@ namespace TestFormsApp_Planning
             AddTask form = new AddTask(holidays);
             form.StartPosition = FormStartPosition.CenterScreen;
             form.FormClosed += (s, args) => loadTasks();
-
             form.Show();
         }
 
@@ -212,8 +229,8 @@ namespace TestFormsApp_Planning
             {
                 if (task.OrderTitle.ToString() == e.Item.HeaderText)
                 {
-                    task.StartTime = e.Item.StartTime;
-                    task.EndTime = e.Item.EndTime;
+                    //task.StartTime = e.Item.StartTime;
+                    //task.EndTime = e.Item.EndTime;
                 }
             }
 
@@ -259,7 +276,7 @@ namespace TestFormsApp_Planning
         private void calendar1_Draw(object sender, DrawEventArgs e)
         {
             //MessageBox.Show("This is called");
-            if (e.Element == CustomDrawElements.ResourceViewCell)
+            if (e.Element == CustomDrawElements.ResourceViewCell && isDraggingOver)
             {
 
                 if (_pointedDate != DateTime.MinValue)
@@ -300,13 +317,8 @@ namespace TestFormsApp_Planning
                             // e.Graphics.DrawString(interval, Font, Brushes.Black,
                             //bounds.Left + 2, bounds.Top + 2);
                         }
-
                     }
-
-
                 }
-
-
             }
         }
 
@@ -320,19 +332,20 @@ namespace TestFormsApp_Planning
                     {
                         OrderTitle = orderAllocation.OrderTitle,
                         OrderDescription = orderAllocation.OrderDescription,
-                        StartTime = orderAllocation.StartTime,
-                        EndTime = orderAllocation.EndTime,
-                        VisibleEndTime = orderAllocation.VisibleEndTime,
-                        VisibleStartTime = orderAllocation.VisibleStartTime,
-                        DurationInHours = orderAllocation.DurationInHours,
-                        Qty = orderAllocation.Qty,
-                        MachineId = orderAllocation.WorkstationId
+                        //Status = orderAllocation.Customer,
+                        //EndTime = orderAllocation.EndTime,
+                        //VisibleEndTime = orderAllocation.VisibleEndTime,
+                        //VisibleStartTime = orderAllocation.VisibleStartTime,
+                        //DurationInHours = orderAllocation.DurationInHours,
+                        //Qty = orderAllocation.Qty,
+                        //MachineId = orderAllocation.WorkstationId
                     };
 
                     context.Orders.Add(order);
                     await context.SaveChangesAsync();
-                    MessageBox.Show("New Orders Saved Successfully");
+
                 }
+                MessageBox.Show("New Orders Saved Successfully");
             }
         }
 
@@ -345,7 +358,7 @@ namespace TestFormsApp_Planning
                 if (hitTest.RowIndex >= 0)
                 {
                     var row = dataGridView1.Rows[hitTest.RowIndex];
-                    var dataItem = (PendingOrder)row.DataBoundItem;
+                    var dataItem = (ScheduleDetails)row.DataBoundItem;
 
                     if (dataItem != null)
                     {
@@ -362,7 +375,7 @@ namespace TestFormsApp_Planning
             Point dropPoint = calendar1.PointToClient(new Point(e.X, e.Y));
             try
             {
-                PendingOrder order = (PendingOrder)e.Data.GetData(typeof(PendingOrder));
+                ScheduleDetails order = (ScheduleDetails)e.Data.GetData(typeof(ScheduleDetails));
 
                 DateTime dropDateTime = calendar1.GetDateAt(dropPoint);
                 // MessageBox.Show(dropDateTime.ToString() + "   " + order.PendingOrderTitle);
@@ -372,11 +385,11 @@ namespace TestFormsApp_Planning
                 OrderAllocation orderAllocation = new OrderAllocation();
                 DateTime StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
                 orderAllocation.StartTime = StartTime;
-                orderAllocation.OrderTitle = order.PendingOrderTitle;
-                orderAllocation.HeaderText = order.PendingOrderTitle;
+                //orderAllocation.OrderTitle = order.PendingOrderTitle;
+                //orderAllocation.HeaderText = order.PendingOrderTitle;
 
-                //  orderAllocation.EndTime = task.EndTime;
-                orderAllocation.Id = order.PendingOrderTitle.ToString();
+                ////  orderAllocation.EndTime = task.EndTime;
+                //orderAllocation.Id = order.PendingOrderTitle.ToString();
                 orderAllocation.Contacts.Add(contact);
 
                 using (var context = new ScheduleDBContext())
@@ -395,41 +408,45 @@ namespace TestFormsApp_Planning
 
                 }
 
-                var capacity = decimal.Parse(workStation.CapacityPerHour);
-                decimal durationInHours = order.PendingOrderQty / capacity;
+                //var capacity = decimal.Parse(workStation.CapacityPerHour);
+                //decimal durationInHours = order.PendingOrderQty / capacity;
                 //MessageBox.Show(durationInHours.ToString());
-                decimal Days = durationInHours / 8;
+               // decimal Days = durationInHours / 8;
                 //MessageBox.Show(Days.ToString());
-                DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
+               // DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
 
-                DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
+               // DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime, endDate, double.Parse(Days.ToString()));
 
 
                 TimeSpan visibleStart = TimeSpan.FromHours(8); // 8 AM visible start
                 TimeSpan visibleEnd = TimeSpan.FromHours(16);
 
                 DateTime visibleStartDateTime = _util.MapToVisibleRange(StartTime, visibleStart, visibleEnd);
-                DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
+                //DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
 
-                orderAllocation.EndTime = endTime;
+                //orderAllocation.EndTime = endTime;
                 orderAllocation.VisibleStartTime = visibleStartDateTime;
-                orderAllocation.VisibleEndTime = visibleEndDateTime;
-                orderAllocation.Qty = order.PendingOrderQty.ToString();
-                orderAllocation.OrderDescription = order.PendingOrderDescription;
-                orderAllocation.DurationInHours = double.Parse(durationInHours.ToString());
-                orderAllocation.WorkstationId = workStation.WorkStationId;
-                orderAllocation.Customer = order.Client;
-                orderAllocation.WorkStationName = workStation.WorkStationName;
-                orderAllocation.deliveryDate = order.ExpectedDeliveryDate;
+               // orderAllocation.VisibleEndTime = visibleEndDateTime;
+                //orderAllocation.Qty = order.PendingOrderQty.ToString();
+                //orderAllocation.OrderDescription = order.PendingOrderDescription;
+                //orderAllocation.DurationInHours = double.Parse(durationInHours.ToString());
+                //orderAllocation.WorkstationId = workStation.WorkStationId;
+                //orderAllocation.Customer = order.Client;
+                //orderAllocation.WorkStationName = workStation.WorkStationName;
+                //orderAllocation.deliveryDate = order.ExpectedDeliveryDate;
                 // calendar1.Schedule.Items.Add(orderAllocation);
-                UnsavedOrderAllocations.Add(orderAllocation);
+                UnsavedOrderAllocations.Push(orderAllocation);
                 AddToOrdersToView();
+                undo.Enabled = true;
+                undoToolStripMenuItem.Enabled = true;
                 index++;
-                var addItemCommand = new AddItemCommand(calendar1.Schedule, orderAllocation,index);
-                
+                var addItemCommand = new AddItemCommand(calendar1.Schedule, orderAllocation, index);
+
                 // Execute the command
                 calendar1.Schedule.ExecuteCommand(addItemCommand);
-                // calendar1.Invalidate();
+                isDraggingOver = false;
+                calendar1.Invalidate();
+
             }
             catch (NullReferenceException ex)
             {
@@ -442,11 +459,12 @@ namespace TestFormsApp_Planning
         private void calendar1_DragOver(object sender, DragEventArgs e)
         {
 
-            if (e.Data.GetDataPresent(typeof(PendingOrder)))
+            if (e.Data.GetDataPresent(typeof(ScheduleDetails)))
             {
                 client = calendar1.PointToClient(new Point(e.X, e.Y));
 
                 _pointedDate = calendar1.GetDateAt(client);
+                isDraggingOver = true;  // Indicate the drag is in progress
 
                 e.Effect = DragDropEffects.Move;
                 calendar1.Invalidate();
@@ -527,122 +545,189 @@ namespace TestFormsApp_Planning
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void undo_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Undoing");
-            calendar1.Schedule.Undo();
-            
+
+
+            OrderAllocation orderAllocation = null;
+            if (UnsavedOrderAllocations.Count > 0)
+            {
+                orderAllocation = UnsavedOrderAllocations.Pop();
+            }
+            else
+            {
+                //redo.Enabled = false;
+            }
+
+            if (orderAllocation != null)
+            {
+                UndoneOrderAllocations.Push(orderAllocation);
+                redo.Enabled = true;
+                redoToolStripMenuItem.Enabled = true;
+                if (UnsavedOrderAllocations.Count == 0)
+                {
+                    undo.Enabled = false;
+                    undoToolStripMenuItem.Enabled = false;
+                }
+            }
+
+            AddToOrdersToView();
+            calendar1.Invalidate();
+            calendar1.Update();
+        }
+
+        private void redo_Click(object sender, EventArgs e)
+        {
+            OrderAllocation orderAllocation = null;
+            if (UndoneOrderAllocations.Count > 0)
+            {
+                orderAllocation = UndoneOrderAllocations.Pop();
+                //button6.Enabled = false;
+            }
+            else
+            {
+                //redo.Enabled = false;
+            }
+
+            if (orderAllocation != null)
+            {
+                UnsavedOrderAllocations.Push(orderAllocation);
+                undo.Enabled = true;
+                undoToolStripMenuItem.Enabled = true;
+                if (UndoneOrderAllocations.Count == 0)
+                {
+                    redo.Enabled = false;
+                    redoToolStripMenuItem.Enabled = false;
+                }
+            }
+
+            AddToOrdersToView();
         }
 
 
 
 
+        private void calendar1_ItemTooltipDisplaying(object sender, ItemTooltipEventArgs e)
+        {
+
+            if (e.Item != null)
+            {
+                OrderAllocation item = (OrderAllocation)e.Item;
+
+                string tooltipString = $"Title: {item.OrderTitle}\n" +
+                              $"Start Time: {item.VisibleStartTime}\n" +
+                              $"End Time: {item.VisibleEndTime}\n" +
+                              $"Description: {item.OrderDescription}\n" +
+                              $"Workstation: {item.WorkStationName}\n" +
+                 $"Customer: {item.Customer}\n" +
+                 $"Duration In Hours: {item.DurationInHours}\n" +
+                   $"Qty: {item.Qty}\n" +
+                     $"Delivery Date: {item.deliveryDate}\n";
+                toolTip2.SetToolTip(calendar1, tooltipString);
+            }
+            else
+            {
+
+            }
 
 
 
 
 
 
+        }
 
-        //private Rectangle dragBoxFromMouseDown;
-        //private object valueFromMouseDown;
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
 
+        }
 
-        //private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        //{
-        //    // Get the index of the item the mouse is below.
-        //    var hittestInfo = dataGridView1.HitTest(e.X, e.Y);
+        private void createOrderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddTask form = new AddTask(holidays);
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.FormClosed += (s, args) => loadTasks();
 
-        //    if (hittestInfo.RowIndex != -1 && hittestInfo.ColumnIndex != -1)
-        //    {
-        //        valueFromMouseDown = dataGridView1.Rows[hittestInfo.RowIndex].Cells[hittestInfo.ColumnIndex].Value;
-        //        if (valueFromMouseDown != null)
-        //        {
-        //            // Remember the point where the mouse down occurred. 
-        //            // The DragSize indicates the size that the mouse can move 
-        //            // before a drag event should be started.                
-        //            Size dragSize = SystemInformation.DragSize;
+            form.Show();
+        }
 
-        //            // Create a rectangle using the DragSize, with the mouse position being
-        //            // at the center of the rectangle.
-        //            dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
-        //        }
-        //    }
-        //    else
-        //        // Reset the rectangle if the mouse is not over an item in the ListBox.
-        //        dragBoxFromMouseDown = Rectangle.Empty;
-        //}
+        private void removeOrderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
-        ////private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        ////{
-        ////    if (e.Button == MouseButtons.Left)
-        ////    {
-        ////        // Hit test to see if a row is clicked
-        ////        var hitTest = dataGridView1.HitTest(e.X, e.Y);
-        ////        if (hitTest.RowIndex >= 0)
-        ////        {
-        ////            // Start the drag operation
-        ////            dataGridView1.DoDragDrop(dataGridView1.Rows[hitTest.RowIndex], DragDropEffects.Move);
-        ////        }
-        ////    }
-        ////}
+        }
 
-        //private void dataGridView2_DragOver(object sender, DragEventArgs e)
-        //{
-        //    e.Effect = DragDropEffects.Copy;
-        //}
+        private void createWorkstationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var context = new ScheduleDBContext())
+            {
+                var form = new AddContact(context);
+                form.StartPosition = FormStartPosition.CenterScreen;
+                form.FormClosed += (s, args) => loadContacts();
 
-        //private void dataGridView1_MouseMove_1(object sender, MouseEventArgs e)
-        //{
-        //    if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
-        //    {
-        //        // If the mouse moves outside the rectangle, start the drag.
-        //        if (dragBoxFromMouseDown != Rectangle.Empty && !dragBoxFromMouseDown.Contains(e.X, e.Y))
-        //        {
-        //            // Proceed with the drag and drop, passing in the list item.                    
-        //            DragDropEffects dropEffect = dataGridView1.DoDragDrop(valueFromMouseDown, DragDropEffects.Copy);
-        //        }
-        //    }
-        //}
+                form.Show();
+            }
+        }
 
+        private void createHolidayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new AddHoliday();
+            form.StartPosition = FormStartPosition.CenterScreen;
 
+            form.Show();
+        }
 
-        //private void dataGridView2_DragDrop(object sender, DragEventArgs e)
-        //{
-        //    // The mouse locations are relative to the screen, so they must be 
-        //    // converted to client coordinates.
-        //    Point clientPoint = dataGridView2.PointToClient(new Point(e.X, e.Y));
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
 
-        //    // If the drag operation was a copy then add the row to the other control.
-        //    if (e.Effect == DragDropEffects.Copy)
-        //    {
-        //        string cellvalue = e.Data.GetData(typeof(string)) as string;
-        //        var hittest = dataGridView2.HitTest(clientPoint.X, clientPoint.Y);
-        //        if (hittest.ColumnIndex != -1
-        //            && hittest.RowIndex != -1)
-        //            dataGridView2[hittest.ColumnIndex, hittest.RowIndex].Value = cellvalue;
+            OrderAllocation orderAllocation = null;
+            if (UnsavedOrderAllocations.Count > 0)
+            {
+                orderAllocation = UnsavedOrderAllocations.Pop();
+            }
+            else
+            {
+                //redo.Enabled = false;
+            }
 
-        //    }
-        //}
+            if (orderAllocation != null)
+            {
+                UndoneOrderAllocations.Push(orderAllocation);
+                redo.Enabled = true;
+                if (UnsavedOrderAllocations.Count == 0)
+                {
+                    undo.Enabled = false;
+                }
+            }
 
-        //private void dataGridView2_DragEnter(object sender, DragEventArgs e)
-        //{
-        //    MessageBox.Show("Dragged and Enter");
-        //    e.Effect = DragDropEffects.Copy;
-        //}
+            AddToOrdersToView();
+            calendar1.Invalidate();
+            calendar1.Update();
+        }
 
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OrderAllocation orderAllocation = null;
+            if (UndoneOrderAllocations.Count > 0)
+            {
+                orderAllocation = UndoneOrderAllocations.Pop();
+                //button6.Enabled = false;
+            }
+            else
+            {
+                //redo.Enabled = false;
+            }
 
+            if (orderAllocation != null)
+            {
+                UnsavedOrderAllocations.Push(orderAllocation);
+                undo.Enabled = true;
+                if (UndoneOrderAllocations.Count == 0)
+                {
+                    redo.Enabled = false;
+                }
+            }
 
-        //private void dataGridView1_DragEnter(object sender, DragEventArgs e)
-        //{
-        //    if (e.Data.GetDataPresent(typeof(DataGridViewRow)))
-        //    {
-        //        e.Effect = DragDropEffects.Move;
-        //    }
-        //    else
-        //    {
-        //        e.Effect = DragDropEffects.None;
-        //    }
-        //}
+            AddToOrdersToView();
+        }
     }
 }
