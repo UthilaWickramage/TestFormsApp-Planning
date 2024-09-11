@@ -19,12 +19,14 @@ namespace TestFormsApp_Planning
     {
         private OrderAllocation _tsa;
         private List<Entities.Holiday> _holidays;
+        private List<CustomDay> _customDays;
         List<WorkStation> _machines;
         private ScheduleUtil _util;
-        public AddTask(List<Entities.Holiday> holidays)
+        public AddTask(List<Entities.Holiday> holidays,List<CustomDay> customDays)
         {
             InitializeComponent();
             _holidays = holidays;
+            _customDays = customDays;
             _util = new ScheduleUtil(_holidays);
             dateTimePicker1.Format = DateTimePickerFormat.Custom;
             dateTimePicker1.CustomFormat = "dddd, dd MMM yyyy - hh:mm tt";
@@ -170,7 +172,7 @@ namespace TestFormsApp_Planning
             TimeSpan visibleStart = TimeSpan.FromHours(8); // 8 AM visible start
             TimeSpan visibleEnd = TimeSpan.FromHours(16);
 
-            DateTime visibleStartDateTime = _util.MapToVisibleRange(StartTime, visibleStart, visibleEnd);
+            //DateTime visibleStartDateTime = _util.MapToVisibleRange(_customDays,StartTime,machine);
             //DateTime visibleEndDateTime = _util.MapToVisibleRange(endTime, visibleStart, visibleEnd);
 
             //MessageBox.Show(visibleStartDateTime.ToString()+" To "+visibleEndDateTime.ToString());

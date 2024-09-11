@@ -30,7 +30,6 @@ namespace TestFormsApp_Planning
             using (var _dbContext = new ScheduleDBContext())
             {
                 string nameText = textBox1.Text;
-                string value = numericUpDown1.Value.ToString();
 
                 if (nameText.Length > 0)
                 {

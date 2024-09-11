@@ -17,7 +17,7 @@ namespace Entities
 
         public virtual List<ScheduleDetails> ScheduleDetails { get; set; }
 
-        public virtual List<Holiday> Holidays { get; set; }
+        //public virtual List<Holiday> Holidays { get; set; }
 
         public virtual List<CustomDay> CustomDays { get; set; }
     }

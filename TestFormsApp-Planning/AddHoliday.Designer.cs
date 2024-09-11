@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddHoliday));
             panel1 = new Panel();
             comboBox1 = new ComboBox();
             label4 = new Label();
@@ -148,6 +149,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(650, 370);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "AddHoliday";
             Text = "Add Holiday";

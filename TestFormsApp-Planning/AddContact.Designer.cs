@@ -28,48 +28,42 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panel1 = new Panel();
-            numericUpDown1 = new NumericUpDown();
-            label3 = new Label();
-            button1 = new MindFusion.UI.WinForms.Button();
-            textBox1 = new TextBox();
-            label2 = new Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddContact));
             label1 = new Label();
+            label2 = new Label();
+            textBox1 = new TextBox();
+            button1 = new MindFusion.UI.WinForms.Button();
+            label3 = new Label();
+            panel1 = new Panel();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
-            // panel1
+            // label1
             // 
-            panel1.BackColor = Color.Lavender;
-            panel1.Controls.Add(numericUpDown1);
-            panel1.Controls.Add(label3);
-            panel1.Controls.Add(button1);
-            panel1.Controls.Add(textBox1);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(703, 237);
-            panel1.TabIndex = 0;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(12, 89);
+            label1.Name = "label1";
+            label1.Size = new Size(187, 28);
+            label1.TabIndex = 0;
+            label1.Text = "WorkStation Name :";
             // 
-            // numericUpDown1
+            // label2
             // 
-            numericUpDown1.Location = new Point(198, 148);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(493, 27);
-            numericUpDown1.TabIndex = 5;
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(12, 9);
+            label2.Name = "label2";
+            label2.Size = new Size(283, 41);
+            label2.TabIndex = 1;
+            label2.Text = "Add a Workstation";
             // 
-            // label3
+            // textBox1
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(12, 148);
-            label3.Name = "label3";
-            label3.Size = new Size(172, 28);
-            label3.TabIndex = 4;
-            label3.Text = "Capacity Per Hour:";
+            textBox1.Location = new Point(198, 92);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(493, 27);
+            textBox1.TabIndex = 2;
             // 
             // button1
             // 
@@ -86,39 +80,35 @@
             button1.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button1.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button1.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button1.Location = new Point(516, 186);
+            button1.Location = new Point(512, 141);
             button1.Name = "button1";
             button1.Size = new Size(175, 44);
             button1.TabIndex = 3;
             button1.Text = "Add WorkStation";
             button1.Click += button1_Click;
             // 
-            // textBox1
+            // label3
             // 
-            textBox1.Location = new Point(198, 92);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(493, 27);
-            textBox1.TabIndex = 2;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Location = new Point(12, 148);
+            label3.Name = "label3";
+            label3.Size = new Size(0, 28);
+            label3.TabIndex = 4;
             // 
-            // label2
+            // panel1
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(12, 9);
-            label2.Name = "label2";
-            label2.Size = new Size(283, 41);
-            label2.TabIndex = 1;
-            label2.Text = "Add a Workstation";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 89);
-            label1.Name = "label1";
-            label1.Size = new Size(187, 28);
-            label1.TabIndex = 0;
-            label1.Text = "WorkStation Name :";
+            panel1.BackColor = Color.Lavender;
+            panel1.Controls.Add(label3);
+            panel1.Controls.Add(button1);
+            panel1.Controls.Add(textBox1);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(703, 237);
+            panel1.TabIndex = 0;
             // 
             // AddContact
             // 
@@ -126,23 +116,22 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(703, 237);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "AddContact";
             Text = "Add Workstation";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Panel panel1;
-        private Label label2;
         private Label label1;
+        private Label label2;
         private TextBox textBox1;
         private MindFusion.UI.WinForms.Button button1;
-        private NumericUpDown numericUpDown1;
         private Label label3;
+        private Panel panel1;
     }
 }

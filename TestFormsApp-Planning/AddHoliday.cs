@@ -43,7 +43,7 @@ namespace TestFormsApp_Planning
         {
             string name = textBox1.Text;
             DateTime dateTime = dateTimePicker1.Value;
-            int Id = (int) comboBox1.SelectedValue;
+           // int Id = (int) comboBox1.SelectedValue;
 
             using (var context = new Entities.ScheduleDBContext())
             {
@@ -54,6 +54,7 @@ namespace TestFormsApp_Planning
                 };
                 context.Holidays.Add(holiday);
                 await context.SaveChangesAsync();
+                MessageBox.Show("Holiday marked successfully");
             }
         }
 

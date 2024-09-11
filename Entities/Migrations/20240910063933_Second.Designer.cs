@@ -4,6 +4,7 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(ScheduleDBContext))]
-    partial class ScheduleDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240910063933_Second")]
+    partial class Second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,12 @@ namespace Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("WorkStationId")
+                        .HasColumnType("int");
+
                     b.HasKey("HolidayId");
+
+                    b.HasIndex("WorkStationId");
 
                     b.ToTable("Holidays");
                 });
@@ -196,6 +204,13 @@ namespace Entities.Migrations
                     b.Navigation("WorkStation");
                 });
 
+            modelBuilder.Entity("Entities.Holiday", b =>
+                {
+                    b.HasOne("Entities.WorkStation", null)
+                        .WithMany("Holidays")
+                        .HasForeignKey("WorkStationId");
+                });
+
             modelBuilder.Entity("Entities.Order", b =>
                 {
                     b.HasOne("Entities.Product", "Product")
@@ -240,6 +255,8 @@ namespace Entities.Migrations
             modelBuilder.Entity("Entities.WorkStation", b =>
                 {
                     b.Navigation("CustomDays");
+
+                    b.Navigation("Holidays");
 
                     b.Navigation("ScheduleDetails");
                 });

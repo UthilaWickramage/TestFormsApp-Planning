@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddTask));
             dockPanel1 = new MindFusion.UI.WinForms.DockPanel();
             panel1 = new Panel();
             numericUpDown1 = new NumericUpDown();
@@ -185,9 +186,9 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(12, 9);
             label2.Name = "label2";
-            label2.Size = new Size(191, 41);
+            label2.Size = new Size(235, 41);
             label2.TabIndex = 8;
-            label2.Text = "Add a Order";
+            label2.Text = "Schedule Order";
             // 
             // AddTask
             // 
@@ -196,9 +197,10 @@
             ClientSize = new Size(612, 450);
             Controls.Add(panel1);
             Controls.Add(dockPanel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "AddTask";
-            Text = "Add Order";
+            Text = "Schedule Order";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();

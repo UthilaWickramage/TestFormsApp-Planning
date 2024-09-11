@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Scheduler));
             panel1 = new Panel();
             splitter1 = new Splitter();
             splitContainer1 = new SplitContainer();
@@ -74,22 +75,28 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             dataGridView1 = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            pendingOrderTitleDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            pendingOrderDescriptionDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            pendingOrderQtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            clientDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            expectedDeliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            pendingOrderBindingSource = new BindingSource(components);
+            Title = new DataGridViewTextBoxColumn();
+            Description = new DataGridViewTextBoxColumn();
+            Customer = new DataGridViewTextBoxColumn();
+            Qty = new DataGridViewTextBoxColumn();
+            ProductName = new DataGridViewTextBoxColumn();
+            DeliveryDate = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
             dataGridView2 = new DataGridView();
-            OrderTitle = new DataGridViewTextBoxColumn();
-            OrderDescription = new DataGridViewTextBoxColumn();
-            VisibleStartTime = new DataGridViewTextBoxColumn();
-            VisibleEndTime = new DataGridViewTextBoxColumn();
-            Qty = new DataGridViewTextBoxColumn();
-            DurationInHours = new DataGridViewTextBoxColumn();
-            MachineName = new DataGridViewTextBoxColumn();
+            orderIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            titleDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            qtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            startTimeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            endTimeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            deliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            durationInHoursDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            productNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            productDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            workstationNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            workStationDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            scheduledOrderBindingSource = new BindingSource(components);
+            orderBindingSource = new BindingSource(components);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -102,9 +109,10 @@
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pendingOrderBindingSource).BeginInit();
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)scheduledOrderBindingSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)orderBindingSource).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -533,7 +541,7 @@
             calendar1.CurrentView = MindFusion.Scheduling.WinForms.CalendarView.ResourceView;
             calendar1.CustomDraw = MindFusion.Scheduling.WinForms.CustomDrawElements.ResourceViewCell;
             calendar1.Date = new DateTime(2024, 8, 27, 0, 0, 0, 0);
-            calendar1.EndDate = new DateTime(2024, 9, 26, 0, 0, 0, 0);
+            calendar1.EndDate = new DateTime(2024, 12, 31, 0, 0, 0, 0);
             calendar1.GroupType = MindFusion.Scheduling.WinForms.GroupType.GroupByContacts;
             calendar1.ItemSettings.MoveBandSize = 2;
             calendar1.LicenseKey = null;
@@ -668,11 +676,9 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.AutoGenerateColumns = false;
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, pendingOrderTitleDataGridViewTextBoxColumn, pendingOrderDescriptionDataGridViewTextBoxColumn, pendingOrderQtyDataGridViewTextBoxColumn, clientDataGridViewTextBoxColumn, expectedDeliveryDateDataGridViewTextBoxColumn });
-            dataGridView1.DataSource = pendingOrderBindingSource;
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Title, Description, Customer, Qty, ProductName, DeliveryDate });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
@@ -681,58 +687,53 @@
             dataGridView1.TabIndex = 6;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
             // 
-            // Column1
+            // Title
             // 
-            Column1.DataPropertyName = "PendingOrderId";
-            Column1.HeaderText = "Column1";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.Visible = false;
-            Column1.Width = 125;
+            Title.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Title.DataPropertyName = "Title";
+            Title.HeaderText = "Order";
+            Title.MinimumWidth = 6;
+            Title.Name = "Title";
             // 
-            // pendingOrderTitleDataGridViewTextBoxColumn
+            // Description
             // 
-            pendingOrderTitleDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            pendingOrderTitleDataGridViewTextBoxColumn.DataPropertyName = "PendingOrderTitle";
-            pendingOrderTitleDataGridViewTextBoxColumn.HeaderText = "Title";
-            pendingOrderTitleDataGridViewTextBoxColumn.MinimumWidth = 6;
-            pendingOrderTitleDataGridViewTextBoxColumn.Name = "pendingOrderTitleDataGridViewTextBoxColumn";
+            Description.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Description.DataPropertyName = "Description";
+            Description.HeaderText = "Description";
+            Description.MinimumWidth = 6;
+            Description.Name = "Description";
             // 
-            // pendingOrderDescriptionDataGridViewTextBoxColumn
+            // Customer
             // 
-            pendingOrderDescriptionDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            pendingOrderDescriptionDataGridViewTextBoxColumn.DataPropertyName = "PendingOrderDescription";
-            pendingOrderDescriptionDataGridViewTextBoxColumn.HeaderText = "Description";
-            pendingOrderDescriptionDataGridViewTextBoxColumn.MinimumWidth = 6;
-            pendingOrderDescriptionDataGridViewTextBoxColumn.Name = "pendingOrderDescriptionDataGridViewTextBoxColumn";
+            Customer.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Customer.DataPropertyName = "Customer";
+            Customer.HeaderText = "Customer";
+            Customer.MinimumWidth = 6;
+            Customer.Name = "Customer";
             // 
-            // pendingOrderQtyDataGridViewTextBoxColumn
+            // Qty
             // 
-            pendingOrderQtyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            pendingOrderQtyDataGridViewTextBoxColumn.DataPropertyName = "PendingOrderQty";
-            pendingOrderQtyDataGridViewTextBoxColumn.HeaderText = "Qty";
-            pendingOrderQtyDataGridViewTextBoxColumn.MinimumWidth = 6;
-            pendingOrderQtyDataGridViewTextBoxColumn.Name = "pendingOrderQtyDataGridViewTextBoxColumn";
+            Qty.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Qty.DataPropertyName = "Qty";
+            Qty.HeaderText = "Qty";
+            Qty.MinimumWidth = 6;
+            Qty.Name = "Qty";
             // 
-            // clientDataGridViewTextBoxColumn
+            // ProductName
             // 
-            clientDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            clientDataGridViewTextBoxColumn.DataPropertyName = "Client";
-            clientDataGridViewTextBoxColumn.HeaderText = "Customer";
-            clientDataGridViewTextBoxColumn.MinimumWidth = 6;
-            clientDataGridViewTextBoxColumn.Name = "clientDataGridViewTextBoxColumn";
+            ProductName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ProductName.DataPropertyName = "ProductName";
+            ProductName.HeaderText = "Product";
+            ProductName.MinimumWidth = 6;
+            ProductName.Name = "ProductName";
             // 
-            // expectedDeliveryDateDataGridViewTextBoxColumn
+            // DeliveryDate
             // 
-            expectedDeliveryDateDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            expectedDeliveryDateDataGridViewTextBoxColumn.DataPropertyName = "ExpectedDeliveryDate";
-            expectedDeliveryDateDataGridViewTextBoxColumn.HeaderText = "Delivery Date";
-            expectedDeliveryDateDataGridViewTextBoxColumn.MinimumWidth = 6;
-            expectedDeliveryDateDataGridViewTextBoxColumn.Name = "expectedDeliveryDateDataGridViewTextBoxColumn";
-            // 
-            // pendingOrderBindingSource
-            // 
-            pendingOrderBindingSource.DataSource = typeof(Entities.ScheduleDetails);
+            DeliveryDate.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            DeliveryDate.DataPropertyName = "DeliveryDate";
+            DeliveryDate.HeaderText = "Delivery Date";
+            DeliveryDate.MinimumWidth = 6;
+            DeliveryDate.Name = "DeliveryDate";
             // 
             // tabPage2
             // 
@@ -749,8 +750,10 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.AutoGenerateColumns = false;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { OrderTitle, OrderDescription, VisibleStartTime, VisibleEndTime, Qty, DurationInHours, MachineName });
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { orderIdDataGridViewTextBoxColumn, titleDataGridViewTextBoxColumn, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, startTimeDataGridViewTextBoxColumn, endTimeDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, durationInHoursDataGridViewTextBoxColumn, productNameDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn, workstationNameDataGridViewTextBoxColumn, workStationDataGridViewTextBoxColumn });
+            dataGridView2.DataSource = scheduledOrderBindingSource;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 3);
             dataGridView2.Name = "dataGridView2";
@@ -759,61 +762,124 @@
             dataGridView2.Size = new Size(1348, 182);
             dataGridView2.TabIndex = 0;
             // 
-            // OrderTitle
+            // orderIdDataGridViewTextBoxColumn
             // 
-            OrderTitle.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            OrderTitle.HeaderText = "Order Title";
-            OrderTitle.MinimumWidth = 6;
-            OrderTitle.Name = "OrderTitle";
-            OrderTitle.ReadOnly = true;
+            orderIdDataGridViewTextBoxColumn.DataPropertyName = "OrderId";
+            orderIdDataGridViewTextBoxColumn.HeaderText = "OrderId";
+            orderIdDataGridViewTextBoxColumn.MinimumWidth = 6;
+            orderIdDataGridViewTextBoxColumn.Name = "orderIdDataGridViewTextBoxColumn";
+            orderIdDataGridViewTextBoxColumn.ReadOnly = true;
+            orderIdDataGridViewTextBoxColumn.Visible = false;
+            orderIdDataGridViewTextBoxColumn.Width = 125;
             // 
-            // OrderDescription
+            // titleDataGridViewTextBoxColumn
             // 
-            OrderDescription.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            OrderDescription.HeaderText = "Order Description";
-            OrderDescription.MinimumWidth = 6;
-            OrderDescription.Name = "OrderDescription";
-            OrderDescription.ReadOnly = true;
+            titleDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            titleDataGridViewTextBoxColumn.DataPropertyName = "Title";
+            titleDataGridViewTextBoxColumn.HeaderText = "Order";
+            titleDataGridViewTextBoxColumn.MinimumWidth = 6;
+            titleDataGridViewTextBoxColumn.Name = "titleDataGridViewTextBoxColumn";
+            titleDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // VisibleStartTime
+            // customerDataGridViewTextBoxColumn
             // 
-            VisibleStartTime.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            VisibleStartTime.HeaderText = "Start Time";
-            VisibleStartTime.MinimumWidth = 6;
-            VisibleStartTime.Name = "VisibleStartTime";
-            VisibleStartTime.ReadOnly = true;
+            customerDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            customerDataGridViewTextBoxColumn.DataPropertyName = "Customer";
+            customerDataGridViewTextBoxColumn.HeaderText = "Customer";
+            customerDataGridViewTextBoxColumn.MinimumWidth = 6;
+            customerDataGridViewTextBoxColumn.Name = "customerDataGridViewTextBoxColumn";
+            customerDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // VisibleEndTime
+            // qtyDataGridViewTextBoxColumn
             // 
-            VisibleEndTime.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            VisibleEndTime.HeaderText = "End Time";
-            VisibleEndTime.MinimumWidth = 6;
-            VisibleEndTime.Name = "VisibleEndTime";
-            VisibleEndTime.ReadOnly = true;
+            qtyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            qtyDataGridViewTextBoxColumn.DataPropertyName = "Qty";
+            qtyDataGridViewTextBoxColumn.HeaderText = "Qty";
+            qtyDataGridViewTextBoxColumn.MinimumWidth = 6;
+            qtyDataGridViewTextBoxColumn.Name = "qtyDataGridViewTextBoxColumn";
+            qtyDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // Qty
+            // startTimeDataGridViewTextBoxColumn
             // 
-            Qty.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Qty.HeaderText = "Qty";
-            Qty.MinimumWidth = 6;
-            Qty.Name = "Qty";
-            Qty.ReadOnly = true;
+            startTimeDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            startTimeDataGridViewTextBoxColumn.DataPropertyName = "StartTime";
+            startTimeDataGridViewTextBoxColumn.HeaderText = "Start Time";
+            startTimeDataGridViewTextBoxColumn.MinimumWidth = 6;
+            startTimeDataGridViewTextBoxColumn.Name = "startTimeDataGridViewTextBoxColumn";
+            startTimeDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // DurationInHours
+            // endTimeDataGridViewTextBoxColumn
             // 
-            DurationInHours.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            DurationInHours.HeaderText = "Duration In Hours";
-            DurationInHours.MinimumWidth = 6;
-            DurationInHours.Name = "DurationInHours";
-            DurationInHours.ReadOnly = true;
+            endTimeDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            endTimeDataGridViewTextBoxColumn.DataPropertyName = "EndTime";
+            endTimeDataGridViewTextBoxColumn.HeaderText = "End Time";
+            endTimeDataGridViewTextBoxColumn.MinimumWidth = 6;
+            endTimeDataGridViewTextBoxColumn.Name = "endTimeDataGridViewTextBoxColumn";
+            endTimeDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // MachineName
+            // deliveryDateDataGridViewTextBoxColumn
             // 
-            MachineName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            MachineName.HeaderText = "Workstation";
-            MachineName.MinimumWidth = 6;
-            MachineName.Name = "MachineName";
-            MachineName.ReadOnly = true;
+            deliveryDateDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            deliveryDateDataGridViewTextBoxColumn.DataPropertyName = "DeliveryDate";
+            deliveryDateDataGridViewTextBoxColumn.HeaderText = "Delivery Date";
+            deliveryDateDataGridViewTextBoxColumn.MinimumWidth = 6;
+            deliveryDateDataGridViewTextBoxColumn.Name = "deliveryDateDataGridViewTextBoxColumn";
+            deliveryDateDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // durationInHoursDataGridViewTextBoxColumn
+            // 
+            durationInHoursDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            durationInHoursDataGridViewTextBoxColumn.DataPropertyName = "DurationInHours";
+            durationInHoursDataGridViewTextBoxColumn.HeaderText = "Duration In Hours";
+            durationInHoursDataGridViewTextBoxColumn.MinimumWidth = 6;
+            durationInHoursDataGridViewTextBoxColumn.Name = "durationInHoursDataGridViewTextBoxColumn";
+            durationInHoursDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // productNameDataGridViewTextBoxColumn
+            // 
+            productNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            productNameDataGridViewTextBoxColumn.DataPropertyName = "ProductName";
+            productNameDataGridViewTextBoxColumn.HeaderText = "Product";
+            productNameDataGridViewTextBoxColumn.MinimumWidth = 6;
+            productNameDataGridViewTextBoxColumn.Name = "productNameDataGridViewTextBoxColumn";
+            productNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // productDataGridViewTextBoxColumn
+            // 
+            productDataGridViewTextBoxColumn.DataPropertyName = "Product";
+            productDataGridViewTextBoxColumn.HeaderText = "Product";
+            productDataGridViewTextBoxColumn.MinimumWidth = 6;
+            productDataGridViewTextBoxColumn.Name = "productDataGridViewTextBoxColumn";
+            productDataGridViewTextBoxColumn.ReadOnly = true;
+            productDataGridViewTextBoxColumn.Visible = false;
+            productDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // workstationNameDataGridViewTextBoxColumn
+            // 
+            workstationNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            workstationNameDataGridViewTextBoxColumn.DataPropertyName = "WorkstationName";
+            workstationNameDataGridViewTextBoxColumn.HeaderText = "Workstation";
+            workstationNameDataGridViewTextBoxColumn.MinimumWidth = 6;
+            workstationNameDataGridViewTextBoxColumn.Name = "workstationNameDataGridViewTextBoxColumn";
+            workstationNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // workStationDataGridViewTextBoxColumn
+            // 
+            workStationDataGridViewTextBoxColumn.DataPropertyName = "WorkStation";
+            workStationDataGridViewTextBoxColumn.HeaderText = "WorkStation";
+            workStationDataGridViewTextBoxColumn.MinimumWidth = 6;
+            workStationDataGridViewTextBoxColumn.Name = "workStationDataGridViewTextBoxColumn";
+            workStationDataGridViewTextBoxColumn.ReadOnly = true;
+            workStationDataGridViewTextBoxColumn.Visible = false;
+            workStationDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // scheduledOrderBindingSource
+            // 
+            scheduledOrderBindingSource.DataSource = typeof(Classes.ScheduledOrder);
+            // 
+            // orderBindingSource
+            // 
+            orderBindingSource.DataSource = typeof(Entities.Order);
             // 
             // Scheduler
             // 
@@ -821,6 +887,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1362, 804);
             Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Scheduler";
             Text = "Scheduler";
             panel1.ResumeLayout(false);
@@ -836,9 +903,10 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pendingOrderBindingSource).EndInit();
             tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)scheduledOrderBindingSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)orderBindingSource).EndInit();
             ResumeLayout(false);
         }
 
@@ -855,8 +923,6 @@
         private Panel panel2;
         private DataGridView dataGridView1;
         private Panel panel3;
-        private BindingSource pendingOrderBindingSource;
-        private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn pendingOrderTitleDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn pendingOrderDescriptionDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn pendingOrderQtyDataGridViewTextBoxColumn;
@@ -898,12 +964,29 @@
         private TabPage tabPage1;
         private TabPage tabPage2;
         private DataGridView dataGridView2;
-        private DataGridViewTextBoxColumn OrderTitle;
-        private DataGridViewTextBoxColumn OrderDescription;
-        private DataGridViewTextBoxColumn VisibleStartTime;
-        private DataGridViewTextBoxColumn VisibleEndTime;
+        private DataGridViewTextBoxColumn orderDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn visibleStartTimeDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn visibleEndTimeDataGridViewTextBoxColumn;
+        private BindingSource orderBindingSource;
+        private DataGridViewTextBoxColumn Product;
+        private DataGridViewTextBoxColumn Title;
+        private DataGridViewTextBoxColumn Description;
+        private DataGridViewTextBoxColumn Customer;
         private DataGridViewTextBoxColumn Qty;
-        private DataGridViewTextBoxColumn DurationInHours;
-        private DataGridViewTextBoxColumn MachineName;
+        private DataGridViewTextBoxColumn ProductName;
+        private DataGridViewTextBoxColumn DeliveryDate;
+        private DataGridViewTextBoxColumn orderIdDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn titleDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn startTimeDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn endTimeDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn durationInHoursDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn productNameDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn productDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn workstationNameDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
+        private BindingSource scheduledOrderBindingSource;
     }
 }
