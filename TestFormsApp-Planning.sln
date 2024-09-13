@@ -5,7 +5,9 @@ VisualStudioVersion = 17.10.34707.107
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFormsApp-Planning", "TestFormsApp-Planning\TestFormsApp-Planning.csproj", "{A484333F-E032-416D-8EB4-D3AD6789D5F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{983C463F-DEC3-4CED-ACE3-BFAA96B9BA8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{983C463F-DEC3-4CED-ACE3-BFAA96B9BA8D}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SchedulerApp", "SchedulerApp\SchedulerApp.vdproj", "{5B70126B-5615-4CFF-87AE-1BCC9CD17941}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,8 @@ Global
 		{983C463F-DEC3-4CED-ACE3-BFAA96B9BA8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{983C463F-DEC3-4CED-ACE3-BFAA96B9BA8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{983C463F-DEC3-4CED-ACE3-BFAA96B9BA8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B70126B-5615-4CFF-87AE-1BCC9CD17941}.Debug|Any CPU.ActiveCfg = Debug
+		{5B70126B-5615-4CFF-87AE-1BCC9CD17941}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

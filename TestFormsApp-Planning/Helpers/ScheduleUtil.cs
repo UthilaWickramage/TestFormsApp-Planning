@@ -47,7 +47,6 @@ namespace TestFormsApp_Planning.Helpers
             {
                 visibleDuration = TimeSpan.FromHours(customDay.EndTime.Hour) - TimeSpan.FromHours(customDay.StartTime.Hour);
                 visibleTime = customDay.StartTime.TimeOfDay + TimeSpan.FromMinutes(proportion * visibleDuration.TotalMinutes);
-
             }
             else
             {

@@ -31,10 +31,7 @@ namespace TestFormsApp_Planning
 
             }
 
-            comboBox1.DataSource = contacts;
-
-            comboBox1.DisplayMember = "WorkStationName";
-            comboBox1.ValueMember = "WorkStationId";
+   
         }
 
        

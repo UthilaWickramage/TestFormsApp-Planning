@@ -30,8 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddHoliday));
             panel1 = new Panel();
-            comboBox1 = new ComboBox();
-            label4 = new Label();
             button1 = new MindFusion.UI.WinForms.Button();
             dateTimePicker1 = new DateTimePicker();
             textBox1 = new TextBox();
@@ -44,8 +42,6 @@
             // panel1
             // 
             panel1.BackColor = Color.Lavender;
-            panel1.Controls.Add(comboBox1);
-            panel1.Controls.Add(label4);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(dateTimePicker1);
             panel1.Controls.Add(textBox1);
@@ -55,26 +51,8 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(650, 370);
+            panel1.Size = new Size(650, 288);
             panel1.TabIndex = 0;
-            // 
-            // comboBox1
-            // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(146, 229);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(441, 28);
-            comboBox1.TabIndex = 8;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label4.Location = new Point(12, 227);
-            label4.Name = "label4";
-            label4.Size = new Size(130, 28);
-            label4.TabIndex = 7;
-            label4.Text = "WorkStation :";
             // 
             // button1
             // 
@@ -91,7 +69,7 @@
             button1.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
             button1.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
             button1.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button1.Location = new Point(402, 294);
+            button1.Location = new Point(402, 213);
             button1.Name = "button1";
             button1.Size = new Size(185, 37);
             button1.TabIndex = 5;
@@ -147,7 +125,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(650, 370);
+            ClientSize = new Size(650, 288);
             Controls.Add(panel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -167,7 +145,5 @@
         private Label label1;
         private MindFusion.UI.WinForms.Button button1;
         private DateTimePicker dateTimePicker1;
-        private Label label4;
-        private ComboBox comboBox1;
     }
 }

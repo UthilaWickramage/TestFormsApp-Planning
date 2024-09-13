@@ -23,6 +23,10 @@ namespace TestFormsApp_Planning
         private List<Entities.Order> tasks = new List<Entities.Order>();
         private List<Entities.Holiday> holidays = new List<Entities.Holiday>();
         private List<Entities.CustomDay> CustomDays = new List<Entities.CustomDay>();
+        BindingList<Classes.ScheduledOrder> scheduledOrderList = new BindingList<Classes.ScheduledOrder>();
+        BindingList<Classes.Order> orderList = new BindingList<Classes.Order>();
+        Stack<Classes.Order> removedOrderList = new Stack<Classes.Order>();
+
         BindingList<Entities.Order> dataSource1;
         BindingList<Order> dataSource2;
         private ScheduleUtil _util;
@@ -65,7 +69,7 @@ namespace TestFormsApp_Planning
             toolTip2.InitialDelay = 100;
             toolTip2.ReshowDelay = 100;
             toolTip2.ShowAlways = false;
-
+            
             // Add resources
         }
 
@@ -92,6 +96,7 @@ namespace TestFormsApp_Planning
 
         private void loadOrders()
         {
+            dataGridView1.Rows.Clear();
             using (var context = new ScheduleDBContext())
             {
                 var orders = context.Orders
@@ -111,7 +116,6 @@ namespace TestFormsApp_Planning
                                         .ToList();
                 dataGridView1.AutoGenerateColumns = false;
 
-                BindingList<Classes.Order> list = new BindingList<Classes.Order>();
                 foreach (var order in orders)
                 {
                     Classes.Order o = new Classes.Order();
@@ -123,9 +127,9 @@ namespace TestFormsApp_Planning
                     o.DeliveryDate = order.DeliveryDate;
                     o.Description = order.Description;
                     o.Title = order.Title;
-                    list.Add(o);
+                    orderList.Add(o);
                 }
-                dataGridView1.DataSource = list;
+                dataGridView1.DataSource = orderList;
 
             }
         }
@@ -157,7 +161,6 @@ namespace TestFormsApp_Planning
                                         .ToList();
                 dataGridView2.AutoGenerateColumns = true;
 
-                BindingList<Classes.ScheduledOrder> list = new BindingList<Classes.ScheduledOrder>();
                 foreach (var order in orders)
                 {
                     Classes.ScheduledOrder o = new Classes.ScheduledOrder();
@@ -173,9 +176,9 @@ namespace TestFormsApp_Planning
                     o.WorkstationName = order.WorkstationName;
                     o.DurationInHours = order.DurationInHours;
                     o.Title = order.Title;
-                    list.Add(o);
+                    scheduledOrderList.Add(o);
                 }
-                dataGridView2.DataSource = list;
+                dataGridView2.DataSource = scheduledOrderList;
             }
         }
 
@@ -273,9 +276,9 @@ namespace TestFormsApp_Planning
 
         private void button2_Click(object sender, EventArgs e)
         {
-            AddTask form = new AddTask(holidays,CustomDays);
+            AddTask form = new AddTask();
             form.StartPosition = FormStartPosition.CenterScreen;
-            form.FormClosed += (s, args) => loadTasks();
+            form.FormClosed += (s, args) => loadOrders();
             form.Show();
         }
 
@@ -518,7 +521,7 @@ namespace TestFormsApp_Planning
                     }
 
                     await context.SaveChangesAsync();
-
+                    OrderAllocations.Add(orderAllocation);
                 }
 
                 //foreach(var task in tasks)
@@ -526,8 +529,15 @@ namespace TestFormsApp_Planning
                 //    context.Orders.Add(task);
                 //    await context.SaveChangesAsync();
                 //}
-
-
+                
+                UnsavedOrderAllocations.Clear();
+                UndoneOrderAllocations.Clear();
+                
+                MessageBox.Show(UnsavedOrderAllocations.Count.ToString());
+                undo.Enabled = false;
+                redoToolStripMenuItem.Enabled = false;
+                undoToolStripMenuItem.Enabled = false;
+                redo.Enabled = false;
                 MessageBox.Show("Changes Saved Successfully");
             }
         }
@@ -594,11 +604,7 @@ namespace TestFormsApp_Planning
 
                 var capacity = decimal.Parse(order.Product.CapacityInHour.ToString());
                 decimal durationInMinutes = (decimal.Parse(order.Qty.ToString()) / capacity);
-                //decimal Days = durationInHours / 8;
-                //decimal Days = CalculateDays(durationInHours, contact);
-                //MessageBox.Show(Days.ToString());
-                //DateTime endDate = StartTime.AddDays(double.Parse(Days.ToString()));
-                //MessageBox.Show("Total Minutes Required :"+durationInMinutes);
+
                 double days =  _util.CalculateDays(StartTime,double.Parse(durationInMinutes.ToString()),contact,CustomDays);
                 //MessageBox.Show("Days: "+days);
                 DateTime endTime = _util.CalculateEndDateConsideringHolidays(StartTime,decimal.Parse(days.ToString()));
@@ -623,6 +629,8 @@ namespace TestFormsApp_Planning
                 AddToOrdersToView();
                 undo.Enabled = true;
                 undoToolStripMenuItem.Enabled = true;
+               int rowIndex =  dataGridView1.CurrentRow.Index;
+                RemoveRow(rowIndex);
                 index++;
                 var addItemCommand = new AddItemCommand(calendar1.Schedule, orderAllocation, index);
 
@@ -750,6 +758,7 @@ namespace TestFormsApp_Planning
                 UndoneOrderAllocations.Push(orderAllocation);
                 redo.Enabled = true;
                 redoToolStripMenuItem.Enabled = true;
+                UndoRemoveRow();
                 if (UnsavedOrderAllocations.Count == 0)
                 {
                     undo.Enabled = false;
@@ -780,6 +789,7 @@ namespace TestFormsApp_Planning
                 UnsavedOrderAllocations.Push(orderAllocation);
                 undo.Enabled = true;
                 undoToolStripMenuItem.Enabled = true;
+                RemoveRow();
                 if (UndoneOrderAllocations.Count == 0)
                 {
                     redo.Enabled = false;
@@ -822,9 +832,9 @@ namespace TestFormsApp_Planning
 
         private void createOrderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddTask form = new AddTask(holidays,CustomDays);
+            AddTask form = new AddTask();
             form.StartPosition = FormStartPosition.CenterScreen;
-            form.FormClosed += (s, args) => loadTasks();
+            form.FormClosed += (s, args) => loadOrders();
             form.Show();
         }
 
@@ -856,6 +866,7 @@ namespace TestFormsApp_Planning
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+
             OrderAllocation orderAllocation = null;
             if (UnsavedOrderAllocations.Count > 0)
             {
@@ -870,19 +881,47 @@ namespace TestFormsApp_Planning
             {
                 UndoneOrderAllocations.Push(orderAllocation);
                 redo.Enabled = true;
+                redoToolStripMenuItem.Enabled = true;
+                UndoRemoveRow();
                 if (UnsavedOrderAllocations.Count == 0)
                 {
                     undo.Enabled = false;
+                    undoToolStripMenuItem.Enabled = false;
                 }
             }
 
             AddToOrdersToView();
             calendar1.Invalidate();
             calendar1.Update();
+
+            //OrderAllocation orderAllocation = null;
+            //if (UnsavedOrderAllocations.Count > 0)
+            //{
+            //    orderAllocation = UnsavedOrderAllocations.Pop();
+            //}
+            //else
+            //{
+            //    //redo.Enabled = false;
+            //}
+
+            //if (orderAllocation != null)
+            //{
+            //    UndoneOrderAllocations.Push(orderAllocation);
+            //    redo.Enabled = true;
+            //    if (UnsavedOrderAllocations.Count == 0)
+            //    {
+            //        undo.Enabled = false;
+            //    }
+            //}
+
+            //AddToOrdersToView();
+            //calendar1.Invalidate();
+            //calendar1.Update();
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             OrderAllocation orderAllocation = null;
             if (UndoneOrderAllocations.Count > 0)
             {
@@ -898,15 +937,96 @@ namespace TestFormsApp_Planning
             {
                 UnsavedOrderAllocations.Push(orderAllocation);
                 undo.Enabled = true;
+                undoToolStripMenuItem.Enabled = true;
+                RemoveRow();
                 if (UndoneOrderAllocations.Count == 0)
                 {
                     redo.Enabled = false;
+                    redoToolStripMenuItem.Enabled = false;
                 }
             }
 
             AddToOrdersToView();
+            //OrderAllocation orderAllocation = null;
+            //if (UndoneOrderAllocations.Count > 0)
+            //{
+            //    orderAllocation = UndoneOrderAllocations.Pop();
+            //    //button6.Enabled = false;
+            //}
+            //else
+            //{
+            //    //redo.Enabled = false;
+            //}
+
+            //if (orderAllocation != null)
+            //{
+            //    UnsavedOrderAllocations.Push(orderAllocation);
+            //    undo.Enabled = true;
+            //    undoToolStripMenuItem.Enabled = true;
+            //    RemoveRow();
+            //    if (UndoneOrderAllocations.Count == 0)
+            //    {
+            //        redo.Enabled = false;
+            //    }
+            //}
+
+            //AddToOrdersToView();
         }
 
-        
+
+        private void RemoveRow(int rowIndex)
+        {
+            if (rowIndex >= 0 && rowIndex < dataGridView1.Rows.Count)
+            {
+                // Store the row in the stack before removing it
+                var cellValue = dataGridView1.Rows[rowIndex].Cells[0].Value;
+
+                //removedRows.Push(row);
+       
+                foreach(var order in orderList)
+                {
+                    if(order.Title == cellValue)
+                    {
+                        orderList.Remove(order);
+                        removedOrderList.Push(order);
+                        break;
+                    }
+                }
+                dataGridView1.DataSource = orderList;
+                // Remove the row
+                //dataGridView1.Rows.RemoveAt(rowIndex);
+            }
+        }
+
+        private void RemoveRow()
+        {
+            if (orderList.Count > 0)
+            {
+                Classes.Order order = orderList.LastOrDefault();
+                if (order != null)
+                {
+                    removedOrderList.Push(order);
+                    orderList.Remove(order);
+                    dataGridView1.DataSource = orderList;
+                }
+
+            }
+        }
+
+
+        private void UndoRemoveRow()
+        {
+            if (removedOrderList.Count > 0)
+            {
+                Classes.Order order = removedOrderList.Pop();
+                if(order != null)
+                {
+                    orderList.Add(order);
+                    dataGridView1.DataSource = orderList;
+                }
+
+            }
+        }
+
     }
 }
