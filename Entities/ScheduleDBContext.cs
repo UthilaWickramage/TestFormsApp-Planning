@@ -9,8 +9,8 @@ namespace Entities
         protected override void OnConfiguring(DbContextOptionsBuilder
             optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=108.60.206.36, 14331;Initial Catalog=task_db;Persist Security Info=False;User ID=sa;Password=ab@03BDDG123#498@1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
-        
+            //optionsBuilder.UseSqlServer("Server=108.60.206.36, 14331;Initial Catalog=task_db;Persist Security Info=False;User ID=sa;Password=ab@03BDDG123#498@1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+            optionsBuilder.UseSqlServer("server=AXCITO-DEV-01;database=schedule_db;User Id=sa;Password=axcito@SQL;TrustServerCertificate=True;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,8 @@ namespace Entities
 
             modelBuilder.Entity<Product>()
    .HasKey(t => t.Product_Id);
+            modelBuilder.Entity<Output_Rate>()
+.HasKey(t => t.Output_Rate_Id);
         }
 
         public ScheduleDBContext()
@@ -44,6 +46,9 @@ namespace Entities
 
         public virtual DbSet<ScheduleDetails> ScheduleDetails { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<Output_Rate> OutputRates { get; set; }
+
+        public virtual DbSet<Operation_Type> OperationTypes { get; set; }
 
 
 

@@ -52,7 +52,7 @@
             label1.Name = "label1";
             label1.Size = new Size(379, 41);
             label1.TabIndex = 1;
-            label1.Text = "Order Scheduler Loading...";
+            label1.Text = "Operation Scheduler Loading...";
             // 
             // SplashScreen
             // 

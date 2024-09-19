@@ -75,15 +75,8 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             dataGridView1 = new DataGridView();
-            Title = new DataGridViewTextBoxColumn();
-            Description = new DataGridViewTextBoxColumn();
-            Customer = new DataGridViewTextBoxColumn();
-            Qty = new DataGridViewTextBoxColumn();
-            ProductName = new DataGridViewTextBoxColumn();
-            DeliveryDate = new DataGridViewTextBoxColumn();
             tabPage2 = new TabPage();
             dataGridView2 = new DataGridView();
-            orderIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             titleDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             qtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
@@ -97,6 +90,12 @@
             workStationDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             scheduledOrderBindingSource = new BindingSource(components);
             orderBindingSource = new BindingSource(components);
+            OrderNo = new DataGridViewTextBoxColumn();
+            Customer = new DataGridViewTextBoxColumn();
+            Qty = new DataGridViewTextBoxColumn();
+            ProductName = new DataGridViewTextBoxColumn();
+            DeliveryDate = new DataGridViewTextBoxColumn();
+            OperationType = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -525,9 +524,9 @@
             label2.ImageAlign = ContentAlignment.BottomCenter;
             label2.Location = new Point(12, 14);
             label2.Name = "label2";
-            label2.Size = new Size(138, 28);
+            label2.Size = new Size(179, 28);
             label2.TabIndex = 7;
-            label2.Text = "Order Detials";
+            label2.Text = "Operation Detials";
             // 
             // calendar1
             // 
@@ -578,8 +577,8 @@
             // createOrderToolStripMenuItem
             // 
             createOrderToolStripMenuItem.Name = "createOrderToolStripMenuItem";
-            createOrderToolStripMenuItem.Size = new Size(177, 26);
-            createOrderToolStripMenuItem.Text = "Create Order";
+            createOrderToolStripMenuItem.Size = new Size(206, 26);
+            createOrderToolStripMenuItem.Text = "Create Operation";
             createOrderToolStripMenuItem.Click += createOrderToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
@@ -678,7 +677,7 @@
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Title, Description, Customer, Qty, ProductName, DeliveryDate });
+            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { OrderNo, Customer, Qty, ProductName, DeliveryDate, OperationType });
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
@@ -686,54 +685,6 @@
             dataGridView1.Size = new Size(1348, 182);
             dataGridView1.TabIndex = 6;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
-            // 
-            // Title
-            // 
-            Title.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Title.DataPropertyName = "Title";
-            Title.HeaderText = "Order";
-            Title.MinimumWidth = 6;
-            Title.Name = "Title";
-            // 
-            // Description
-            // 
-            Description.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Description.DataPropertyName = "Description";
-            Description.HeaderText = "Description";
-            Description.MinimumWidth = 6;
-            Description.Name = "Description";
-            // 
-            // Customer
-            // 
-            Customer.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Customer.DataPropertyName = "Customer";
-            Customer.HeaderText = "Customer";
-            Customer.MinimumWidth = 6;
-            Customer.Name = "Customer";
-            // 
-            // Qty
-            // 
-            Qty.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Qty.DataPropertyName = "Qty";
-            Qty.HeaderText = "Qty";
-            Qty.MinimumWidth = 6;
-            Qty.Name = "Qty";
-            // 
-            // ProductName
-            // 
-            ProductName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            ProductName.DataPropertyName = "ProductName";
-            ProductName.HeaderText = "Product";
-            ProductName.MinimumWidth = 6;
-            ProductName.Name = "ProductName";
-            // 
-            // DeliveryDate
-            // 
-            DeliveryDate.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            DeliveryDate.DataPropertyName = "DeliveryDate";
-            DeliveryDate.HeaderText = "Delivery Date";
-            DeliveryDate.MinimumWidth = 6;
-            DeliveryDate.Name = "DeliveryDate";
             // 
             // tabPage2
             // 
@@ -752,7 +703,7 @@
             dataGridView2.AllowUserToDeleteRows = false;
             dataGridView2.AutoGenerateColumns = false;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { orderIdDataGridViewTextBoxColumn, titleDataGridViewTextBoxColumn, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, startTimeDataGridViewTextBoxColumn, endTimeDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, durationInHoursDataGridViewTextBoxColumn, productNameDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn, workstationNameDataGridViewTextBoxColumn, workStationDataGridViewTextBoxColumn });
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { titleDataGridViewTextBoxColumn, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, startTimeDataGridViewTextBoxColumn, endTimeDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, durationInHoursDataGridViewTextBoxColumn, productNameDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn, workstationNameDataGridViewTextBoxColumn, workStationDataGridViewTextBoxColumn });
             dataGridView2.DataSource = scheduledOrderBindingSource;
             dataGridView2.Dock = DockStyle.Fill;
             dataGridView2.Location = new Point(3, 3);
@@ -762,21 +713,11 @@
             dataGridView2.Size = new Size(1348, 182);
             dataGridView2.TabIndex = 0;
             // 
-            // orderIdDataGridViewTextBoxColumn
-            // 
-            orderIdDataGridViewTextBoxColumn.DataPropertyName = "OrderId";
-            orderIdDataGridViewTextBoxColumn.HeaderText = "OrderId";
-            orderIdDataGridViewTextBoxColumn.MinimumWidth = 6;
-            orderIdDataGridViewTextBoxColumn.Name = "orderIdDataGridViewTextBoxColumn";
-            orderIdDataGridViewTextBoxColumn.ReadOnly = true;
-            orderIdDataGridViewTextBoxColumn.Visible = false;
-            orderIdDataGridViewTextBoxColumn.Width = 125;
-            // 
             // titleDataGridViewTextBoxColumn
             // 
             titleDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             titleDataGridViewTextBoxColumn.DataPropertyName = "Title";
-            titleDataGridViewTextBoxColumn.HeaderText = "Order";
+            titleDataGridViewTextBoxColumn.HeaderText = "Operation";
             titleDataGridViewTextBoxColumn.MinimumWidth = 6;
             titleDataGridViewTextBoxColumn.Name = "titleDataGridViewTextBoxColumn";
             titleDataGridViewTextBoxColumn.ReadOnly = true;
@@ -881,6 +822,60 @@
             // 
             orderBindingSource.DataSource = typeof(Entities.Order);
             // 
+            // OrderNo
+            // 
+            OrderNo.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            OrderNo.DataPropertyName = "OrderNo";
+            OrderNo.HeaderText = "Order No";
+            OrderNo.MinimumWidth = 6;
+            OrderNo.Name = "OrderNo";
+            OrderNo.ReadOnly = true;
+            // 
+            // Customer
+            // 
+            Customer.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Customer.DataPropertyName = "Customer";
+            Customer.HeaderText = "Customer";
+            Customer.MinimumWidth = 6;
+            Customer.Name = "Customer";
+            Customer.ReadOnly = true;
+            // 
+            // Qty
+            // 
+            Qty.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Qty.DataPropertyName = "Qty";
+            Qty.HeaderText = "Qty";
+            Qty.MinimumWidth = 6;
+            Qty.Name = "Qty";
+            Qty.ReadOnly = true;
+            // 
+            // ProductName
+            // 
+            ProductName.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ProductName.DataPropertyName = "ProductName";
+            ProductName.HeaderText = "Product";
+            ProductName.MinimumWidth = 6;
+            ProductName.Name = "ProductName";
+            ProductName.ReadOnly = true;
+            // 
+            // DeliveryDate
+            // 
+            DeliveryDate.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            DeliveryDate.DataPropertyName = "DeliveryDate";
+            DeliveryDate.HeaderText = "Delivery Date";
+            DeliveryDate.MinimumWidth = 6;
+            DeliveryDate.Name = "DeliveryDate";
+            DeliveryDate.ReadOnly = true;
+            // 
+            // OperationType
+            // 
+            OperationType.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            OperationType.DataPropertyName = "OperationType";
+            OperationType.HeaderText = "Operation Type";
+            OperationType.MinimumWidth = 6;
+            OperationType.Name = "OperationType";
+            OperationType.ReadOnly = true;
+            // 
             // Scheduler
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -969,12 +964,6 @@
         private DataGridViewTextBoxColumn visibleEndTimeDataGridViewTextBoxColumn;
         private BindingSource orderBindingSource;
         private DataGridViewTextBoxColumn Product;
-        private DataGridViewTextBoxColumn Title;
-        private DataGridViewTextBoxColumn Description;
-        private DataGridViewTextBoxColumn Customer;
-        private DataGridViewTextBoxColumn Qty;
-        private DataGridViewTextBoxColumn ProductName;
-        private DataGridViewTextBoxColumn DeliveryDate;
         private DataGridViewTextBoxColumn orderIdDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn titleDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
@@ -988,5 +977,11 @@
         private DataGridViewTextBoxColumn workstationNameDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
         private BindingSource scheduledOrderBindingSource;
+        private DataGridViewTextBoxColumn OrderNo;
+        private DataGridViewTextBoxColumn Customer;
+        private DataGridViewTextBoxColumn Qty;
+        private DataGridViewTextBoxColumn ProductName;
+        private DataGridViewTextBoxColumn DeliveryDate;
+        private DataGridViewTextBoxColumn OperationType;
     }
 }

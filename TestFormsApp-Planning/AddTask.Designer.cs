@@ -105,7 +105,7 @@
             label1.Name = "label1";
             label1.Size = new Size(109, 28);
             label1.TabIndex = 17;
-            label1.Text = "Order Title:";
+            label1.Text = "Operation Title:";
             // 
             // label5
             // 
@@ -145,7 +145,7 @@
             button1.Name = "button1";
             button1.Size = new Size(218, 42);
             button1.TabIndex = 14;
-            button1.Text = "Add Order";
+            button1.Text = "Add Operation";
             button1.Click += button1_Click;
             // 
             // label4
@@ -183,7 +183,7 @@
             label2.Name = "label2";
             label2.Size = new Size(167, 41);
             label2.TabIndex = 8;
-            label2.Text = "Add Order";
+            label2.Text = "Add Operation";
             // 
             // textBox2
             // 
@@ -219,7 +219,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "AddTask";
-            Text = "Schedule Order";
+            Text = "Schedule Operation";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();

@@ -15,6 +15,7 @@ namespace TestFormsApp_Planning
             ApplicationConfiguration.Initialize();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             using (SplashScreen splash = new SplashScreen())
             {
                 splash.Show();
