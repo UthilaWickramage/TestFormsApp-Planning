@@ -113,13 +113,7 @@ namespace TestFormsApp_Planning
             dataGridView1.Rows.Clear();
             using (var context = new ScheduleDBContext())
             {
-
                 var orders = context.Orders.Include(o => o.Product).ThenInclude(p => p.OutputRates).ToList();
-
-
-
-
-
 
                 dataGridView1.AutoGenerateColumns = false;
 
@@ -142,9 +136,18 @@ namespace TestFormsApp_Planning
                         o.WorkStation = workstation;
                         o.Order = order;
                         o.Operation_Type = operation_type;
+
+                        var b = context.ScheduleDetails.Any(s=>s.OrderId == order.OrderId && s.OperationTypeId == operation_type.Operation_Type_Id);
+                        if (b)
+                        {
+                            o.OperationStatus = OperationStatus.SCHEDULED;
+                        }
+                        else
+                        {
+                            o.OperationStatus = OperationStatus.UNSCHEDULED;
+                        }
                         orderList.Add(o);
                     }
-
 
                 }
 
@@ -170,7 +173,6 @@ namespace TestFormsApp_Planning
                 dataGridView1.DataSource = uniqueOrderList;
 
 
-
             }
         }
 
@@ -181,7 +183,6 @@ namespace TestFormsApp_Planning
                 var orders = context.Orders
                     .Include(o => o.Product)
                                         .Include(o => o.ScheduleDetails)
-
                                         .Where(o => o.Status == OrderStatus.SCHEDULED)
                                         .Select(o => new
                                         {
@@ -445,8 +446,6 @@ namespace TestFormsApp_Planning
 
                 var c = orderList.Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id && o.WorkStation.WorkStationId.ToString() == contact.Id).FirstOrDefault();
 
-
-
                 OrderAllocation orderAllocation = new OrderAllocation();
                 DateTime StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
                 orderAllocation.StartTime = StartTime;
@@ -455,7 +454,7 @@ namespace TestFormsApp_Planning
 
 
                 //orderAllocation.Id = order.Order.ToString();
-                //orderAllocation.OrderAllocationId = order.OperationId;
+                //orderAllocation.OrderAllocationId = order.OrderNo;
                 orderAllocation.Contacts.Add(contact);
 
 
@@ -661,10 +660,6 @@ namespace TestFormsApp_Planning
 
             
 
-            UnsavedOrderAllocations.Clear();
-            UndoneOrderAllocations.Clear();
-
-            MessageBox.Show(UnsavedOrderAllocations.Count.ToString());
             undo.Enabled = false;
             redoToolStripMenuItem.Enabled = false;
             undoToolStripMenuItem.Enabled = false;
@@ -964,7 +959,7 @@ namespace TestFormsApp_Planning
             {
                 // Store the row in the stack before removing it
                 var cellValue = dataGridView1.Rows[rowIndex].Cells[0].Value;
-
+                
                 //removedRows.Push(row);
        
                 //foreach(var order in uniqueOrderList)

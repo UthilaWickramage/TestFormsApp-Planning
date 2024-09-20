@@ -32,5 +32,7 @@ namespace TestFormsApp_Planning.Classes
         public WorkStation WorkStation { get; set; }
 
         public Order Order { get; set; }
+
+        public OperationStatus OperationStatus { get; set; }
     }
 }
