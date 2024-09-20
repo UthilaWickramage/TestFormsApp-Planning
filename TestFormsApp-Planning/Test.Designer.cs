@@ -39,8 +39,8 @@
             button5 = new Button();
             button4 = new Button();
             button1 = new Button();
-            button3 = new MindFusion.UI.WinForms.Button();
-            button2 = new MindFusion.UI.WinForms.Button();
+            button3 = new Button();
+            button2 = new Button();
             label18 = new Label();
             label19 = new Label();
             label16 = new Label();
@@ -62,6 +62,7 @@
             label2 = new Label();
             calendar1 = new MindFusion.Scheduling.WinForms.Calendar();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
             createOrderToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
@@ -75,27 +76,22 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             dataGridView1 = new DataGridView();
-            tabPage2 = new TabPage();
-            dataGridView2 = new DataGridView();
-            titleDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            qtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            startTimeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            endTimeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            deliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            durationInHoursDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            productNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            productDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            workstationNameDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            workStationDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            scheduledOrderBindingSource = new BindingSource(components);
-            orderBindingSource = new BindingSource(components);
             OrderNo = new DataGridViewTextBoxColumn();
             Customer = new DataGridViewTextBoxColumn();
             Qty = new DataGridViewTextBoxColumn();
             ProductName = new DataGridViewTextBoxColumn();
             DeliveryDate = new DataGridViewTextBoxColumn();
             OperationType = new DataGridViewTextBoxColumn();
+            tabPage2 = new TabPage();
+            dataGridView2 = new DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            qtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            deliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            productDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            scheduledOrderBindingSource = new BindingSource(components);
+            orderBindingSource = new BindingSource(components);
+            viewFullOrderToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -154,7 +150,7 @@
             // 
             // panel2
             // 
-            panel2.BackColor = Color.AliceBlue;
+            panel2.BackColor = SystemColors.GrayText;
             panel2.Controls.Add(redo);
             panel2.Controls.Add(undo);
             panel2.Controls.Add(button5);
@@ -190,7 +186,7 @@
             // redo
             // 
             redo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            redo.BackColor = Color.FromArgb(224, 224, 224);
+            redo.BackColor = SystemColors.AppWorkspace;
             redo.FlatStyle = FlatStyle.Popup;
             redo.Image = Properties.Resources.icons8_redo_25;
             redo.Location = new Point(1048, 4);
@@ -203,7 +199,7 @@
             // undo
             // 
             undo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            undo.BackColor = Color.FromArgb(224, 224, 224);
+            undo.BackColor = SystemColors.AppWorkspace;
             undo.FlatStyle = FlatStyle.Flat;
             undo.Image = Properties.Resources.icons8_undo_25;
             undo.Location = new Point(1091, 4);
@@ -230,7 +226,7 @@
             // button4
             // 
             button4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button4.BackColor = Color.FromArgb(224, 224, 224);
+            button4.BackColor = SystemColors.AppWorkspace;
             button4.FlatStyle = FlatStyle.Flat;
             button4.Image = Properties.Resources.icons8_save_25;
             button4.Location = new Point(1136, 3);
@@ -243,7 +239,7 @@
             // button1
             // 
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button1.BackColor = Color.FromArgb(224, 224, 224);
+            button1.BackColor = SystemColors.AppWorkspace;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Image = Properties.Resources.icons8_create_25;
             button1.Location = new Point(1275, 4);
@@ -256,49 +252,27 @@
             // button3
             // 
             button3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button3.BackColor = Color.FromArgb(224, 224, 224);
-            button3.BackgroundBrush = new MindFusion.Drawing.SolidBrush("#FFF0F0F0");
-            button3.BackgroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FFDEDEDE");
-            button3.BackgroundBrushDown = new MindFusion.Drawing.SolidBrush("#FFAEAEAE");
-            button3.BackgroundBrushOver = new MindFusion.Drawing.SolidBrush("#FFC5C5C5");
-            button3.BorderBrush = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button3.BorderBrushDisabled = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button3.BorderBrushDown = new MindFusion.Drawing.SolidBrush("#FF777777");
-            button3.BorderBrushOver = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button3.BorderThickness = 0;
-            button3.ForegroundBrush = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button3.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
-            button3.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button3.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
+            button3.BackColor = SystemColors.AppWorkspace;
+            button3.FlatStyle = FlatStyle.Flat;
             button3.Image = Properties.Resources.icons8_machine_25;
             button3.Location = new Point(1187, 4);
             button3.Name = "button3";
             button3.Size = new Size(40, 40);
             button3.TabIndex = 3;
+            button3.UseVisualStyleBackColor = false;
             button3.Click += button3_Click;
             // 
             // button2
             // 
             button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button2.BackColor = Color.FromArgb(224, 224, 224);
-            button2.BackgroundBrush = new MindFusion.Drawing.SolidBrush("#FFF0F0F0");
-            button2.BackgroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FFDEDEDE");
-            button2.BackgroundBrushDown = new MindFusion.Drawing.SolidBrush("#FFAEAEAE");
-            button2.BackgroundBrushOver = new MindFusion.Drawing.SolidBrush("#FFC5C5C5");
-            button2.BorderBrush = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button2.BorderBrushDisabled = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button2.BorderBrushDown = new MindFusion.Drawing.SolidBrush("#FF777777");
-            button2.BorderBrushOver = new MindFusion.Drawing.SolidBrush("#FFA6A6A6");
-            button2.BorderThickness = 1;
-            button2.ForegroundBrush = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button2.ForegroundBrushDisabled = new MindFusion.Drawing.SolidBrush("#FF777777");
-            button2.ForegroundBrushDown = new MindFusion.Drawing.SolidBrush("#FF000000");
-            button2.ForegroundBrushOver = new MindFusion.Drawing.SolidBrush("#FF000000");
+            button2.BackColor = SystemColors.AppWorkspace;
+            button2.FlatStyle = FlatStyle.Flat;
             button2.Image = Properties.Resources.icons8_new_order_25;
             button2.Location = new Point(1231, 4);
             button2.Name = "button2";
             button2.Size = new Size(40, 40);
             button2.TabIndex = 2;
+            button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
             // 
             // label18
@@ -546,7 +520,10 @@
             calendar1.LicenseKey = null;
             calendar1.Location = new Point(0, 0);
             calendar1.Name = "calendar1";
+            calendar1.ResourceViewSettings.LaneSize = 25;
+            calendar1.ResourceViewSettings.RowHeaderSize = 150;
             calendar1.ResourceViewSettings.SnapUnit = MindFusion.Scheduling.WinForms.TimeUnit.Hour;
+            calendar1.ResourceViewSettings.Style = (MindFusion.Scheduling.Style)resources.GetObject("calendar1.ResourceViewSettings.Style");
             calendar1.ShowToolTips = true;
             calendar1.Size = new Size(1362, 423);
             calendar1.TabIndex = 0;
@@ -563,15 +540,22 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new Size(20, 20);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem3, toolStripMenuItem2, undoToolStripMenuItem, redoToolStripMenuItem, preferencesToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem4, toolStripMenuItem1, toolStripMenuItem3, toolStripMenuItem2, undoToolStripMenuItem, redoToolStripMenuItem, preferencesToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(168, 160);
+            contextMenuStrip1.Size = new Size(184, 186);
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(183, 26);
+            toolStripMenuItem4.Text = "View Full Order";
+            toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { createOrderToolStripMenuItem });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(167, 26);
+            toolStripMenuItem1.Size = new Size(183, 26);
             toolStripMenuItem1.Text = "Orders";
             // 
             // createOrderToolStripMenuItem
@@ -585,7 +569,7 @@
             // 
             toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { createWorkstationToolStripMenuItem });
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(167, 26);
+            toolStripMenuItem3.Size = new Size(183, 26);
             toolStripMenuItem3.Text = "Workstations";
             // 
             // createWorkstationToolStripMenuItem
@@ -599,7 +583,7 @@
             // 
             toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { createHolidayToolStripMenuItem });
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(167, 26);
+            toolStripMenuItem2.Size = new Size(183, 26);
             toolStripMenuItem2.Text = "Holidays";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
@@ -615,7 +599,7 @@
             undoToolStripMenuItem.Enabled = false;
             undoToolStripMenuItem.Image = Properties.Resources.icons8_undo_25;
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.Size = new Size(167, 26);
+            undoToolStripMenuItem.Size = new Size(183, 26);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -624,7 +608,7 @@
             redoToolStripMenuItem.Enabled = false;
             redoToolStripMenuItem.Image = Properties.Resources.icons8_redo_25;
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            redoToolStripMenuItem.Size = new Size(167, 26);
+            redoToolStripMenuItem.Size = new Size(183, 26);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
@@ -632,7 +616,7 @@
             // 
             preferencesToolStripMenuItem.Image = Properties.Resources.icons8_settings_50;
             preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            preferencesToolStripMenuItem.Size = new Size(167, 26);
+            preferencesToolStripMenuItem.Size = new Size(183, 26);
             preferencesToolStripMenuItem.Text = "Preferences";
             // 
             // panel3
@@ -675,9 +659,10 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.BackgroundColor = Color.White;
+            dataGridView1.BackgroundColor = SystemColors.WindowFrame;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { OrderNo, Customer, Qty, ProductName, DeliveryDate, OperationType });
+            dataGridView1.ContextMenuStrip = contextMenuStrip1;
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
@@ -685,142 +670,6 @@
             dataGridView1.Size = new Size(1348, 182);
             dataGridView1.TabIndex = 6;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(dataGridView2);
-            tabPage2.Location = new Point(4, 32);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1354, 188);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Schedule Orders";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView2
-            // 
-            dataGridView2.AllowUserToAddRows = false;
-            dataGridView2.AllowUserToDeleteRows = false;
-            dataGridView2.AutoGenerateColumns = false;
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { titleDataGridViewTextBoxColumn, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, startTimeDataGridViewTextBoxColumn, endTimeDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, durationInHoursDataGridViewTextBoxColumn, productNameDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn, workstationNameDataGridViewTextBoxColumn, workStationDataGridViewTextBoxColumn });
-            dataGridView2.DataSource = scheduledOrderBindingSource;
-            dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(3, 3);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.ReadOnly = true;
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1348, 182);
-            dataGridView2.TabIndex = 0;
-            // 
-            // titleDataGridViewTextBoxColumn
-            // 
-            titleDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            titleDataGridViewTextBoxColumn.DataPropertyName = "Title";
-            titleDataGridViewTextBoxColumn.HeaderText = "Operation";
-            titleDataGridViewTextBoxColumn.MinimumWidth = 6;
-            titleDataGridViewTextBoxColumn.Name = "titleDataGridViewTextBoxColumn";
-            titleDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // customerDataGridViewTextBoxColumn
-            // 
-            customerDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            customerDataGridViewTextBoxColumn.DataPropertyName = "Customer";
-            customerDataGridViewTextBoxColumn.HeaderText = "Customer";
-            customerDataGridViewTextBoxColumn.MinimumWidth = 6;
-            customerDataGridViewTextBoxColumn.Name = "customerDataGridViewTextBoxColumn";
-            customerDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // qtyDataGridViewTextBoxColumn
-            // 
-            qtyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            qtyDataGridViewTextBoxColumn.DataPropertyName = "Qty";
-            qtyDataGridViewTextBoxColumn.HeaderText = "Qty";
-            qtyDataGridViewTextBoxColumn.MinimumWidth = 6;
-            qtyDataGridViewTextBoxColumn.Name = "qtyDataGridViewTextBoxColumn";
-            qtyDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // startTimeDataGridViewTextBoxColumn
-            // 
-            startTimeDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            startTimeDataGridViewTextBoxColumn.DataPropertyName = "StartTime";
-            startTimeDataGridViewTextBoxColumn.HeaderText = "Start Time";
-            startTimeDataGridViewTextBoxColumn.MinimumWidth = 6;
-            startTimeDataGridViewTextBoxColumn.Name = "startTimeDataGridViewTextBoxColumn";
-            startTimeDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // endTimeDataGridViewTextBoxColumn
-            // 
-            endTimeDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            endTimeDataGridViewTextBoxColumn.DataPropertyName = "EndTime";
-            endTimeDataGridViewTextBoxColumn.HeaderText = "End Time";
-            endTimeDataGridViewTextBoxColumn.MinimumWidth = 6;
-            endTimeDataGridViewTextBoxColumn.Name = "endTimeDataGridViewTextBoxColumn";
-            endTimeDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // deliveryDateDataGridViewTextBoxColumn
-            // 
-            deliveryDateDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            deliveryDateDataGridViewTextBoxColumn.DataPropertyName = "DeliveryDate";
-            deliveryDateDataGridViewTextBoxColumn.HeaderText = "Delivery Date";
-            deliveryDateDataGridViewTextBoxColumn.MinimumWidth = 6;
-            deliveryDateDataGridViewTextBoxColumn.Name = "deliveryDateDataGridViewTextBoxColumn";
-            deliveryDateDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // durationInHoursDataGridViewTextBoxColumn
-            // 
-            durationInHoursDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            durationInHoursDataGridViewTextBoxColumn.DataPropertyName = "DurationInHours";
-            durationInHoursDataGridViewTextBoxColumn.HeaderText = "Duration In Hours";
-            durationInHoursDataGridViewTextBoxColumn.MinimumWidth = 6;
-            durationInHoursDataGridViewTextBoxColumn.Name = "durationInHoursDataGridViewTextBoxColumn";
-            durationInHoursDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // productNameDataGridViewTextBoxColumn
-            // 
-            productNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            productNameDataGridViewTextBoxColumn.DataPropertyName = "ProductName";
-            productNameDataGridViewTextBoxColumn.HeaderText = "Product";
-            productNameDataGridViewTextBoxColumn.MinimumWidth = 6;
-            productNameDataGridViewTextBoxColumn.Name = "productNameDataGridViewTextBoxColumn";
-            productNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // productDataGridViewTextBoxColumn
-            // 
-            productDataGridViewTextBoxColumn.DataPropertyName = "Product";
-            productDataGridViewTextBoxColumn.HeaderText = "Product";
-            productDataGridViewTextBoxColumn.MinimumWidth = 6;
-            productDataGridViewTextBoxColumn.Name = "productDataGridViewTextBoxColumn";
-            productDataGridViewTextBoxColumn.ReadOnly = true;
-            productDataGridViewTextBoxColumn.Visible = false;
-            productDataGridViewTextBoxColumn.Width = 125;
-            // 
-            // workstationNameDataGridViewTextBoxColumn
-            // 
-            workstationNameDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            workstationNameDataGridViewTextBoxColumn.DataPropertyName = "WorkstationName";
-            workstationNameDataGridViewTextBoxColumn.HeaderText = "Workstation";
-            workstationNameDataGridViewTextBoxColumn.MinimumWidth = 6;
-            workstationNameDataGridViewTextBoxColumn.Name = "workstationNameDataGridViewTextBoxColumn";
-            workstationNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // workStationDataGridViewTextBoxColumn
-            // 
-            workStationDataGridViewTextBoxColumn.DataPropertyName = "WorkStation";
-            workStationDataGridViewTextBoxColumn.HeaderText = "WorkStation";
-            workStationDataGridViewTextBoxColumn.MinimumWidth = 6;
-            workStationDataGridViewTextBoxColumn.Name = "workStationDataGridViewTextBoxColumn";
-            workStationDataGridViewTextBoxColumn.ReadOnly = true;
-            workStationDataGridViewTextBoxColumn.Visible = false;
-            workStationDataGridViewTextBoxColumn.Width = 125;
-            // 
-            // scheduledOrderBindingSource
-            // 
-            scheduledOrderBindingSource.DataSource = typeof(Classes.ScheduledOrder);
-            // 
-            // orderBindingSource
-            // 
-            orderBindingSource.DataSource = typeof(Entities.Order);
             // 
             // OrderNo
             // 
@@ -876,6 +725,95 @@
             OperationType.Name = "OperationType";
             OperationType.ReadOnly = true;
             // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(dataGridView2);
+            tabPage2.Location = new Point(4, 32);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1354, 188);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Schedule Orders";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView2
+            // 
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.AutoGenerateColumns = false;
+            dataGridView2.BackgroundColor = SystemColors.ControlDarkDark;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Column1, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn });
+            dataGridView2.ContextMenuStrip = contextMenuStrip1;
+            dataGridView2.DataSource = scheduledOrderBindingSource;
+            dataGridView2.Dock = DockStyle.Fill;
+            dataGridView2.Location = new Point(3, 3);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.Size = new Size(1348, 182);
+            dataGridView2.TabIndex = 0;
+            dataGridView2.MouseDown += dataGridView2_MouseDown;
+            // 
+            // Column1
+            // 
+            Column1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Column1.DataPropertyName = "OrderNo";
+            Column1.HeaderText = "Order No";
+            Column1.MinimumWidth = 6;
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            // 
+            // customerDataGridViewTextBoxColumn
+            // 
+            customerDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            customerDataGridViewTextBoxColumn.DataPropertyName = "Customer";
+            customerDataGridViewTextBoxColumn.HeaderText = "Customer";
+            customerDataGridViewTextBoxColumn.MinimumWidth = 6;
+            customerDataGridViewTextBoxColumn.Name = "customerDataGridViewTextBoxColumn";
+            customerDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // qtyDataGridViewTextBoxColumn
+            // 
+            qtyDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            qtyDataGridViewTextBoxColumn.DataPropertyName = "Qty";
+            qtyDataGridViewTextBoxColumn.HeaderText = "Qty";
+            qtyDataGridViewTextBoxColumn.MinimumWidth = 6;
+            qtyDataGridViewTextBoxColumn.Name = "qtyDataGridViewTextBoxColumn";
+            qtyDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // deliveryDateDataGridViewTextBoxColumn
+            // 
+            deliveryDateDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            deliveryDateDataGridViewTextBoxColumn.DataPropertyName = "DeliveryDate";
+            deliveryDateDataGridViewTextBoxColumn.HeaderText = "Delivery Date";
+            deliveryDateDataGridViewTextBoxColumn.MinimumWidth = 6;
+            deliveryDateDataGridViewTextBoxColumn.Name = "deliveryDateDataGridViewTextBoxColumn";
+            deliveryDateDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // productDataGridViewTextBoxColumn
+            // 
+            productDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            productDataGridViewTextBoxColumn.DataPropertyName = "ProductName";
+            productDataGridViewTextBoxColumn.HeaderText = "Product";
+            productDataGridViewTextBoxColumn.MinimumWidth = 6;
+            productDataGridViewTextBoxColumn.Name = "productDataGridViewTextBoxColumn";
+            productDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // scheduledOrderBindingSource
+            // 
+            scheduledOrderBindingSource.DataSource = typeof(Classes.ScheduledOrder);
+            // 
+            // orderBindingSource
+            // 
+            orderBindingSource.DataSource = typeof(Entities.Order);
+            // 
+            // viewFullOrderToolStripMenuItem
+            // 
+            viewFullOrderToolStripMenuItem.Name = "viewFullOrderToolStripMenuItem";
+            viewFullOrderToolStripMenuItem.Size = new Size(179, 24);
+            viewFullOrderToolStripMenuItem.Text = "View Full Order";
+            // 
             // Scheduler
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -909,8 +847,8 @@
 
         private Panel panel1;
         private MindFusion.Scheduling.WinForms.Calendar calendar1;
-        private MindFusion.UI.WinForms.Button button2;
-        private MindFusion.UI.WinForms.Button button3;
+        private Button button2;
+        private Button button3;
         private Button button1;
         private Button button4;
         private Splitter splitter1;
@@ -966,16 +904,11 @@
         private DataGridViewTextBoxColumn Product;
         private DataGridViewTextBoxColumn orderIdDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn titleDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn startTimeDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn endTimeDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn durationInHoursDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn productNameDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn productDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn workstationNameDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
         private BindingSource scheduledOrderBindingSource;
         private DataGridViewTextBoxColumn OrderNo;
         private DataGridViewTextBoxColumn Customer;
@@ -983,5 +916,13 @@
         private DataGridViewTextBoxColumn ProductName;
         private DataGridViewTextBoxColumn DeliveryDate;
         private DataGridViewTextBoxColumn OperationType;
+        private ToolStripMenuItem viewFullOrderToolStripMenuItem;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn productDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
+        private ToolStripMenuItem toolStripMenuItem4;
     }
 }

@@ -21,12 +21,11 @@ namespace TestFormsApp_Planning.Classes
 
         public string Customer {  get; set; }
 
-       
-
         public Operation_Type Operation_Type { get; set; }
 
         public WorkStation WorkStation { get; set; }
 
+        public string ProductName { get; set; }
         public Order Order { get; set; }
         public string Qty { get; set; }
         public double DurationInHours { get; set; }

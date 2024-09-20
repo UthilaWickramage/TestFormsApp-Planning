@@ -9,8 +9,8 @@ namespace Entities
         protected override void OnConfiguring(DbContextOptionsBuilder
             optionsBuilder)
         {
-            //optionsBuilder.UseSqlServer("Server=108.60.206.36, 14331;Initial Catalog=schedule_db;Persist Security Info=False;User ID=sa;Password=ab@03BDDG123#498@1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
-            optionsBuilder.UseSqlServer("server=AXCITO-DEV-01;database=schedule_db;User Id=sa;Password=axcito@SQL;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=108.60.206.36, 14331;Initial Catalog=schedule_db_new;Persist Security Info=False;User ID=sa;Password=ab@03BDDG123#498@1;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;");
+            //optionsBuilder.UseSqlServer("server=AXCITO-DEV-01;database=schedule_db;User Id=sa;Password=axcito@SQL;TrustServerCertificate=True;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -34,5 +34,7 @@ namespace TestFormsApp_Planning.Classes
         public Order Order { get; set; }
 
         public OperationStatus OperationStatus { get; set; }
+
+        public List<ScheduledOperationDetails> ScheduledOperationDetails { get; set; }
     }
 }
