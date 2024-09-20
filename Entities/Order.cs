@@ -12,8 +12,7 @@ namespace Entities
         [Key]
         public int OrderId { get; set; }
 
-        public string OrderTitle { get; set; }
-        public string OrderDescription { get; set; }
+        public string OrderNo { get; set; }
 
         public string CustomerName { get; set; }
 
@@ -25,6 +24,7 @@ namespace Entities
         public Product Product { get; set; }
 
         public ScheduleDetails ScheduleDetails { get; set; }
+
 
     }
 }

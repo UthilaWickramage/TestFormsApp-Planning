@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(ScheduleDBContext))]
-    [Migration("20240910095147_Third")]
-    partial class Third
+    [Migration("20240919065239_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,23 @@ namespace Entities.Migrations
                     b.ToTable("Holidays");
                 });
 
+            modelBuilder.Entity("Entities.Operation_Type", b =>
+                {
+                    b.Property<int>("Operation_Type_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Operation_Type_Id"));
+
+                    b.Property<string>("Operation_Type_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Operation_Type_Id");
+
+                    b.ToTable("Operation_Type");
+                });
+
             modelBuilder.Entity("Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -88,11 +105,7 @@ namespace Entities.Migrations
                     b.Property<DateTime>("ExpectedDeliveryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("OrderDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OrderTitle")
+                    b.Property<string>("OrderNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -112,6 +125,37 @@ namespace Entities.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("Entities.Output_Rate", b =>
+                {
+                    b.Property<int>("Output_Rate_Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Output_Rate_Id"));
+
+                    b.Property<int>("OperationTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Rate")
+                        .HasColumnType("float");
+
+                    b.Property<int>("WorkstationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Output_Rate_Id");
+
+                    b.HasIndex("OperationTypeId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("WorkstationId");
+
+                    b.ToTable("Output_Rate");
+                });
+
             modelBuilder.Entity("Entities.Product", b =>
                 {
                     b.Property<int>("Product_Id")
@@ -119,9 +163,6 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Product_Id"));
-
-                    b.Property<double>("CapacityInHour")
-                        .HasColumnType("float");
 
                     b.Property<string>("Product_Name")
                         .IsRequired()
@@ -146,8 +187,14 @@ namespace Entities.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OperationTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
+
+                    b.Property<double>("Qty")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
@@ -162,6 +209,8 @@ namespace Entities.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ScheduleDetailsId");
+
+                    b.HasIndex("OperationTypeId");
 
                     b.HasIndex("OrderId")
                         .IsUnique();
@@ -210,8 +259,41 @@ namespace Entities.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Entities.Output_Rate", b =>
+                {
+                    b.HasOne("Entities.Operation_Type", "OperationType")
+                        .WithMany("OutputRates")
+                        .HasForeignKey("OperationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Product", "Product")
+                        .WithMany("OutputRates")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.WorkStation", "WorkStation")
+                        .WithMany("OutputRates")
+                        .HasForeignKey("WorkstationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OperationType");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("WorkStation");
+                });
+
             modelBuilder.Entity("Entities.ScheduleDetails", b =>
                 {
+                    b.HasOne("Entities.Operation_Type", "OperationType")
+                        .WithMany()
+                        .HasForeignKey("OperationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Entities.Order", "Order")
                         .WithOne("ScheduleDetails")
                         .HasForeignKey("Entities.ScheduleDetails", "OrderId")
@@ -224,9 +306,16 @@ namespace Entities.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("OperationType");
+
                     b.Navigation("Order");
 
                     b.Navigation("WorkStation");
+                });
+
+            modelBuilder.Entity("Entities.Operation_Type", b =>
+                {
+                    b.Navigation("OutputRates");
                 });
 
             modelBuilder.Entity("Entities.Order", b =>
@@ -238,11 +327,15 @@ namespace Entities.Migrations
             modelBuilder.Entity("Entities.Product", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("OutputRates");
                 });
 
             modelBuilder.Entity("Entities.WorkStation", b =>
                 {
                     b.Navigation("CustomDays");
+
+                    b.Navigation("OutputRates");
 
                     b.Navigation("ScheduleDetails");
                 });

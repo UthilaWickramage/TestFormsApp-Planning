@@ -13,6 +13,10 @@ namespace Entities
         public int OrderId { get; set; }
 
         public Order Order { get; set; }
+
+        public int OperationTypeId { get; set; }
+
+        public Operation_Type OperationType { get; set; }
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -26,7 +30,7 @@ namespace Entities
 
         public WorkStation WorkStation { get; set; }
 
-
+        public double Qty { get; set; }
 
 
     }

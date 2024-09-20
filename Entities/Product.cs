@@ -10,9 +10,9 @@ namespace Entities
     {
         public int Product_Id { get; set; }
         public string Product_Name { get; set; }
-        public double CapacityInHour {  get; set; }
 
         public List<Order> Orders { get; set; }
 
+public virtual List<Output_Rate> OutputRates { get; set; }  
     }
 }

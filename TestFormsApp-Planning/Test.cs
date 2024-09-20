@@ -6,7 +6,12 @@ using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Entities;
+using log4net;
+using log4net.Config;
+using log4net.Repository.Hierarchy;
 using Microsoft.EntityFrameworkCore;
+using MindFusion.Drawing;
+using MindFusion.Excel;
 using MindFusion.HolidayProviders;
 using MindFusion.Scheduling;
 using MindFusion.Scheduling.WinForms;
@@ -23,13 +28,22 @@ namespace TestFormsApp_Planning
         private List<Entities.Order> tasks = new List<Entities.Order>();
         private List<Entities.Holiday> holidays = new List<Entities.Holiday>();
         private List<Entities.CustomDay> CustomDays = new List<Entities.CustomDay>();
-        BindingList<Classes.ScheduledOrder> scheduledOrderList = new BindingList<Classes.ScheduledOrder>();
-        BindingList<Classes.Order> orderList = new BindingList<Classes.Order>();
-        Stack<Classes.Order> removedOrderList = new Stack<Classes.Order>();
 
-        private ScheduleUtil _util;
+
+        BindingList<Classes.Operation> uniqueOrderList = new BindingList<Classes.Operation>();
+        BindingList<Classes.Operation> uniqueScheduledOrderList = new BindingList<Classes.Operation>();
+        List<Classes.Operation> scheduledOrderList = new List<Classes.Operation>();
+        List<Classes.Operation> orderList = new List<Classes.Operation>();
+
         private List<OrderAllocation> OrderAllocations = new List<OrderAllocation>();
         private List<OrderAllocation> NewOrderAllocations = new List<OrderAllocation>();
+
+
+
+        Stack<Classes.Operation> removedOrderList = new Stack<Classes.Operation>();
+        private static readonly ILog logger = LogManager.GetLogger(typeof(Scheduler));
+        private ScheduleUtil _util;
+
         private Stack<OrderAllocation> UnsavedOrderAllocations = new Stack<OrderAllocation>();
         private Stack<OrderAllocation> UndoneOrderAllocations = new Stack<OrderAllocation>();
         private DateTime _pointedDate;
@@ -40,30 +54,35 @@ namespace TestFormsApp_Planning
         bool isDraggingOver = false;  // Indicate the drag is in progress
         ToolTip toolTip2;
         Point client;
+        private DataGridViewRow _dataGridView1clickedRow;
+        private DataGridViewRow _dataGridView2clickedRow;
 
         public Scheduler()
         {
             InitializeComponent();
+            XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
+
+            logger.Info("Application started.");
             this.StartPosition = FormStartPosition.CenterScreen;
-            calendar1.ResourceViewSettings.LaneSize = 25;
+          
             loadContacts();
             loadHolidays();
             loadOrders();
             LoadCustomDays();
             this.ShowInTaskbar = true;
-            loadScheduledOrders();
+            //loadScheduledOrders();
             _util = new ScheduleUtil(holidays);
-        
+
             calendar1.CustomDraw = CustomDrawElements.ResourceViewCell;
-            
+
             calendar1.Draw += new EventHandler<DrawEventArgs>(this.calendar1_Draw);
             setupToolTips();
             calendar1.Schedule.UndoEnabled = true;
             redo.Enabled = false;
             undo.Enabled = false;
-            calendar1.ShowToolTips = false;
-           
-            
+            calendar1.ShowToolTips = true;
+
+
             // Add resources
         }
 
@@ -85,7 +104,7 @@ namespace TestFormsApp_Planning
             // Set ToolTips for buttons
             toolTip.SetToolTip(button5, "Maximize the Schedule View");
             toolTip.SetToolTip(button1, "Create a Holiday");
-            toolTip.SetToolTip(button2, "Schedule an Order");
+            toolTip.SetToolTip(button2, "Schedule an Operation");
             toolTip.SetToolTip(button3, "Create Workstation");
             toolTip.SetToolTip(button4, "Save Changes");
             toolTip.SetToolTip(redo, "Redo Changes");
@@ -98,94 +117,101 @@ namespace TestFormsApp_Planning
             dataGridView1.Rows.Clear();
             using (var context = new ScheduleDBContext())
             {
-                var orders = context.Orders
-                                        .Include(o => o.Product)
-                                        .Where(o => o.Status == OrderStatus.PENDING)
-                                        .Select(o => new
-                                        {
-                                            OrderId = o.OrderId,
-                                            Title = o.OrderTitle,
-                                            Description = o.OrderDescription,
-                                            ProductName = o.Product.Product_Name,
-                                            Customer = o.CustomerName,
-                                            Qty = o.Qty,
-                                            DeliveryDate = o.ExpectedDeliveryDate,
-                                            Product = o.Product
-                                        })
-                                        .ToList();
+                var orders = context.Orders.Include(o => o.Product).ThenInclude(p => p.OutputRates).ToList();
+
                 dataGridView1.AutoGenerateColumns = false;
 
                 foreach (var order in orders)
                 {
-                    Classes.Order o = new Classes.Order();
-                    o.OrderId = order.OrderId;
-                    o.Customer = order.Customer;
-                    o.ProductName = order.ProductName;
-                    o.Qty = order.Qty;
-                    o.Product = order.Product;
-                    o.DeliveryDate = order.DeliveryDate;
-                    o.Description = order.Description;
-                    o.Title = order.Title;
-                    orderList.Add(o);
+                    foreach (var output_rates in order.Product.OutputRates)
+                    {
+                        var workstation = context.WorkStations.Find(output_rates.WorkstationId);
+                        var operation_type = context.OperationTypes.Find(output_rates.OperationTypeId);
+                        Classes.Operation o = new Classes.Operation();
+                        o.OperationId = output_rates.Output_Rate_Id;
+                        o.Customer = order.CustomerName;
+                        o.ProductName = order.Product.Product_Name;
+                        o.Qty = order.Qty;
+                        o.OperationType = operation_type.Operation_Type_Name;
+                        o.DeliveryDate = order.ExpectedDeliveryDate;
+                        o.OrderNo = order.OrderNo;
+                        o.Capacity = output_rates.Rate;
+                        o.Product = order.Product;
+                        o.WorkStation = workstation;
+                        o.Order = order;
+                        o.Operation_Type = operation_type;
+
+                        var r = context.ScheduleDetails.Where(s => s.OrderId == order.OrderId && s.OperationTypeId == operation_type.Operation_Type_Id).ToList();
+
+                        if (r.Count == 0)
+                        {
+                            orderList.Add(o);
+
+                        }
+                        else
+                        {
+                            //we consider list here because we might need to implement the split order functionality
+                            List<ScheduledOperationDetails> sod = new List<ScheduledOperationDetails>();
+                            foreach (var item in r)
+                            {
+                                ScheduledOperationDetails s = new ScheduledOperationDetails()
+                                {
+                                    ScheduledOperationDetailsId = item.ScheduleDetailsId,
+                                    DurationInHours = item.DurationInHours,
+                                    StartTime = item.StartTime,
+                                    EndTime = item.EndTime,
+                                    VisibleEndTime = item.VisibleEndTime,
+                                    VisibleStartTime = item.VisibleStartTime,
+                                    Qty = item.Qty,
+                                };
+                                sod.Add(s);
+                            }
+                            o.ScheduledOperationDetails = sod;
+                            scheduledOrderList.Add(o);
+                        }
+                    }
+
                 }
-                dataGridView1.DataSource = orderList;
 
-            }
-        }
-
-        private void loadScheduledOrders()
-        {
-            using (var context = new ScheduleDBContext())
-            {
-                var orders = context.Orders
-                    .Include(o => o.Product)
-                                        .Include(o => o.ScheduleDetails)
-
-                                        .Where(o => o.Status == OrderStatus.SCHEDULED)
-                                        .Select(o => new
-                                        {
-                                            OrderId = o.OrderId,
-                                            Title = o.OrderTitle,
-                                            ProductName = o.Product.Product_Name,
-                                            Customer = o.CustomerName,
-                                            Qty = o.Qty,
-                                            DeliveryDate = o.ExpectedDeliveryDate,
-                                            Product = o.Product,
-                                            StartTime = o.ScheduleDetails.VisibleStartTime,
-                                            EndTime = o.ScheduleDetails.VisibleEndTime,
-                                            DurationInHours = o.ScheduleDetails.DurationInHours,
-                                            Workstation = o.ScheduleDetails.WorkStation,
-                                            WorkstationName = o.ScheduleDetails.WorkStation.WorkStationName
-                                        })
-                                        .ToList();
-                dataGridView2.AutoGenerateColumns = true;
-
-                foreach (var order in orders)
+                foreach (var order in orderList)
                 {
-                    Classes.ScheduledOrder o = new Classes.ScheduledOrder();
-                    o.OrderId = order.OrderId;
-                    o.Customer = order.Customer;
-                    o.ProductName = order.ProductName;
-                    o.Qty = order.Qty;
-                    o.Product = order.Product;
-                    o.DeliveryDate = order.DeliveryDate;
-                    o.StartTime = order.StartTime;
-                    o.EndTime = order.EndTime;
-                    o.WorkStation = order.Workstation;
-                    o.WorkstationName = order.WorkstationName;
-                    o.DurationInHours = order.DurationInHours;
-                    o.Title = order.Title;
-                    scheduledOrderList.Add(o);
+
+                    // Check if an entry with the same ProductId and OperationTypeId exists
+                    if (!uniqueOrderList.Any(o => o.Product.Product_Id == order.Product.Product_Id &&
+                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id
+
+                                                  ))
+                    {
+                        uniqueOrderList.Add(order);
+                    }
                 }
-                dataGridView2.DataSource = scheduledOrderList;
+
+                foreach (var order in scheduledOrderList)
+                {
+
+                    // Check if an entry with the same ProductId and OperationTypeId exists
+                    if (!uniqueScheduledOrderList.Any(o => o.Product.Product_Id == order.Product.Product_Id &&
+                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id
+
+                                                  ))
+                    {
+                        uniqueScheduledOrderList.Add(order);
+                    }
+                }
+                dataGridView1.DataSource = uniqueOrderList;
+                dataGridView2.DataSource = uniqueScheduledOrderList;
+
             }
         }
+
+
+
 
         private void LoadCustomDays()
         {
             using (var context = new ScheduleDBContext())
             {
-                context.CustomDays.Include(c=>c.WorkStation).ToList().ForEach(d =>
+                context.CustomDays.Include(c => c.WorkStation).ToList().ForEach(d =>
                 {
                     CustomDays.Add(d);
                 });
@@ -223,53 +249,60 @@ namespace TestFormsApp_Planning
                 }
             }
             loadTasks();
-            AddToOrdersToView();
+            //AddToOrdersToView();
         }
 
         private void loadTasks()
         {
             using (var context = new ScheduleDBContext())
             {
-                tasks = context.Orders.Where(o => o.Status == OrderStatus.SCHEDULED).Include(t => t.ScheduleDetails).ThenInclude(s => s.WorkStation).ToList();
-                foreach (var task in tasks)
+                var scheduledOperations = context.ScheduleDetails.ToList();
+                foreach (var scheduledOperation in scheduledOperations)
                 {
-                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == task.ScheduleDetails.WorkStation.WorkStationName.Trim()).FirstOrDefault();
+                    var or = context.Orders.Include(o=>o.Product).Where(o=>o.OrderId == scheduledOperation.OrderId).FirstOrDefault();
+                    var ws = context.WorkStations.Find(scheduledOperation.WorkStationId);
+                    var ot = context.OperationTypes.Find(scheduledOperation.OperationTypeId);
+                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == ws.WorkStationName.Trim()).FirstOrDefault();
 
-                    contact.Name = task.ScheduleDetails.WorkStation.WorkStationName;
-                    contact.Id = task.ScheduleDetails.WorkStationId.ToString();
+                    contact.Name = ws.WorkStationName;
+                    contact.Id = ws.WorkStationId.ToString();
                     OrderAllocation tsa = new OrderAllocation();
-                    tsa.OrderTitle = task.OrderTitle;
-                    tsa.HeaderText = task.OrderTitle;
-                    tsa.StartTime = task.ScheduleDetails.StartTime;
-                    tsa.EndTime = task.ScheduleDetails.EndTime;
-                    tsa.VisibleEndTime = task.ScheduleDetails.VisibleEndTime;
-                    tsa.VisibleStartTime = task.ScheduleDetails.VisibleStartTime;
-                    tsa.Qty = task.Qty.ToString();
-                    tsa.DurationInHours = task.ScheduleDetails.DurationInHours;
-                    tsa.WorkStationName = contact.Name;
-                    tsa.deliveryDate = task.ExpectedDeliveryDate;
-                    tsa.Customer = task.CustomerName;
-                    tsa.Id = task.OrderId.ToString();
+                    tsa.OrderAllocationId = scheduledOperation.OrderId;
+                    tsa.OrderTitle = or.OrderNo;
+                    tsa.HeaderText = or.OrderNo;
+                    tsa.StartTime = scheduledOperation.StartTime;
+                    tsa.EndTime = scheduledOperation.EndTime;
+                    tsa.VisibleEndTime = scheduledOperation.VisibleEndTime;
+                    tsa.VisibleStartTime = scheduledOperation.VisibleStartTime;
+                    tsa.Qty = scheduledOperation.Qty.ToString();
+                    tsa.DurationInHours = scheduledOperation.DurationInHours;
+                    tsa.deliveryDate = or.ExpectedDeliveryDate;
+                    tsa.Customer = or.CustomerName;
+                    tsa.Operation_Type = scheduledOperation.OperationType;
+                    tsa.ProductName = or.Product.Product_Name;
+                    tsa.Id = scheduledOperation.ScheduleDetailsId.ToString();
                     tsa.Contacts.Add(contact);
-
-                    OrderAllocations.Add(tsa);
+                    tsa.Style.FillColor = System.Drawing.Color.Red;
+                    tsa.Style.LineColor = System.Drawing.Color.Red;
+                  
+                    calendar1.Schedule.Items.Add(tsa);
                 }
             }
 
         }
 
-        private void AddToOrdersToView()
-        {
-            calendar1.Schedule.Items.Clear();
-            foreach (var orderAllocation in OrderAllocations)
-            {
-                calendar1.Schedule.Items.Add(orderAllocation);
-            }
-            foreach (var orderAllocation in UnsavedOrderAllocations)
-            {
-                calendar1.Schedule.Items.Add(orderAllocation);
-            }
-        }
+        //private void AddToOrdersToView()
+        //{
+        //    calendar1.Schedule.Items.Clear();
+        //    foreach (var orderAllocation in OrderAllocations)
+        //    {
+        //        calendar1.Schedule.Items.Add(orderAllocation);
+        //    }
+        //    foreach (var orderAllocation in UnsavedOrderAllocations)
+        //    {
+        //        calendar1.Schedule.Items.Add(orderAllocation);
+        //    }
+        //}
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -334,7 +367,7 @@ namespace TestFormsApp_Planning
 
             if (!isFoundOrder)
             {
-                foreach(var orderAllocation in NewOrderAllocations)
+                foreach (var orderAllocation in NewOrderAllocations)
                 {
                     if (orderAllocation.Id.ToString() == e.Item.Id)
                     {
@@ -371,8 +404,8 @@ namespace TestFormsApp_Planning
                 UnsavedOrderAllocations.Push(modifiedOrderAllocation);
                 undo.Enabled = true;
                 toolStripMenuItem2.Enabled = true;
-                AddToOrdersToView();
-            
+                //AddToOrdersToView();
+
             }
 
         }
@@ -382,41 +415,37 @@ namespace TestFormsApp_Planning
             Point dropPoint = calendar1.PointToClient(new Point(e.X, e.Y));
             try
             {
-                Classes.Order order = (Classes.Order)e.Data.GetData(typeof(Classes.Order));
+                Classes.Operation order = (Classes.Operation)e.Data.GetData(typeof(Classes.Operation));
 
                 DateTime dropDateTime = calendar1.GetDateAt(dropPoint);
-                // MessageBox.Show(dropDateTime.ToString() + "   " + order.PendingOrderTitle);
                 Contact contact = calendar1.GetContactAt(dropPoint);
-                WorkStation workStation;
+
+                var result = orderList
+                .Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id);
+
+                var r = result.Where(r => r.WorkStation.WorkStationId.ToString() == contact.Id).FirstOrDefault();
+
+                if (r == null)
+                {
+                    MessageBox.Show("Invalid Workstation");
+                    return;
+                }
+
+                var c = orderList.Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id && o.WorkStation.WorkStationId.ToString() == contact.Id).FirstOrDefault();
 
                 OrderAllocation orderAllocation = new OrderAllocation();
                 DateTime StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
                 orderAllocation.StartTime = StartTime;
-                orderAllocation.OrderTitle = order.Title;
-                orderAllocation.HeaderText = order.Title;
+                orderAllocation.OrderTitle = order.OrderNo;
+                orderAllocation.HeaderText = order.OrderNo;
 
-                //orderAllocation.EndTime = task.EndTime;
-                orderAllocation.Id = order.Title.ToString();
-                orderAllocation.OrderAllocationId = order.OrderId;
+
+                //orderAllocation.Id = order.Order.ToString();
+                //orderAllocation.OrderAllocationId = order.OrderNo;
                 orderAllocation.Contacts.Add(contact);
 
-                using (var context = new ScheduleDBContext())
-                {
-                    try
-                    {
-                        workStation = await context.WorkStations.Where(w => w.WorkStationName == contact.Name).FirstOrDefaultAsync();
 
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("No Date Selected");
-                        return;
-                    }
-
-
-                }
-
-                var capacity = decimal.Parse(order.Product.CapacityInHour.ToString());
+                var capacity = decimal.Parse(c.Capacity.ToString());
                 decimal durationInHours = (decimal.Parse(order.Qty.ToString()) / capacity);
 
                 double days = _util.CalculateDays(StartTime, double.Parse(durationInHours.ToString()), contact, CustomDays);
@@ -429,17 +458,17 @@ namespace TestFormsApp_Planning
                 orderAllocation.VisibleStartTime = visibleStartDateTime;
                 orderAllocation.VisibleEndTime = visibleEndDateTime;
                 orderAllocation.Qty = order.Qty.ToString();
-                orderAllocation.OrderDescription = order.Description;
                 orderAllocation.DurationInHours = double.Parse(durationInHours.ToString());
-                orderAllocation.WorkstationId = workStation.WorkStationId;
                 orderAllocation.Customer = order.Customer;
-                orderAllocation.WorkStationName = workStation.WorkStationName;
                 orderAllocation.deliveryDate = order.DeliveryDate;
-
+                orderAllocation.Contact = contact;
+                orderAllocation.Operation_Type = order.Operation_Type;
+                orderAllocation.WorkStation = order.WorkStation;
+                orderAllocation.Order = order.Order;
+                orderAllocation.Style.FillColor = System.Drawing.Color.Red;
+                orderAllocation.Style.LineColor = System.Drawing.Color.Red;
                 calendar1.Schedule.Items.Add(orderAllocation);
-                NewOrderAllocations.Add(orderAllocation);
-                UnsavedOrderAllocations.Push(orderAllocation);
-                AddToOrdersToView();
+                calendar1.Invalidate();
                 undo.Enabled = true;
                 undoToolStripMenuItem.Enabled = true;
                 int rowIndex = dataGridView1.CurrentRow.Index;
@@ -464,7 +493,7 @@ namespace TestFormsApp_Planning
             var form = new AddHoliday();
             form.StartPosition = FormStartPosition.CenterScreen;
             form.FormClosed += (s, args) => loadHolidays();
-            
+
             form.Show();
         }
 
@@ -485,7 +514,7 @@ namespace TestFormsApp_Planning
                 // Example: highlight the 10th of September 2024
                 // DateTime highlightDate = new DateTime(2024, 9, 10);
 
-                
+
 
                 foreach (var day in CustomDays)
                 {
@@ -570,62 +599,57 @@ namespace TestFormsApp_Planning
         {
             using (var context = new ScheduleDBContext())
             {
-                foreach (var orderAllocation in UnsavedOrderAllocations)
+                foreach (OrderAllocation oa in calendar1.Schedule.Items)
                 {
-                    var scheduleDetails = await context.ScheduleDetails.FirstOrDefaultAsync(s => s.OrderId == orderAllocation.OrderAllocationId);
-                    
-                    if(scheduleDetails is null)
+                    var scheduleDetails = await context.ScheduleDetails.FirstOrDefaultAsync(s => s.OrderId == oa.OrderAllocationId);
+
+                    if (scheduleDetails is null)
                     {
                         ScheduleDetails details = new ScheduleDetails
                         {
-                            OrderId = orderAllocation.OrderAllocationId,
-                            StartTime = orderAllocation.StartTime,
-                            EndTime = orderAllocation.EndTime,
-                            VisibleStartTime = orderAllocation.VisibleStartTime,
-                            VisibleEndTime = orderAllocation.VisibleEndTime,
-                            DurationInHours = orderAllocation.DurationInHours,
-                            WorkStationId = orderAllocation.WorkstationId
+
+                            StartTime = oa.StartTime,
+                            EndTime = oa.EndTime,
+                            VisibleStartTime = oa.VisibleStartTime,
+                            VisibleEndTime = oa.VisibleEndTime,
+                            DurationInHours = oa.DurationInHours,
+                            WorkStationId = oa.WorkStation.WorkStationId,
+                            OperationTypeId = oa.Operation_Type.Operation_Type_Id,
+                            OrderId = oa.Order.OrderId,
+
+                            Qty = double.Parse(oa.Qty),
+
+
                         };
 
                         context.ScheduleDetails.Add(details);
 
-                        var o = await context.Orders.FindAsync(orderAllocation.OrderAllocationId);
+                        var o = await context.Orders.FindAsync(oa.OrderAllocationId);
                         if (o != null)
                         {
                             o.Status = OrderStatus.SCHEDULED;
                             context.Orders.Update(o);
                         }
 
-                        
+
                     }
                     else
                     {
-                        scheduleDetails.StartTime = orderAllocation.StartTime;
-                        scheduleDetails.EndTime = orderAllocation.EndTime;
+                        scheduleDetails.StartTime = oa.StartTime;
+                        scheduleDetails.EndTime = oa.EndTime;
                         context.ScheduleDetails.Update(scheduleDetails);
                         await context.SaveChangesAsync();
                     }
-
-                    await context.SaveChangesAsync();
-                    OrderAllocations.Add(orderAllocation);
                 }
 
-                //foreach(var task in tasks)
-                //{
-                //    context.Orders.Add(task);
-                //    await context.SaveChangesAsync();
-                //}
-                
-                UnsavedOrderAllocations.Clear();
-                UndoneOrderAllocations.Clear();
-                
-                MessageBox.Show(UnsavedOrderAllocations.Count.ToString());
-                undo.Enabled = false;
-                redoToolStripMenuItem.Enabled = false;
-                undoToolStripMenuItem.Enabled = false;
-                redo.Enabled = false;
-                MessageBox.Show("Changes Saved Successfully");
+                await context.SaveChangesAsync();
+
             }
+            undo.Enabled = false;
+            redoToolStripMenuItem.Enabled = false;
+            undoToolStripMenuItem.Enabled = false;
+            redo.Enabled = false;
+            MessageBox.Show("Changes Saved Successfully");
         }
 
 
@@ -637,7 +661,7 @@ namespace TestFormsApp_Planning
                 if (hitTest.RowIndex >= 0)
                 {
                     var row = dataGridView1.Rows[hitTest.RowIndex];
-                    var dataItem = (Classes.Order)row.DataBoundItem;
+                    var dataItem = (Classes.Operation)row.DataBoundItem;
                     //MessageBox.Show(dataItem.Title);
                     if (dataItem != null)
                     {
@@ -645,12 +669,34 @@ namespace TestFormsApp_Planning
                     }
                 }
             }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                // Use HitTest to determine where the click occurred
+                var hit = dataGridView1.HitTest(e.X, e.Y);
+
+                // Check if the click is on a valid row
+                if (hit.RowIndex >= 0)
+                {
+                    // Store the clicked row for use in the context menu item click event
+                    _dataGridView1clickedRow = dataGridView1.Rows[hit.RowIndex];
+
+                    // Optionally select the clicked row
+                    dataGridView1.ClearSelection();
+                    _dataGridView1clickedRow.Selected = true;
+
+                    // Show the context menu at the mouse position
+                    contextMenuStrip1.Show(dataGridView1, e.Location);
+                }
+            }
+
+
+
         }
 
         private void calendar1_DragOver(object sender, DragEventArgs e)
         {
-
-            if (e.Data.GetDataPresent(typeof(Classes.Order)))
+            if (e.Data.GetDataPresent(typeof(Classes.Operation)))
             {
                 client = calendar1.PointToClient(new Point(e.X, e.Y));
 
@@ -676,7 +722,7 @@ namespace TestFormsApp_Planning
             label9.Text = orderAllocation.OrderTitle;
             label8.Text = orderAllocation.Qty;
             label7.Text = orderAllocation.Customer;
-            label10.Text = orderAllocation.WorkStationName;
+            ////label10.Text = orderAllocation.WorkStationName;
             label16.Text = orderAllocation.DurationInHours.ToString();
             DateOnly date1 = new DateOnly(orderAllocation.deliveryDate.Year, orderAllocation.deliveryDate.Month, orderAllocation.deliveryDate.Day);
             DateOnly date2 = new DateOnly(orderAllocation.VisibleStartTime.Year, orderAllocation.VisibleStartTime.Month, orderAllocation.VisibleStartTime.Day);
@@ -712,7 +758,7 @@ namespace TestFormsApp_Planning
             {
                 isCollapsed = false;
                 splitContainer1.Panel2Collapsed = false;
-                button5.BackColor = Color.DodgerBlue;
+                button5.BackColor = System.Drawing.Color.DodgerBlue;
                 button5.Image = Properties.Resources.icons8_full_screen_24;
                 button5.FlatStyle = FlatStyle.Flat;
                 button5.FlatAppearance.BorderSize = 0;
@@ -725,8 +771,8 @@ namespace TestFormsApp_Planning
                 splitContainer1.Panel2Collapsed = true;
                 button5.FlatStyle = FlatStyle.Flat;
                 button5.FlatAppearance.BorderSize = 0;
-                button5.BackColor = Color.MediumSeaGreen;
-                toolTip.SetToolTip(button5, "View the Order List");
+                button5.BackColor = System.Drawing.Color.MediumSeaGreen;
+                toolTip.SetToolTip(button5, "View the Operation List");
 
                 button5.Image = Properties.Resources.icons8_exit_full_screen_25__1_;
 
@@ -760,7 +806,7 @@ namespace TestFormsApp_Planning
                 }
             }
 
-            AddToOrdersToView();
+            //AddToOrdersToView();
             calendar1.Invalidate();
             calendar1.Update();
         }
@@ -791,31 +837,31 @@ namespace TestFormsApp_Planning
                 }
             }
 
-            AddToOrdersToView();
+            // AddToOrdersToView();
         }
 
         private void calendar1_ItemTooltipDisplaying(object sender, ItemTooltipEventArgs e)
         {
 
-            if (e.Item != null)
-            {
+          
                 OrderAllocation item = (OrderAllocation)e.Item;
 
-                string tooltipString = $"Title: {item.OrderTitle}\n" +
-                              $"Start Time: {item.VisibleStartTime}\n" +
-                              $"End Time: {item.VisibleEndTime}\n" +
-                              $"Description: {item.OrderDescription}\n" +
-                              $"Workstation: {item.WorkStationName}\n" +
-                 $"Customer: {item.Customer}\n" +
-                 $"Duration In Hours: {item.DurationInHours}\n" +
+                string t = $"Order No: {item.OrderTitle}\n" +
+                       $"Customer: {item.Customer}\n" +
+                          $"Product: {item.ProductName}\n" +
+                           $"Delivery Date: {new DateOnly(item.deliveryDate.Year,item.deliveryDate.Month,item.deliveryDate.Day)}\n" +
+                        
+                           "--------------------------------\n" +
+                        
+                            $"Operation Type: {item.Operation_Type.Operation_Type_Name}\n" +
+                 $"Duration: {item.DurationInHours}\n" +
                    $"Qty: {item.Qty}\n" +
-                     $"Delivery Date: {item.deliveryDate}\n";
-                toolTip2.SetToolTip(calendar1, tooltipString);
-            }
-            else
-            {
+                    $"Start Time: {item.VisibleStartTime}\n" +
+                              $"End Time: {item.VisibleEndTime}\n";
 
-            }
+                e.Tooltip = t;
+           
+           
 
         }
 
@@ -866,7 +912,7 @@ namespace TestFormsApp_Planning
             {
                 orderAllocation = UnsavedOrderAllocations.Pop();
             }
-          
+
 
             if (orderAllocation != null)
             {
@@ -881,11 +927,11 @@ namespace TestFormsApp_Planning
                 }
             }
 
-            AddToOrdersToView();
+            //AddToOrdersToView();
             calendar1.Invalidate();
             calendar1.Update();
 
-           
+
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -896,7 +942,7 @@ namespace TestFormsApp_Planning
             {
                 orderAllocation = UndoneOrderAllocations.Pop();
             }
-            
+
             if (orderAllocation != null)
             {
                 UnsavedOrderAllocations.Push(orderAllocation);
@@ -910,8 +956,8 @@ namespace TestFormsApp_Planning
                 }
             }
 
-            AddToOrdersToView();
-         
+            //AddToOrdersToView();
+
         }
 
 
@@ -923,31 +969,31 @@ namespace TestFormsApp_Planning
                 var cellValue = dataGridView1.Rows[rowIndex].Cells[0].Value;
 
                 //removedRows.Push(row);
-       
-                foreach(var order in orderList)
-                {
-                    if(order.Title == cellValue)
-                    {
-                        orderList.Remove(order);
-                        removedOrderList.Push(order);
-                        break;
-                    }
-                }
-                dataGridView1.DataSource = orderList;
-         
+
+                //foreach(var order in uniqueOrderList)
+                //{
+                //    if(order.Title == cellValue)
+                //    {
+                //        uniqueOrderList.Remove(order);
+                //        removedOrderList.Push(order);
+                //        break;
+                //    }
+                //}
+                //dataGridView1.DataSource = uniqueOrderList;
+
             }
         }
 
         private void RemoveRow()
         {
-            if (orderList.Count > 0)
+            if (uniqueOrderList.Count > 0)
             {
-                Classes.Order order = orderList.LastOrDefault();
+                Classes.Operation order = uniqueOrderList.LastOrDefault();
                 if (order != null)
                 {
                     removedOrderList.Push(order);
-                    orderList.Remove(order);
-                    dataGridView1.DataSource = orderList;
+                    uniqueOrderList.Remove(order);
+                    dataGridView1.DataSource = uniqueOrderList;
                 }
 
             }
@@ -958,15 +1004,66 @@ namespace TestFormsApp_Planning
         {
             if (removedOrderList.Count > 0)
             {
-                Classes.Order order = removedOrderList.Pop();
-                if(order != null)
+                Classes.Operation order = removedOrderList.Pop();
+                if (order != null)
                 {
-                    orderList.Add(order);
-                    dataGridView1.DataSource = orderList;
+                    uniqueOrderList.Add(order);
+                    dataGridView1.DataSource = uniqueOrderList;
                 }
 
             }
         }
 
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            if (_dataGridView1clickedRow != null)
+            {
+
+                string orderNo = _dataGridView1clickedRow.Cells[0].Value.ToString();
+                FullOrder fullOrder = new FullOrder(uniqueOrderList, uniqueScheduledOrderList, machines,orderNo);
+                fullOrder.Text = "Order No :" + orderNo;
+        
+
+                _dataGridView1clickedRow = null;
+                fullOrder.Show();
+
+            }
+            else if (_dataGridView2clickedRow != null)
+            {
+
+                string orderNo = _dataGridView2clickedRow.Cells[0].Value.ToString();
+         
+                FullOrder fullOrder = new FullOrder(uniqueOrderList, uniqueScheduledOrderList, machines, orderNo);
+                fullOrder.Text = "Order No :" + orderNo;
+                _dataGridView2clickedRow = null;
+                fullOrder.Show();
+
+            }
+        }
+
+
+     
+        private void dataGridView2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Use HitTest to determine where the click occurred
+                var hit = dataGridView2.HitTest(e.X, e.Y);
+
+                // Check if the click is on a valid row
+                if (hit.RowIndex >= 0)
+                {
+                    // Store the clicked row for use in the context menu item click event
+                    _dataGridView2clickedRow = dataGridView2.Rows[hit.RowIndex];
+
+                    // Optionally select the clicked row
+                    dataGridView2.ClearSelection();
+                    _dataGridView2clickedRow.Selected = true;
+
+                    // Show the context menu at the mouse position
+                    contextMenuStrip1.Show(dataGridView2, e.Location);
+                }
+            }
+        }
     }
 }

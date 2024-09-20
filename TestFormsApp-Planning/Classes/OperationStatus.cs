@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestFormsApp_Planning.Helpers
+namespace TestFormsApp_Planning.Classes
 {
-    public class DataRepository
+    public enum OperationStatus
     {
-
+        SCHEDULED,UNSCHEDULED
     }
 }

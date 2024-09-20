@@ -20,5 +20,7 @@ namespace Entities
         //public virtual List<Holiday> Holidays { get; set; }
 
         public virtual List<CustomDay> CustomDays { get; set; }
+                public virtual List<Output_Rate> OutputRates { get; set; }
+
     }
 }

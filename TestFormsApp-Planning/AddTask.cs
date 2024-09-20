@@ -56,8 +56,8 @@ namespace TestFormsApp_Planning
             decimal qty = numericUpDown1.Value;
       
             Entities.Order order = new Entities.Order();
-            order.OrderTitle = TaskName;
-            order.OrderDescription = TaskName;
+            order.OrderNo = TaskName;
+
             order.ProductId = Id;
             order.Status = OrderStatus.PENDING;
             order.CustomerName = customer;
@@ -72,7 +72,7 @@ namespace TestFormsApp_Planning
                 await context.SaveChangesAsync();
 
             }
-            MessageBox.Show("Order added Successfully");
+            MessageBox.Show("Operation added Successfully");
         }
         
     }
