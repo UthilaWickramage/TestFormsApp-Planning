@@ -271,9 +271,10 @@ namespace TestFormsApp_Planning
         {
             using (var context = new ScheduleDBContext())
             {
-               var  scheduledOperations = context.ScheduleDetails.Include(s=>s.Order).ToList();
+               var  scheduledOperations = context.ScheduleDetails.ToList();
                 foreach (var scheduledOperation in scheduledOperations)
                 {
+                    var or = context.Orders.Find(scheduledOperation.OrderId);
                     var ws = context.WorkStations.Find(scheduledOperation.WorkStationId);
                     var ot = context.OperationTypes.Find(scheduledOperation.OperationTypeId);
                     MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == ws.WorkStationName.Trim()).FirstOrDefault();
@@ -282,17 +283,17 @@ namespace TestFormsApp_Planning
                     contact.Id =ws.WorkStationId.ToString();
                     OrderAllocation tsa = new OrderAllocation();
                     tsa.OrderAllocationId = scheduledOperation.OrderId;
-                    tsa.OrderTitle = scheduledOperation.Order.OrderNo;
-                    tsa.HeaderText = scheduledOperation.Order.OrderNo;
+                    tsa.OrderTitle = or.OrderNo;
+                    tsa.HeaderText = or.OrderNo;
                     tsa.StartTime = scheduledOperation.StartTime;
                     tsa.EndTime = scheduledOperation.EndTime;
                     tsa.VisibleEndTime = scheduledOperation.VisibleEndTime;
                     tsa.VisibleStartTime = scheduledOperation.VisibleStartTime;
                     tsa.Qty = scheduledOperation.Qty.ToString();
                     tsa.DurationInHours = scheduledOperation.DurationInHours;
-                    tsa.deliveryDate = scheduledOperation.Order.ExpectedDeliveryDate;
-                    tsa.Customer = scheduledOperation.Order.CustomerName;
-                    tsa.Id = scheduledOperation.Order.OrderId.ToString();
+                    tsa.deliveryDate = or.ExpectedDeliveryDate;
+                    tsa.Customer = or.CustomerName;
+                    tsa.Id = scheduledOperation.OrderId.ToString();
                     tsa.Contacts.Add(contact);
 
                     calendar1.Schedule.Items.Add(tsa);
@@ -480,9 +481,6 @@ namespace TestFormsApp_Planning
                 orderAllocation.WorkStation = order.WorkStation;
                 orderAllocation.Order = order.Order;
                 calendar1.Schedule.Items.Add(orderAllocation);
-                //NewOrderAllocations.Add(orderAllocation);
-                //UnsavedOrderAllocations.Push(orderAllocation);
-                //AddToOrdersToView();
                 calendar1.Invalidate();
                 undo.Enabled = true;
                 undoToolStripMenuItem.Enabled = true;
@@ -621,7 +619,7 @@ namespace TestFormsApp_Planning
                     {
                         ScheduleDetails details = new ScheduleDetails
                         {
-                            
+                             
                             StartTime = oa.StartTime,
                             EndTime = oa.EndTime,
                             VisibleStartTime = oa.VisibleStartTime,
@@ -630,9 +628,10 @@ namespace TestFormsApp_Planning
                             WorkStationId = oa.WorkStation.WorkStationId,
                             OperationTypeId = oa.Operation_Type.Operation_Type_Id,
                             OrderId = oa.Order.OrderId,
+                      
                             Qty = double.Parse(oa.Qty),
-                            
-                            
+
+
                         };
 
                         context.ScheduleDetails.Add(details);
