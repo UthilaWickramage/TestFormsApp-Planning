@@ -21,18 +21,52 @@ namespace TestFormsApp_Planning
         BindingList<Operation> _scheduledList;
         List<WorkStation> _workStations;
         string _OrderNo;
+        ItemCollection _itemCollection;
 
-        public FullOrder(BindingList<Operation> unScheduledList, BindingList<Operation> scheduledList, List<WorkStation> workstations, string OrderNo)
+        public FullOrder(ItemCollection itemCollection,BindingList<Operation> unScheduledList, BindingList<Operation> scheduledList, List<WorkStation> workstations, string OrderNo)
         {
             InitializeComponent();
+            optMainTheme.optMainTheme mt = new optMainTheme.optMainTheme();
+            calendar1.ApplyTheme(mt);
             _unScheduledList = unScheduledList;
             _scheduledList = scheduledList;
             _workStations = workstations;
             _OrderNo = OrderNo;
+            _itemCollection  = itemCollection;
             loadContacts();
             loadTasks();
             loadOrderDetails();
             FillDataGridViews();
+            dataGridView1.DefaultCellStyle.BackColor = Color.DarkGray;           // Row background color
+            dataGridView1.DefaultCellStyle.ForeColor = Color.Black;           // Row text color
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DodgerBlue;   // Row selection background color
+            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;      // Row selection text color
+
+            // Customize the column headers' style
+            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);  // Font style for header text
+
+            // Optionally customize row headers if they are shown (optional)
+            dataGridView1.RowHeadersDefaultCellStyle.BackColor = Color.DarkGray;   // Row header background color
+            dataGridView1.RowHeadersDefaultCellStyle.ForeColor = Color.Black;           // Row header text color
+
+            // Disable column headers visual styles (to apply custom styles completely)
+            dataGridView1.EnableHeadersVisualStyles = false;
+
+            dataGridView2.DefaultCellStyle.BackColor = Color.DarkGray;           // Row background color
+            dataGridView2.DefaultCellStyle.ForeColor = Color.Black;           // Row text color
+            dataGridView2.DefaultCellStyle.SelectionBackColor = Color.DodgerBlue;   // Row selection background color
+            dataGridView2.DefaultCellStyle.SelectionForeColor = Color.White;      // Row selection text color
+            dataGridView2.BackgroundColor = SystemColors.ControlDarkDark;
+            // Customize the column headers' style
+            //dataGridView2.ColumnHeadersDefaultCellStyle.BackColor = Color.DarkGray;   // Header background color
+            //dataGridView2.ColumnHeadersDefaultCellStyle.ForeColor = Color.Black;           // Header text color
+            //dataGridView2.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);  // Font style for header text
+
+            // Optionally customize row headers if they are shown (optional)
+            dataGridView2.RowHeadersDefaultCellStyle.BackColor = Color.DarkGray;   // Row header background color
+            dataGridView2.RowHeadersDefaultCellStyle.ForeColor = Color.Black;           // Row header text color
+            // Disable column headers visual styles (to apply custom styles completely)
+            dataGridView2.EnableHeadersVisualStyles = false;
         }
 
         private void FillDataGridViews()
@@ -64,44 +98,27 @@ namespace TestFormsApp_Planning
 
         private void loadTasks()
         {
-           
             DateTime earliest = DateTime.Now;
-            var list = _scheduledList.Where(l => l.OrderNo == _OrderNo).ToList();
-          
-            foreach (Operation op in list)
+            var list = _itemCollection.Where(l => l.HeaderText == _OrderNo).ToList();
+       
+            foreach (OrderAllocation oa in list)
             {
-                foreach (var d in op.ScheduledOperationDetails)
-                {
-                    if (earliest > d.StartTime)
-                    {
-                        earliest = d.StartTime;
-                    }
-                    MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Id.Trim() == op.WorkStation.WorkStationId.ToString()).FirstOrDefault();
-                 
-                    contact.Name = op.WorkStation.WorkStationName;
-                    contact.Id = op.WorkStation.WorkStationId.ToString();
+             
+                if (earliest > oa.StartTime)
+                   {
+                    earliest = oa.StartTime;
+                   }
                 
-                    OrderAllocation oa = new OrderAllocation();
-                    oa.OrderAllocationId = op.Order.OrderId;
+                MindFusion.Scheduling.Contact contact = calendar1.Contacts.FirstOrDefault(c => c.Id == oa.Contact.Id);
 
-                    oa.OrderTitle = op.OrderNo;
-                    oa.HeaderText = op.OrderNo;
-                    oa.StartTime = d.StartTime;
-                    oa.EndTime = d.EndTime;
-                    oa.VisibleEndTime = d.VisibleEndTime;
-                    oa.VisibleStartTime = d.VisibleStartTime;
-                    oa.Qty = d.Qty.ToString();
-                    oa.DurationInHours = d.DurationInHours;
-                    oa.deliveryDate = op.DeliveryDate;
-                    oa.Customer = op.Customer;
-                    oa.Id = d.ScheduledOperationDetailsId.ToString();
+                if (contact != null)
+                {
                     oa.Contacts.Add(contact);
-                    oa.Operation_Type = op.Operation_Type;
-                    oa.ProductName = op.Product.Product_Name;
-                    oa.Style.FillColor = System.Drawing.Color.Red;
-                    oa.Style.LineColor = System.Drawing.Color.Red;
-                    calendar1.Schedule.Items.Add(oa);
                 }
+                oa.Style.FillColor = Color.Red;
+                oa.Style.LineColor = Color.Red;
+                calendar1.Schedule.Items.Add(oa);
+
             }
 
             calendar1.Date = earliest;

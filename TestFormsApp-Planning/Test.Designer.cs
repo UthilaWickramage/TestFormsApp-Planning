@@ -30,6 +30,12 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Scheduler));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             panel1 = new Panel();
             splitter1 = new Splitter();
             splitContainer1 = new SplitContainer();
@@ -62,6 +68,8 @@
             label2 = new Label();
             calendar1 = new MindFusion.Scheduling.WinForms.Calendar();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            splitHereToolStripMenuItem = new ToolStripMenuItem();
+            splitByQuantityToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
             createOrderToolStripMenuItem = new ToolStripMenuItem();
@@ -73,8 +81,8 @@
             redoToolStripMenuItem = new ToolStripMenuItem();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             panel3 = new Panel();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
+            tabControlAdv1 = new Syncfusion.Windows.Forms.Tools.TabControlAdv();
+            tabPageAdv1 = new Syncfusion.Windows.Forms.Tools.TabPageAdv();
             dataGridView1 = new DataGridView();
             OrderNo = new DataGridViewTextBoxColumn();
             Customer = new DataGridViewTextBoxColumn();
@@ -82,14 +90,18 @@
             ProductName = new DataGridViewTextBoxColumn();
             DeliveryDate = new DataGridViewTextBoxColumn();
             OperationType = new DataGridViewTextBoxColumn();
-            tabPage2 = new TabPage();
+            tabPageAdv2 = new Syncfusion.Windows.Forms.Tools.TabPageAdv();
             dataGridView2 = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
+            Title = new DataGridViewTextBoxColumn();
             customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            productDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             qtyDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             deliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            productDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             scheduledOrderBindingSource = new BindingSource(components);
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            tabPage2 = new TabPage();
             orderBindingSource = new BindingSource(components);
             viewFullOrderToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
@@ -101,17 +113,20 @@
             ((System.ComponentModel.ISupportInitialize)calendar1).BeginInit();
             contextMenuStrip1.SuspendLayout();
             panel3.SuspendLayout();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tabControlAdv1).BeginInit();
+            tabControlAdv1.SuspendLayout();
+            tabPageAdv1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            tabPage2.SuspendLayout();
+            tabPageAdv2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)scheduledOrderBindingSource).BeginInit();
+            tabControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)orderBindingSource).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.BackColor = SystemColors.ControlDarkDark;
             panel1.Controls.Add(splitter1);
             panel1.Controls.Add(splitContainer1);
             panel1.Dock = DockStyle.Fill;
@@ -186,7 +201,7 @@
             // redo
             // 
             redo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            redo.BackColor = SystemColors.AppWorkspace;
+            redo.BackColor = SystemColors.Control;
             redo.FlatStyle = FlatStyle.Popup;
             redo.Image = Properties.Resources.icons8_redo_25;
             redo.Location = new Point(1048, 4);
@@ -199,7 +214,7 @@
             // undo
             // 
             undo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            undo.BackColor = SystemColors.AppWorkspace;
+            undo.BackColor = SystemColors.Control;
             undo.FlatStyle = FlatStyle.Flat;
             undo.Image = Properties.Resources.icons8_undo_25;
             undo.Location = new Point(1091, 4);
@@ -226,7 +241,7 @@
             // button4
             // 
             button4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button4.BackColor = SystemColors.AppWorkspace;
+            button4.BackColor = SystemColors.Control;
             button4.FlatStyle = FlatStyle.Flat;
             button4.Image = Properties.Resources.icons8_save_25;
             button4.Location = new Point(1136, 3);
@@ -239,7 +254,7 @@
             // button1
             // 
             button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button1.BackColor = SystemColors.AppWorkspace;
+            button1.BackColor = SystemColors.Control;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Image = Properties.Resources.icons8_create_25;
             button1.Location = new Point(1275, 4);
@@ -252,7 +267,7 @@
             // button3
             // 
             button3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button3.BackColor = SystemColors.AppWorkspace;
+            button3.BackColor = SystemColors.Control;
             button3.FlatStyle = FlatStyle.Flat;
             button3.Image = Properties.Resources.icons8_machine_25;
             button3.Location = new Point(1187, 4);
@@ -265,7 +280,7 @@
             // button2
             // 
             button2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button2.BackColor = SystemColors.AppWorkspace;
+            button2.BackColor = SystemColors.Control;
             button2.FlatStyle = FlatStyle.Flat;
             button2.Image = Properties.Resources.icons8_new_order_25;
             button2.Location = new Point(1231, 4);
@@ -511,12 +526,15 @@
             calendar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             calendar1.ContactNameFormat = "F";
             calendar1.ContextMenuStrip = contextMenuStrip1;
+            calendar1.ControlStyle.ButtonBorderColor = Color.DimGray;
             calendar1.CurrentView = MindFusion.Scheduling.WinForms.CalendarView.ResourceView;
             calendar1.CustomDraw = MindFusion.Scheduling.WinForms.CustomDrawElements.ResourceViewCell;
             calendar1.Date = new DateTime(2024, 8, 27, 0, 0, 0, 0);
             calendar1.EndDate = new DateTime(2024, 12, 31, 0, 0, 0, 0);
             calendar1.GroupType = MindFusion.Scheduling.WinForms.GroupType.GroupByContacts;
             calendar1.ItemSettings.MoveBandSize = 2;
+            calendar1.ItemSettings.PointedItemStyle = (MindFusion.Scheduling.Style)resources.GetObject("calendar1.ItemSettings.PointedItemStyle");
+            calendar1.ItemSettings.Size = 5;
             calendar1.LicenseKey = null;
             calendar1.Location = new Point(0, 0);
             calendar1.Name = "calendar1";
@@ -540,14 +558,29 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.ImageScalingSize = new Size(20, 20);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem4, toolStripMenuItem1, toolStripMenuItem3, toolStripMenuItem2, undoToolStripMenuItem, redoToolStripMenuItem, preferencesToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { splitHereToolStripMenuItem, splitByQuantityToolStripMenuItem, toolStripMenuItem4, toolStripMenuItem1, toolStripMenuItem3, toolStripMenuItem2, undoToolStripMenuItem, redoToolStripMenuItem, preferencesToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(184, 186);
+            contextMenuStrip1.Size = new Size(193, 238);
+            contextMenuStrip1.Opening += contextMenuStrip1_Opening;
+            // 
+            // splitHereToolStripMenuItem
+            // 
+            splitHereToolStripMenuItem.Name = "splitHereToolStripMenuItem";
+            splitHereToolStripMenuItem.Size = new Size(192, 26);
+            splitHereToolStripMenuItem.Text = "Split Here";
+            splitHereToolStripMenuItem.Click += splitHereToolStripMenuItem_Click;
+            // 
+            // splitByQuantityToolStripMenuItem
+            // 
+            splitByQuantityToolStripMenuItem.Name = "splitByQuantityToolStripMenuItem";
+            splitByQuantityToolStripMenuItem.Size = new Size(192, 26);
+            splitByQuantityToolStripMenuItem.Text = "Split By Quantity";
+            splitByQuantityToolStripMenuItem.Click += splitByQuantityToolStripMenuItem_Click_1;
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(183, 26);
+            toolStripMenuItem4.Size = new Size(192, 26);
             toolStripMenuItem4.Text = "View Full Order";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
@@ -555,7 +588,7 @@
             // 
             toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { createOrderToolStripMenuItem });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(183, 26);
+            toolStripMenuItem1.Size = new Size(192, 26);
             toolStripMenuItem1.Text = "Orders";
             // 
             // createOrderToolStripMenuItem
@@ -569,7 +602,7 @@
             // 
             toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { createWorkstationToolStripMenuItem });
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(183, 26);
+            toolStripMenuItem3.Size = new Size(192, 26);
             toolStripMenuItem3.Text = "Workstations";
             // 
             // createWorkstationToolStripMenuItem
@@ -583,7 +616,7 @@
             // 
             toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { createHolidayToolStripMenuItem });
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(183, 26);
+            toolStripMenuItem2.Size = new Size(192, 26);
             toolStripMenuItem2.Text = "Holidays";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
@@ -599,7 +632,7 @@
             undoToolStripMenuItem.Enabled = false;
             undoToolStripMenuItem.Image = Properties.Resources.icons8_undo_25;
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.Size = new Size(183, 26);
+            undoToolStripMenuItem.Size = new Size(192, 26);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -608,7 +641,7 @@
             redoToolStripMenuItem.Enabled = false;
             redoToolStripMenuItem.Image = Properties.Resources.icons8_redo_25;
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            redoToolStripMenuItem.Size = new Size(183, 26);
+            redoToolStripMenuItem.Size = new Size(192, 26);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
@@ -616,11 +649,12 @@
             // 
             preferencesToolStripMenuItem.Image = Properties.Resources.icons8_settings_50;
             preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            preferencesToolStripMenuItem.Size = new Size(183, 26);
+            preferencesToolStripMenuItem.Size = new Size(192, 26);
             preferencesToolStripMenuItem.Text = "Preferences";
             // 
             // panel3
             // 
+            panel3.Controls.Add(tabControlAdv1);
             panel3.Controls.Add(tabControl1);
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 0);
@@ -628,30 +662,31 @@
             panel3.Size = new Size(1362, 224);
             panel3.TabIndex = 7;
             // 
-            // tabControl1
+            // tabControlAdv1
             // 
-            tabControl1.Appearance = TabAppearance.FlatButtons;
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.HotTrack = true;
-            tabControl1.Location = new Point(0, 0);
-            tabControl1.Multiline = true;
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1362, 224);
-            tabControl1.TabIndex = 7;
+            tabControlAdv1.ActiveTabColor = SystemColors.ControlDarkDark;
+            tabControlAdv1.BackColor = SystemColors.ControlDark;
+            tabControlAdv1.BeforeTouchSize = new Size(1362, 224);
+            tabControlAdv1.Controls.Add(tabPageAdv1);
+            tabControlAdv1.Controls.Add(tabPageAdv2);
+            tabControlAdv1.Dock = DockStyle.Fill;
+            tabControlAdv1.Location = new Point(0, 0);
+            tabControlAdv1.Name = "tabControlAdv1";
+            tabControlAdv1.Size = new Size(1362, 224);
+            tabControlAdv1.TabIndex = 8;
             // 
-            // tabPage1
+            // tabPageAdv1
             // 
-            tabPage1.Controls.Add(dataGridView1);
-            tabPage1.Location = new Point(4, 32);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1354, 188);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Pending Orders";
-            tabPage1.UseVisualStyleBackColor = true;
+            tabPageAdv1.Controls.Add(dataGridView1);
+            tabPageAdv1.Image = null;
+            tabPageAdv1.ImageSize = new Size(20, 20);
+            tabPageAdv1.Location = new Point(1, 33);
+            tabPageAdv1.Name = "tabPageAdv1";
+            tabPageAdv1.ShowCloseButton = true;
+            tabPageAdv1.Size = new Size(1359, 189);
+            tabPageAdv1.TabIndex = 1;
+            tabPageAdv1.Text = "Unscheduled Operations";
+            tabPageAdv1.ThemesEnabled = false;
             // 
             // dataGridView1
             // 
@@ -659,16 +694,41 @@
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToResizeRows = false;
-            dataGridView1.BackgroundColor = SystemColors.WindowFrame;
+            dataGridView1.BackgroundColor = SystemColors.ControlDarkDark;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = Color.DarkGray;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { OrderNo, Customer, Qty, ProductName, DeliveryDate, OperationType });
             dataGridView1.ContextMenuStrip = contextMenuStrip1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.DarkGray;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = Color.DarkGray;
+            dataGridViewCellStyle2.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(3, 3);
+            dataGridView1.EnableHeadersVisualStyles = false;
+            dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.DarkGray;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1348, 182);
-            dataGridView1.TabIndex = 6;
+            dataGridView1.Size = new Size(1359, 189);
+            dataGridView1.TabIndex = 7;
             dataGridView1.MouseDown += dataGridView1_MouseDown;
             // 
             // OrderNo
@@ -725,16 +785,18 @@
             OperationType.Name = "OperationType";
             OperationType.ReadOnly = true;
             // 
-            // tabPage2
+            // tabPageAdv2
             // 
-            tabPage2.Controls.Add(dataGridView2);
-            tabPage2.Location = new Point(4, 32);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1354, 188);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Schedule Orders";
-            tabPage2.UseVisualStyleBackColor = true;
+            tabPageAdv2.Controls.Add(dataGridView2);
+            tabPageAdv2.Image = null;
+            tabPageAdv2.ImageSize = new Size(20, 20);
+            tabPageAdv2.Location = new Point(1, 33);
+            tabPageAdv2.Name = "tabPageAdv2";
+            tabPageAdv2.ShowCloseButton = true;
+            tabPageAdv2.Size = new Size(1359, 189);
+            tabPageAdv2.TabIndex = 2;
+            tabPageAdv2.Text = "Scheduled Operations";
+            tabPageAdv2.ThemesEnabled = false;
             // 
             // dataGridView2
             // 
@@ -742,27 +804,50 @@
             dataGridView2.AllowUserToDeleteRows = false;
             dataGridView2.AutoGenerateColumns = false;
             dataGridView2.BackgroundColor = SystemColors.ControlDarkDark;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dataGridViewCellStyle4.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            dataGridView2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Column1, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn });
+            dataGridView2.Columns.AddRange(new DataGridViewColumn[] { Title, customerDataGridViewTextBoxColumn, productDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, dataGridViewTextBoxColumn1 });
             dataGridView2.ContextMenuStrip = contextMenuStrip1;
             dataGridView2.DataSource = scheduledOrderBindingSource;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.DarkGray;
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = Color.Black;
+            dataGridViewCellStyle5.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle5.SelectionForeColor = Color.Black;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
+            dataGridView2.DefaultCellStyle = dataGridViewCellStyle5;
             dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(3, 3);
+            dataGridView2.EnableHeadersVisualStyles = false;
+            dataGridView2.Location = new Point(0, 0);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = Color.DarkGray;
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle6.ForeColor = Color.Black;
+            dataGridViewCellStyle6.SelectionBackColor = Color.DodgerBlue;
+            dataGridViewCellStyle6.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
+            dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1348, 182);
+            dataGridView2.Size = new Size(1359, 189);
             dataGridView2.TabIndex = 0;
             dataGridView2.MouseDown += dataGridView2_MouseDown;
             // 
-            // Column1
+            // Title
             // 
-            Column1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            Column1.DataPropertyName = "OrderNo";
-            Column1.HeaderText = "Order No";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
+            Title.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            Title.DataPropertyName = "OrderNo";
+            Title.HeaderText = "Order No";
+            Title.MinimumWidth = 6;
+            Title.Name = "Title";
+            Title.ReadOnly = true;
             // 
             // customerDataGridViewTextBoxColumn
             // 
@@ -772,6 +857,15 @@
             customerDataGridViewTextBoxColumn.MinimumWidth = 6;
             customerDataGridViewTextBoxColumn.Name = "customerDataGridViewTextBoxColumn";
             customerDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // productDataGridViewTextBoxColumn
+            // 
+            productDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            productDataGridViewTextBoxColumn.DataPropertyName = "ProductName";
+            productDataGridViewTextBoxColumn.HeaderText = "Product";
+            productDataGridViewTextBoxColumn.MinimumWidth = 6;
+            productDataGridViewTextBoxColumn.Name = "productDataGridViewTextBoxColumn";
+            productDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // qtyDataGridViewTextBoxColumn
             // 
@@ -791,18 +885,54 @@
             deliveryDateDataGridViewTextBoxColumn.Name = "deliveryDateDataGridViewTextBoxColumn";
             deliveryDateDataGridViewTextBoxColumn.ReadOnly = true;
             // 
-            // productDataGridViewTextBoxColumn
+            // dataGridViewTextBoxColumn1
             // 
-            productDataGridViewTextBoxColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            productDataGridViewTextBoxColumn.DataPropertyName = "ProductName";
-            productDataGridViewTextBoxColumn.HeaderText = "Product";
-            productDataGridViewTextBoxColumn.MinimumWidth = 6;
-            productDataGridViewTextBoxColumn.Name = "productDataGridViewTextBoxColumn";
-            productDataGridViewTextBoxColumn.ReadOnly = true;
+            dataGridViewTextBoxColumn1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewTextBoxColumn1.DataPropertyName = "OperationType";
+            dataGridViewTextBoxColumn1.HeaderText = "Operation Type";
+            dataGridViewTextBoxColumn1.MinimumWidth = 6;
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // scheduledOrderBindingSource
             // 
             scheduledOrderBindingSource.DataSource = typeof(Classes.ScheduledOrder);
+            // 
+            // tabControl1
+            // 
+            tabControl1.Appearance = TabAppearance.FlatButtons;
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Font = new Font("Segoe UI Emoji", 9F);
+            tabControl1.HotTrack = true;
+            tabControl1.Location = new Point(0, 0);
+            tabControl1.Multiline = true;
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(588, 224);
+            tabControl1.SizeMode = TabSizeMode.Fixed;
+            tabControl1.TabIndex = 7;
+            tabControl1.DrawItem += tabControl1_DrawItem;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Location = new Point(4, 32);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(580, 188);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Pending Orders";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Location = new Point(4, 32);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(580, 188);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Schedule Orders";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
             // orderBindingSource
             // 
@@ -833,12 +963,14 @@
             ((System.ComponentModel.ISupportInitialize)calendar1).EndInit();
             contextMenuStrip1.ResumeLayout(false);
             panel3.ResumeLayout(false);
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tabControlAdv1).EndInit();
+            tabControlAdv1.ResumeLayout(false);
+            tabPageAdv1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            tabPage2.ResumeLayout(false);
+            tabPageAdv2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ((System.ComponentModel.ISupportInitialize)scheduledOrderBindingSource).EndInit();
+            tabControl1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)orderBindingSource).EndInit();
             ResumeLayout(false);
         }
@@ -854,7 +986,6 @@
         private Splitter splitter1;
         private SplitContainer splitContainer1;
         private Panel panel2;
-        private DataGridView dataGridView1;
         private Panel panel3;
         private DataGridViewTextBoxColumn pendingOrderTitleDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn pendingOrderDescriptionDataGridViewTextBoxColumn;
@@ -910,19 +1041,27 @@
         private DataGridViewTextBoxColumn productNameDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn workstationNameDataGridViewTextBoxColumn;
         private BindingSource scheduledOrderBindingSource;
+        private ToolStripMenuItem viewFullOrderToolStripMenuItem;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
+        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripMenuItem splitHereToolStripMenuItem;
+        private ToolStripMenuItem splitByQuantityToolStripMenuItem;
+        private Syncfusion.Windows.Forms.Tools.TabControlAdv tabControlAdv1;
+        private Syncfusion.Windows.Forms.Tools.TabPageAdv tabPageAdv1;
+        private Syncfusion.Windows.Forms.Tools.TabPageAdv tabPageAdv2;
+        private DataGridView dataGridView1;
         private DataGridViewTextBoxColumn OrderNo;
         private DataGridViewTextBoxColumn Customer;
         private DataGridViewTextBoxColumn Qty;
         private DataGridViewTextBoxColumn ProductName;
         private DataGridViewTextBoxColumn DeliveryDate;
         private DataGridViewTextBoxColumn OperationType;
-        private ToolStripMenuItem viewFullOrderToolStripMenuItem;
-        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Title;
         private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
+        private DataGridViewTextBoxColumn productDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn productDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn workStationDataGridViewTextBoxColumn;
-        private ToolStripMenuItem toolStripMenuItem4;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
     }
 }

@@ -31,5 +31,7 @@ namespace TestFormsApp_Planning.Classes
         public double DurationInHours { get; set; }
 
         public DateTime deliveryDate { get; set; }
+
+        public double CapacityOfWorkstaiton { get; set; }
     }
 }

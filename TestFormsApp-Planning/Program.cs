@@ -1,3 +1,4 @@
+using Elegant.Ui;
 using System.ComponentModel;
 
 namespace TestFormsApp_Planning
@@ -14,6 +15,7 @@ namespace TestFormsApp_Planning
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.EnableVisualStyles();
+           SkinManager.DefaultTheme = EmbeddedTheme.Office2010Black;
             Application.SetCompatibleTextRenderingDefault(false);
             log4net.Config.XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             using (SplashScreen splash = new SplashScreen())

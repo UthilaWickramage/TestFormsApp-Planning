@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.0.0" />
+    <PackageReference Include="MaterialSkin.2" Version="2.3.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -33,6 +34,168 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Entities\Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Elegant.Ui.Common">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2007Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2007Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2007Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2007Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2007Silver">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2007Silver.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2010Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2010Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2010Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2010Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2010Silver">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2010Silver.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2010TP">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2010TP.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2013AzureDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2013AzureDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2013AzureLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2013AzureLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2013GreenDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2013GreenDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Office2013GreenLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Office2013GreenLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.System">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Common.Theme.Windows7">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Common.Theme.Windows7.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Design">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2007Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2007Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2007Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2007Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2010Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2010Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2010Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2010Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2013AzureDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2013AzureDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Office2013AzureLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Office2013AzureLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.System">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Grid.Theme.Windows7">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Grid.Theme.Windows7.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2007Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2007Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2007Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2007Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2010Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2010Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2010Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2010Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2013AzureDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2013AzureDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2013AzureLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2013AzureLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2013GreenDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2013GreenDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Office2013GreenLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Office2013GreenLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.System">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.NavigationBar.Theme.Windows7">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.NavigationBar.Theme.Windows7.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Design">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2007Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2007Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2007Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2007Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2007Silver">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2007Silver.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2010Black">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2010Black.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2010Blue">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2010Blue.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2010Silver">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2010Silver.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2010TP">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2010TP.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2013AzureDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2013AzureDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2013AzureLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2013AzureLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2013RedDarkGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2013RedDarkGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Office2013RedLightGrey">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Office2013RedLightGrey.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.System">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Elegant.Ui.Ribbon.Theme.Windows7">
+      <HintPath>..\..\..\..\..\..\optPlan\Full Planing Board\Full Planing Board\bin\Debug\Elegant.Ui.Ribbon.Theme.Windows7.dll</HintPath>
+    </Reference>
+    <Reference Include="MindFusion.Common">
+      <HintPath>..\..\..\..\Downloads\nayomiTheme\nayomiTheme\MindFusion.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="MindFusion.Scheduling">
+      <HintPath>..\..\..\..\Downloads\nayomiTheme\nayomiTheme\MindFusion.Scheduling.dll</HintPath>
+    </Reference>
+    <Reference Include="optMainTheme">
+      <HintPath>..\..\..\..\Downloads\nayomiTheme\nayomiTheme\optMainTheme.dll</HintPath>
+    </Reference>
+    <Reference Include="opttheme">
+      <HintPath>..\..\..\..\Downloads\nayomiTheme\nayomiTheme\opttheme.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

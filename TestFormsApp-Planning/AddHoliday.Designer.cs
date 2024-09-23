@@ -41,7 +41,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Lavender;
+            panel1.BackColor = SystemColors.Control;
             panel1.Controls.Add(button1);
             panel1.Controls.Add(dateTimePicker1);
             panel1.Controls.Add(textBox1);

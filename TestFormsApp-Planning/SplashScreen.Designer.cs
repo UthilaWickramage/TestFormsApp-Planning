@@ -37,6 +37,7 @@
             // 
             // pictureBox1
             // 
+            pictureBox1.BackColor = Color.MidnightBlue;
             pictureBox1.Image = Properties.Resources.icons8_schedule_642;
             pictureBox1.Location = new Point(40, 50);
             pictureBox1.Name = "pictureBox1";
@@ -47,6 +48,7 @@
             // label1
             // 
             label1.AutoSize = true;
+            label1.BackColor = Color.MidnightBlue;
             label1.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.Lavender;
             label1.Location = new Point(133, 62);
@@ -57,7 +59,9 @@
             // 
             // panel1
             // 
+            panel1.BackColor = Color.MidnightBlue;
             panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Cursor = Cursors.No;
             panel1.ForeColor = SystemColors.ButtonHighlight;
             panel1.Location = new Point(12, 12);
             panel1.Name = "panel1";
@@ -68,7 +72,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.DarkBlue;
+            BackColor = Color.MidnightBlue;
             ClientSize = new Size(639, 180);
             Controls.Add(label1);
             Controls.Add(pictureBox1);

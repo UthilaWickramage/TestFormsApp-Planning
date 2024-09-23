@@ -15,6 +15,8 @@ using MindFusion.Excel;
 using MindFusion.HolidayProviders;
 using MindFusion.Scheduling;
 using MindFusion.Scheduling.WinForms;
+using optMainTheme;
+using Syncfusion.Windows.Forms;
 using Syncfusion.Windows.Forms.Tools.Win32API;
 using TestFormsApp_Planning.Classes;
 using TestFormsApp_Planning.Helpers;
@@ -25,7 +27,6 @@ namespace TestFormsApp_Planning
     public partial class Scheduler : Form
     {
         private List<Entities.WorkStation> machines = new List<Entities.WorkStation>();
-        private List<Entities.Order> tasks = new List<Entities.Order>();
         private List<Entities.Holiday> holidays = new List<Entities.Holiday>();
         private List<Entities.CustomDay> CustomDays = new List<Entities.CustomDay>();
 
@@ -35,8 +36,6 @@ namespace TestFormsApp_Planning
         List<Classes.Operation> scheduledOrderList = new List<Classes.Operation>();
         List<Classes.Operation> orderList = new List<Classes.Operation>();
 
-        private List<OrderAllocation> OrderAllocations = new List<OrderAllocation>();
-        private List<OrderAllocation> NewOrderAllocations = new List<OrderAllocation>();
 
 
 
@@ -50,21 +49,28 @@ namespace TestFormsApp_Planning
         private Item lastClickedItem;
         private DateTime lastClickTime = DateTime.MinValue;
         private ToolTip toolTip;
-        private int index = 0;
         bool isDraggingOver = false;  // Indicate the drag is in progress
         ToolTip toolTip2;
         Point client;
+        DateTime SplitHereClickedDateTime;
+        OrderAllocation SplitHereSelectedItem;
         private DataGridViewRow _dataGridView1clickedRow;
         private DataGridViewRow _dataGridView2clickedRow;
 
         public Scheduler()
         {
             InitializeComponent();
+
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
+            optMainTheme.optMainTheme mt = new optMainTheme.optMainTheme();
+            calendar1.ApplyTheme(mt);
 
             logger.Info("Application started.");
             this.StartPosition = FormStartPosition.CenterScreen;
-          
+            dataGridView1.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.DodgerBlue;   // Row selection background color
+            dataGridView1.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridView2.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.DodgerBlue;   // Row selection background color
+            dataGridView2.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             loadContacts();
             loadHolidays();
             loadOrders();
@@ -81,7 +87,7 @@ namespace TestFormsApp_Planning
             redo.Enabled = false;
             undo.Enabled = false;
             calendar1.ShowToolTips = true;
-
+            this.WindowState = FormWindowState.Maximized; // Maximize window
 
             // Add resources
         }
@@ -259,15 +265,16 @@ namespace TestFormsApp_Planning
                 var scheduledOperations = context.ScheduleDetails.ToList();
                 foreach (var scheduledOperation in scheduledOperations)
                 {
-                    var or = context.Orders.Include(o=>o.Product).Where(o=>o.OrderId == scheduledOperation.OrderId).FirstOrDefault();
+                    var or = context.Orders.Include(o => o.Product).Where(o => o.OrderId == scheduledOperation.OrderId).FirstOrDefault();
                     var ws = context.WorkStations.Find(scheduledOperation.WorkStationId);
                     var ot = context.OperationTypes.Find(scheduledOperation.OperationTypeId);
+                    var outputRateRecord = context.OutputRates.Where(o => o.WorkstationId == ws.WorkStationId && o.OperationTypeId == ot.Operation_Type_Id && o.ProductId == or.ProductId).FirstOrDefault();
                     MindFusion.Scheduling.Contact contact = calendar1.Contacts.Where(a => a.Name.Trim() == ws.WorkStationName.Trim()).FirstOrDefault();
 
                     contact.Name = ws.WorkStationName;
                     contact.Id = ws.WorkStationId.ToString();
                     OrderAllocation tsa = new OrderAllocation();
-                    tsa.OrderAllocationId = scheduledOperation.OrderId;
+                    tsa.OrderAllocationId = scheduledOperation.ScheduleDetailsId;
                     tsa.OrderTitle = or.OrderNo;
                     tsa.HeaderText = or.OrderNo;
                     tsa.StartTime = scheduledOperation.StartTime;
@@ -278,13 +285,18 @@ namespace TestFormsApp_Planning
                     tsa.DurationInHours = scheduledOperation.DurationInHours;
                     tsa.deliveryDate = or.ExpectedDeliveryDate;
                     tsa.Customer = or.CustomerName;
+                    tsa.CapacityOfWorkstaiton = outputRateRecord.Rate;
                     tsa.Operation_Type = scheduledOperation.OperationType;
                     tsa.ProductName = or.Product.Product_Name;
                     tsa.Id = scheduledOperation.ScheduleDetailsId.ToString();
+                    tsa.Order = or;
+                    tsa.WorkStation = ws;
+                    tsa.Operation_Type = ot;
+                    tsa.Contact = contact;
                     tsa.Contacts.Add(contact);
                     tsa.Style.FillColor = System.Drawing.Color.Red;
                     tsa.Style.LineColor = System.Drawing.Color.Red;
-                  
+
                     calendar1.Schedule.Items.Add(tsa);
                 }
             }
@@ -326,87 +338,65 @@ namespace TestFormsApp_Planning
 
         private void calendar1_DateClick(object sender, MindFusion.Scheduling.WinForms.ResourceDateEventArgs e)
         {
-
-            var resource = calendar1.GetResourceAt(e.Bounds.X, e.Bounds.Y);
-            if (resource != null)
+            if (e.Button == MouseButtons.Left)
             {
-                var r = new WorkStation()
+                var resource = calendar1.GetResourceAt(e.Bounds.X, e.Bounds.Y);
+                if (resource != null)
                 {
-                    WorkStationId = int.Parse(resource.Id),
-                    WorkStationName = resource.Name,
-                };
+                    var r = new WorkStation()
+                    {
+                        WorkStationId = int.Parse(resource.Id),
+                        WorkStationName = resource.Name,
+                    };
 
-                SetCustomHours form = new SetCustomHours(machines, r, e.Date);
-                form.FormClosed += (s, args) => LoadCustomDays();
-                form.StartPosition = FormStartPosition.CenterScreen;
-                form.Show();
+                    SetCustomHours form = new SetCustomHours(machines, r, e.Date);
+                    form.FormClosed += (s, args) => LoadCustomDays();
+                    form.StartPosition = FormStartPosition.CenterScreen;
+                    form.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Please click on a valid date");
+                }
             }
-            else
-            {
-                MessageBox.Show("Please click on a valid date");
-            }
+
         }
 
         private async void calendar1_ItemModified(object sender, MindFusion.Scheduling.WinForms.ItemModifiedEventArgs e)
         {
+            OrderAllocation oa = (OrderAllocation)e.Item;
+            calendar1.Schedule.Items.Remove(oa);
+            var isEmptyDay = calendar1.Schedule.Items.Any(i => i != oa && i.EndTime.Date == oa.StartTime.Date && i.Contacts.FirstOrDefault() == oa.Contacts.FirstOrDefault());
 
-            MessageBox.Show(e.Item.StartTime.ToString());
-            MessageBox.Show(e.Item.Contacts.FirstOrDefault().Name);
-            bool isFoundOrder = false;
-            OrderAllocation modifiedOrderAllocation = null;
-            foreach (var orderAllocation in OrderAllocations)
+            if (!isEmptyDay)
             {
-                if (orderAllocation.Id.ToString() == e.Item.Id)
+
+                DialogResult result = MessageBox.Show(
+                    "Do you want to move this to start of the day", // Message
+                    "Confirmation",            // Title
+                    MessageBoxButtons.YesNo,    // Buttons (Yes and No)
+                    MessageBoxIcon.Question     // Icon (Question mark)
+                    );
+
+                if (result == DialogResult.Yes)
                 {
-                    modifiedOrderAllocation = orderAllocation;
-                    OrderAllocations.Remove(orderAllocation);
-                    isFoundOrder = true;
-                    break;
+                    DateTime newStartTime = new DateTime(oa.StartTime.Year, oa.StartTime.Month, oa.StartTime.Day, 0, 0, 0);
+                    oa.StartTime = newStartTime;
                 }
             }
 
-            if (!isFoundOrder)
-            {
-                foreach (var orderAllocation in NewOrderAllocations)
-                {
-                    if (orderAllocation.Id.ToString() == e.Item.Id)
-                    {
-                        modifiedOrderAllocation = orderAllocation;
-                        NewOrderAllocations.Remove(orderAllocation);
-                        isFoundOrder = true;
-                        break;
-                    }
-                }
-            }
 
-            if (modifiedOrderAllocation != null)
-            {
-                MessageBox.Show(modifiedOrderAllocation.Qty);
-                double days = _util.CalculateDays(e.Item.StartTime, double.Parse(modifiedOrderAllocation.DurationInHours.ToString()), e.Item.Contacts.FirstOrDefault(), CustomDays);
-                DateTime endTime = _util.CalculateEndDateConsideringHolidays(e.Item.StartTime, decimal.Parse(days.ToString()));
-                DateTime visibleStartDateTime = _util.MapToVisibleRange(CustomDays, e.Item.StartTime, e.Item.Contacts.FirstOrDefault());
-                DateTime visibleEndDateTime = _util.MapToVisibleRange(CustomDays, endTime, e.Item.Contacts.FirstOrDefault());
+            double days = _util.CalculateDays(oa.StartTime, double.Parse(oa.DurationInHours.ToString()), oa.Contacts.FirstOrDefault(), CustomDays);
+            DateTime endTime = _util.CalculateEndDateConsideringHolidays(oa.StartTime, decimal.Parse(days.ToString()));
+            DateTime visibleStartDateTime = _util.MapToVisibleRange(CustomDays, oa.StartTime, oa.Contacts.FirstOrDefault());
+            DateTime visibleEndDateTime = _util.MapToVisibleRange(CustomDays, endTime, oa.Contacts.FirstOrDefault());
 
-                modifiedOrderAllocation.StartTime = e.Item.StartTime;
-                modifiedOrderAllocation.EndTime = endTime;
-                modifiedOrderAllocation.VisibleStartTime = visibleStartDateTime;
-                modifiedOrderAllocation.VisibleEndTime = visibleEndDateTime;
+            oa.EndTime = endTime;
+            oa.VisibleStartTime = visibleStartDateTime;
+            oa.VisibleEndTime = visibleEndDateTime;
 
-                if (isFoundOrder)
-                {
-                    NewOrderAllocations.Add(modifiedOrderAllocation);
-                }
-                else
-                {
-                    OrderAllocations.Add(modifiedOrderAllocation);
+            calendar1.Schedule.Items.Add(oa);
 
-                }
-                UnsavedOrderAllocations.Push(modifiedOrderAllocation);
-                undo.Enabled = true;
-                toolStripMenuItem2.Enabled = true;
-                //AddToOrdersToView();
-
-            }
 
         }
 
@@ -428,6 +418,7 @@ namespace TestFormsApp_Planning
                 if (r == null)
                 {
                     MessageBox.Show("Invalid Workstation");
+                    calendar1.Invalidate();
                     return;
                 }
 
@@ -435,6 +426,7 @@ namespace TestFormsApp_Planning
 
                 OrderAllocation orderAllocation = new OrderAllocation();
                 DateTime StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
+
                 orderAllocation.StartTime = StartTime;
                 orderAllocation.OrderTitle = order.OrderNo;
                 orderAllocation.HeaderText = order.OrderNo;
@@ -467,6 +459,10 @@ namespace TestFormsApp_Planning
                 orderAllocation.Order = order.Order;
                 orderAllocation.Style.FillColor = System.Drawing.Color.Red;
                 orderAllocation.Style.LineColor = System.Drawing.Color.Red;
+                orderAllocation.CapacityOfWorkstaiton = c.Capacity;
+                orderAllocation.WorkStation = order.WorkStation;
+                orderAllocation.Operation_Type = order.Operation_Type;
+                orderAllocation.Order = order.Order;
                 calendar1.Schedule.Items.Add(orderAllocation);
                 calendar1.Invalidate();
                 undo.Enabled = true;
@@ -601,9 +597,9 @@ namespace TestFormsApp_Planning
             {
                 foreach (OrderAllocation oa in calendar1.Schedule.Items)
                 {
-                    var scheduleDetails = await context.ScheduleDetails.FirstOrDefaultAsync(s => s.OrderId == oa.OrderAllocationId);
+                    var scheduleDetails = await context.ScheduleDetails.FirstOrDefaultAsync(s => s.ScheduleDetailsId == oa.OrderAllocationId);
 
-                    if (scheduleDetails is null)
+                    if (scheduleDetails == null)
                     {
                         ScheduleDetails details = new ScheduleDetails
                         {
@@ -624,19 +620,17 @@ namespace TestFormsApp_Planning
 
                         context.ScheduleDetails.Add(details);
 
-                        var o = await context.Orders.FindAsync(oa.OrderAllocationId);
-                        if (o != null)
-                        {
-                            o.Status = OrderStatus.SCHEDULED;
-                            context.Orders.Update(o);
-                        }
 
 
                     }
                     else
                     {
+                        scheduleDetails.Qty = double.Parse(oa.Qty);
+                        scheduleDetails.DurationInHours = oa.DurationInHours;
                         scheduleDetails.StartTime = oa.StartTime;
                         scheduleDetails.EndTime = oa.EndTime;
+                        scheduleDetails.VisibleStartTime = oa.VisibleStartTime;
+                        scheduleDetails.VisibleEndTime = oa.VisibleEndTime;
                         context.ScheduleDetails.Update(scheduleDetails);
                         await context.SaveChangesAsync();
                     }
@@ -645,10 +639,7 @@ namespace TestFormsApp_Planning
                 await context.SaveChangesAsync();
 
             }
-            undo.Enabled = false;
-            redoToolStripMenuItem.Enabled = false;
-            undoToolStripMenuItem.Enabled = false;
-            redo.Enabled = false;
+
             MessageBox.Show("Changes Saved Successfully");
         }
 
@@ -749,6 +740,18 @@ namespace TestFormsApp_Planning
             {
                 calendar1.AllowDrag = false;
             }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                Point clickLocation = calendar1.PointToClient(Cursor.Position);
+
+                SplitHereClickedDateTime = calendar1.GetDateAt(clickLocation);
+                SplitHereSelectedItem = (OrderAllocation)e.Item;
+
+
+            }
+
+
         }
 
         bool isCollapsed = false;
@@ -782,87 +785,30 @@ namespace TestFormsApp_Planning
         private void undo_Click(object sender, EventArgs e)
         {
 
-
-            OrderAllocation orderAllocation = null;
-            if (UnsavedOrderAllocations.Count > 0)
-            {
-                orderAllocation = UnsavedOrderAllocations.Pop();
-            }
-            else
-            {
-                //redo.Enabled = false;
-            }
-
-            if (orderAllocation != null)
-            {
-                UndoneOrderAllocations.Push(orderAllocation);
-                redo.Enabled = true;
-                redoToolStripMenuItem.Enabled = true;
-                UndoRemoveRow();
-                if (UnsavedOrderAllocations.Count == 0)
-                {
-                    undo.Enabled = false;
-                    undoToolStripMenuItem.Enabled = false;
-                }
-            }
-
-            //AddToOrdersToView();
-            calendar1.Invalidate();
-            calendar1.Update();
         }
 
         private void redo_Click(object sender, EventArgs e)
         {
-            OrderAllocation orderAllocation = null;
-            if (UndoneOrderAllocations.Count > 0)
-            {
-                orderAllocation = UndoneOrderAllocations.Pop();
-                //button6.Enabled = false;
-            }
-            else
-            {
-                //redo.Enabled = false;
-            }
 
-            if (orderAllocation != null)
-            {
-                UnsavedOrderAllocations.Push(orderAllocation);
-                undo.Enabled = true;
-                undoToolStripMenuItem.Enabled = true;
-                RemoveRow();
-                if (UndoneOrderAllocations.Count == 0)
-                {
-                    redo.Enabled = false;
-                    redoToolStripMenuItem.Enabled = false;
-                }
-            }
-
-            // AddToOrdersToView();
         }
 
         private void calendar1_ItemTooltipDisplaying(object sender, ItemTooltipEventArgs e)
         {
+            OrderAllocation item = (OrderAllocation)e.Item;
 
-          
-                OrderAllocation item = (OrderAllocation)e.Item;
+            string t = $"Order No: {item.OrderTitle}\n" +
+                   $"Customer: {item.Customer}\n" +
+                      $"Product: {item.ProductName}\n" +
+                       $"Delivery Date: {new DateOnly(item.deliveryDate.Year, item.deliveryDate.Month, item.deliveryDate.Day)}\n" +
 
-                string t = $"Order No: {item.OrderTitle}\n" +
-                       $"Customer: {item.Customer}\n" +
-                          $"Product: {item.ProductName}\n" +
-                           $"Delivery Date: {new DateOnly(item.deliveryDate.Year,item.deliveryDate.Month,item.deliveryDate.Day)}\n" +
-                        
-                           "--------------------------------\n" +
-                        
-                            $"Operation Type: {item.Operation_Type.Operation_Type_Name}\n" +
-                 $"Duration: {item.DurationInHours}\n" +
-                   $"Qty: {item.Qty}\n" +
-                    $"Start Time: {item.VisibleStartTime}\n" +
-                              $"End Time: {item.VisibleEndTime}\n";
+                       "--------------------------------\n" +
 
-                e.Tooltip = t;
-           
-           
-
+                        $"Operation Type: {item.Operation_Type.Operation_Type_Name}\n" +
+             $"Duration: {item.DurationInHours}\n" +
+               $"Qty: {item.Qty}\n" +
+                $"Start Time: {item.VisibleStartTime}\n" +
+                          $"End Time: {item.VisibleEndTime}\n";
+            e.Tooltip = t;
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -905,33 +851,6 @@ namespace TestFormsApp_Planning
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-
-            OrderAllocation orderAllocation = null;
-            if (UnsavedOrderAllocations.Count > 0)
-            {
-                orderAllocation = UnsavedOrderAllocations.Pop();
-            }
-
-
-            if (orderAllocation != null)
-            {
-                UndoneOrderAllocations.Push(orderAllocation);
-                redo.Enabled = true;
-                redoToolStripMenuItem.Enabled = true;
-                UndoRemoveRow();
-                if (UnsavedOrderAllocations.Count == 0)
-                {
-                    undo.Enabled = false;
-                    undoToolStripMenuItem.Enabled = false;
-                }
-            }
-
-            //AddToOrdersToView();
-            calendar1.Invalidate();
-            calendar1.Update();
-
-
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1020,9 +939,9 @@ namespace TestFormsApp_Planning
             {
 
                 string orderNo = _dataGridView1clickedRow.Cells[0].Value.ToString();
-                FullOrder fullOrder = new FullOrder(uniqueOrderList, uniqueScheduledOrderList, machines,orderNo);
+                FullOrder fullOrder = new FullOrder(calendar1.Schedule.Items, uniqueOrderList, uniqueScheduledOrderList, machines, orderNo);
                 fullOrder.Text = "Order No :" + orderNo;
-        
+
 
                 _dataGridView1clickedRow = null;
                 fullOrder.Show();
@@ -1032,8 +951,8 @@ namespace TestFormsApp_Planning
             {
 
                 string orderNo = _dataGridView2clickedRow.Cells[0].Value.ToString();
-         
-                FullOrder fullOrder = new FullOrder(uniqueOrderList, uniqueScheduledOrderList, machines, orderNo);
+
+                FullOrder fullOrder = new FullOrder(calendar1.Schedule.Items, uniqueOrderList, uniqueScheduledOrderList, machines, orderNo);
                 fullOrder.Text = "Order No :" + orderNo;
                 _dataGridView2clickedRow = null;
                 fullOrder.Show();
@@ -1042,7 +961,7 @@ namespace TestFormsApp_Planning
         }
 
 
-     
+
         private void dataGridView2_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -1064,6 +983,126 @@ namespace TestFormsApp_Planning
                     contextMenuStrip1.Show(dataGridView2, e.Location);
                 }
             }
+        }
+
+        private void splitHereToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void splitByQuantityToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void splitByQuantityToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            double inputQty = 0;
+
+            using (SplitAt sa = new SplitAt(decimal.Parse(SplitHereSelectedItem.Qty), SplitHereSelectedItem.Operation_Type.Operation_Type_Name))
+            {
+                if (sa.ShowDialog() == DialogResult.OK)
+                {
+                    inputQty = sa.qty;
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            double otherNewQty = double.Parse(SplitHereSelectedItem.Qty) - inputQty;
+
+            MindFusion.Scheduling.Contact contact = calendar1.Contacts.FirstOrDefault(c => c.Id == SplitHereSelectedItem.Contact.Id);
+
+
+            double durationInHours = (double.Parse(inputQty.ToString()) / SplitHereSelectedItem.CapacityOfWorkstaiton);
+
+            double days = _util.CalculateDays(SplitHereSelectedItem.StartTime, durationInHours, contact, CustomDays);
+
+            DateTime endTime = _util.CalculateEndDateConsideringHolidays(SplitHereSelectedItem.StartTime, decimal.Parse(days.ToString()));
+
+            DateTime visibleEndDateTime = _util.MapToVisibleRange(CustomDays, endTime, contact);
+
+            double durationInHoursNew = (double.Parse(otherNewQty.ToString()) / SplitHereSelectedItem.CapacityOfWorkstaiton);
+
+            double daysNew = _util.CalculateDays(endTime, durationInHoursNew, contact, CustomDays);
+
+            DateTime endTimeNew = _util.CalculateEndDateConsideringHolidays(endTime, decimal.Parse(daysNew.ToString()));
+
+            DateTime visibleStartDateTimeNew = _util.MapToVisibleRange(CustomDays, endTime, contact);
+
+            DateTime visibleEndDateTimeNew = _util.MapToVisibleRange(CustomDays, endTimeNew, contact);
+
+
+            OrderAllocation oa = new OrderAllocation();
+            oa.OrderAllocationId = -1;
+            oa.OrderTitle = SplitHereSelectedItem.OrderTitle;
+            oa.HeaderText = SplitHereSelectedItem.OrderTitle;
+            oa.StartTime = endTime;
+            oa.EndTime = endTimeNew;
+            oa.VisibleEndTime = visibleEndDateTimeNew;
+            oa.VisibleStartTime = visibleStartDateTimeNew;
+            oa.Qty = otherNewQty.ToString();
+            oa.DurationInHours = durationInHoursNew;
+            oa.deliveryDate = SplitHereSelectedItem.deliveryDate;
+            oa.Customer = SplitHereSelectedItem.Customer;
+            oa.Operation_Type = SplitHereSelectedItem.Operation_Type;
+            oa.WorkStation = SplitHereSelectedItem.WorkStation;
+            oa.Order = SplitHereSelectedItem.Order;
+            oa.ProductName = SplitHereSelectedItem.ProductName;
+            oa.Id = SplitHereSelectedItem.OrderAllocationId.ToString();
+            oa.Contact = contact;
+            oa.CapacityOfWorkstaiton = SplitHereSelectedItem.CapacityOfWorkstaiton;
+
+            if (contact != null)
+            {
+                oa.Contacts.Add(contact);
+            }
+            oa.Style.FillColor = System.Drawing.Color.Red;
+            oa.Style.LineColor = System.Drawing.Color.Red;
+
+
+            SplitHereSelectedItem.Qty = inputQty.ToString();
+            SplitHereSelectedItem.DurationInHours = durationInHours;
+            SplitHereSelectedItem.StartTime = SplitHereSelectedItem.StartTime;
+            SplitHereSelectedItem.EndTime = endTime;
+            SplitHereSelectedItem.VisibleStartTime = SplitHereSelectedItem.VisibleStartTime;
+            SplitHereSelectedItem.VisibleEndTime = visibleEndDateTime;
+
+            calendar1.Schedule.Items.Remove(SplitHereSelectedItem);
+
+            calendar1.Schedule.Items.Add(oa);
+            calendar1.Schedule.Items.Add(SplitHereSelectedItem);
+        }
+
+        private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            TabPage tabPage = tabControl1.TabPages[e.Index];
+
+            // Get the bounds of the tab
+            Rectangle tabRect = tabControl1.GetTabRect(e.Index);
+
+            // Set colors (background and text)
+            System.Drawing.Color tabBackColor = e.State == DrawItemState.Selected ? System.Drawing.Color.DarkBlue : System.Drawing.Color.LightGray; // Background color for selected/unselected tab
+            System.Drawing.Color tabTextColor = e.State == DrawItemState.Selected ? System.Drawing.Color.White : System.Drawing.Color.Black; // Text color for selected/unselected tab
+
+            // Fill the tab background
+            using (System.Drawing.Brush brush = new System.Drawing.SolidBrush(tabBackColor))
+            {
+                e.Graphics.FillRectangle(brush, tabRect);
+            }
+
+            // Draw the tab text
+            TextRenderer.DrawText(e.Graphics, tabPage.Text, tabControl1.Font, tabRect, tabTextColor, TextFormatFlags.Left);
+
         }
     }
 }

@@ -30,6 +30,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetCustomHours));
             panel1 = new Panel();
+            textBox2 = new TextBox();
+            label7 = new Label();
             button1 = new Button();
             textBox1 = new TextBox();
             dateTimePicker3 = new DateTimePicker();
@@ -42,14 +44,12 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            label7 = new Label();
-            textBox2 = new TextBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
-            panel1.BackColor = Color.AliceBlue;
+            panel1.BackColor = SystemColors.Control;
             panel1.Controls.Add(textBox2);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(button1);
@@ -69,6 +69,23 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(652, 523);
             panel1.TabIndex = 0;
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(179, 383);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(420, 27);
+            textBox2.TabIndex = 13;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 12F);
+            label7.Location = new Point(12, 382);
+            label7.Name = "label7";
+            label7.Size = new Size(126, 28);
+            label7.TabIndex = 12;
+            label7.Text = "Description : ";
             // 
             // button1
             // 
@@ -183,23 +200,6 @@
             label1.Size = new Size(265, 41);
             label1.TabIndex = 0;
             label1.Text = "Set Custom Hours";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 12F);
-            label7.Location = new Point(12, 382);
-            label7.Name = "label7";
-            label7.Size = new Size(126, 28);
-            label7.TabIndex = 12;
-            label7.Text = "Description : ";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(179, 383);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(420, 27);
-            textBox2.TabIndex = 13;
             // 
             // SetCustomHours
             // 

@@ -42,7 +42,6 @@
             splitContainer1 = new SplitContainer();
             label10 = new Label();
             label9 = new Label();
-            tabPage2 = new TabPage();
             dataGridView2 = new DataGridView();
             orderNoDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             customerDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
@@ -51,7 +50,9 @@
             deliveryDateDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             operationTypeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
             operationBindingSource = new BindingSource(components);
-            tabPage1 = new TabPage();
+            operationBindingSource1 = new BindingSource(components);
+            tabControlAdv1 = new Syncfusion.Windows.Forms.Tools.TabControlAdv();
+            tabPageAdv1 = new Syncfusion.Windows.Forms.Tools.TabPageAdv();
             dataGridView1 = new DataGridView();
             orderNoDataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             customerDataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
@@ -59,20 +60,20 @@
             ProductName = new DataGridViewTextBoxColumn();
             deliveryDateDataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             operationTypeDataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            operationBindingSource1 = new BindingSource(components);
-            tabControl1 = new TabControl();
+            tabPageAdv2 = new Syncfusion.Windows.Forms.Tools.TabPageAdv();
             ((System.ComponentModel.ISupportInitialize)calendar1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
-            tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)operationBindingSource).BeginInit();
-            tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)operationBindingSource1).BeginInit();
-            tabControl1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tabControlAdv1).BeginInit();
+            tabControlAdv1.SuspendLayout();
+            tabPageAdv1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            tabPageAdv2.SuspendLayout();
             SuspendLayout();
             // 
             // calendar1
@@ -174,12 +175,14 @@
             label8.Text = "2024-09-24";
             // 
             // splitContainer1
+            // splitContainer1
             // 
             splitContainer1.Location = new Point(6, 12);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.BackColor = SystemColors.ControlDarkDark;
             splitContainer1.Panel1.Controls.Add(label10);
             splitContainer1.Panel1.Controls.Add(label9);
             splitContainer1.Panel1.Controls.Add(label1);
@@ -217,17 +220,6 @@
             label9.TabIndex = 10;
             label9.Text = "Qty :";
             // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(dataGridView2);
-            tabPage2.Location = new Point(4, 29);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1150, 172);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Scheduled Operations";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
             // dataGridView2
             // 
             dataGridView2.AllowUserToAddRows = false;
@@ -237,10 +229,10 @@
             dataGridView2.Columns.AddRange(new DataGridViewColumn[] { orderNoDataGridViewTextBoxColumn, customerDataGridViewTextBoxColumn, qtyDataGridViewTextBoxColumn, productNameDataGridViewTextBoxColumn, deliveryDateDataGridViewTextBoxColumn, operationTypeDataGridViewTextBoxColumn });
             dataGridView2.DataSource = operationBindingSource;
             dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(3, 3);
+            dataGridView2.Location = new Point(0, 0);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1144, 166);
+            dataGridView2.Size = new Size(1157, 175);
             dataGridView2.TabIndex = 0;
             // 
             // orderNoDataGridViewTextBoxColumn
@@ -295,31 +287,50 @@
             // 
             operationBindingSource.DataSource = typeof(Classes.Operation);
             // 
-            // tabPage1
+            // operationBindingSource1
             // 
-            tabPage1.Controls.Add(dataGridView1);
-            tabPage1.Location = new Point(4, 29);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1150, 172);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "Pending Operations";
-            tabPage1.UseVisualStyleBackColor = true;
+            operationBindingSource1.DataSource = typeof(Classes.Operation);
+            // 
+            // tabControlAdv1
+            // 
+            tabControlAdv1.BackColor = SystemColors.ControlDark;
+            tabControlAdv1.BeforeTouchSize = new Size(1160, 209);
+            tabControlAdv1.Controls.Add(tabPageAdv1);
+            tabControlAdv1.Controls.Add(tabPageAdv2);
+            tabControlAdv1.Dock = DockStyle.Bottom;
+            tabControlAdv1.Location = new Point(0, 384);
+            tabControlAdv1.Name = "tabControlAdv1";
+            tabControlAdv1.Size = new Size(1160, 209);
+            tabControlAdv1.TabIndex = 11;
+            // 
+            // tabPageAdv1
+            // 
+            tabPageAdv1.BackColor = SystemColors.ActiveCaption;
+            tabPageAdv1.Controls.Add(dataGridView1);
+            tabPageAdv1.Image = null;
+            tabPageAdv1.ImageSize = new Size(20, 20);
+            tabPageAdv1.Location = new Point(1, 33);
+            tabPageAdv1.Name = "tabPageAdv1";
+            tabPageAdv1.ShowCloseButton = true;
+            tabPageAdv1.Size = new Size(1157, 175);
+            tabPageAdv1.TabIndex = 1;
+            tabPageAdv1.Text = "Unscheduled Operations";
+            tabPageAdv1.ThemesEnabled = false;
             // 
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.BackgroundColor = SystemColors.ButtonHighlight;
+            dataGridView1.BackgroundColor = SystemColors.ControlDarkDark;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Columns.AddRange(new DataGridViewColumn[] { orderNoDataGridViewTextBoxColumn1, customerDataGridViewTextBoxColumn1, qtyDataGridViewTextBoxColumn1, ProductName, deliveryDateDataGridViewTextBoxColumn1, operationTypeDataGridViewTextBoxColumn2 });
             dataGridView1.DataSource = operationBindingSource1;
             dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(3, 3);
+            dataGridView1.Location = new Point(0, 0);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1144, 166);
-            dataGridView1.TabIndex = 0;
+            dataGridView1.Size = new Size(1157, 175);
+            dataGridView1.TabIndex = 1;
             // 
             // orderNoDataGridViewTextBoxColumn1
             // 
@@ -369,27 +380,27 @@
             operationTypeDataGridViewTextBoxColumn2.MinimumWidth = 6;
             operationTypeDataGridViewTextBoxColumn2.Name = "operationTypeDataGridViewTextBoxColumn2";
             // 
-            // operationBindingSource1
+            // tabPageAdv2
             // 
-            operationBindingSource1.DataSource = typeof(Classes.Operation);
-            // 
-            // tabControl1
-            // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(2, 387);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1158, 205);
-            tabControl1.TabIndex = 1;
+            tabPageAdv2.Controls.Add(dataGridView2);
+            tabPageAdv2.Image = null;
+            tabPageAdv2.ImageSize = new Size(20, 20);
+            tabPageAdv2.Location = new Point(1, 33);
+            tabPageAdv2.Name = "tabPageAdv2";
+            tabPageAdv2.ShowCloseButton = true;
+            tabPageAdv2.Size = new Size(1157, 175);
+            tabPageAdv2.TabIndex = 2;
+            tabPageAdv2.Text = "Scheduled Operations";
+            tabPageAdv2.ThemesEnabled = false;
             // 
             // FullOrder
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1162, 593);
+            BackColor = SystemColors.ControlDarkDark;
+            ClientSize = new Size(1160, 593);
+            Controls.Add(tabControlAdv1);
             Controls.Add(splitContainer1);
-            Controls.Add(tabControl1);
             MaximizeBox = false;
             Name = "FullOrder";
             StartPosition = FormStartPosition.CenterScreen;
@@ -400,13 +411,14 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ((System.ComponentModel.ISupportInitialize)operationBindingSource).EndInit();
-            tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)operationBindingSource1).EndInit();
-            tabControl1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tabControlAdv1).EndInit();
+            tabControlAdv1.ResumeLayout(false);
+            tabPageAdv1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            tabPageAdv2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -424,25 +436,25 @@
         private SplitContainer splitContainer1;
         private Label label10;
         private Label label9;
-        private TabPage tabPage2;
-        private TabPage tabPage1;
-        private TabControl tabControl1;
         private DataGridView dataGridView2;
-        private DataGridView dataGridView1;
         private BindingSource operationBindingSource;
         private BindingSource operationBindingSource1;
         private DataGridViewTextBoxColumn productNameDataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn orderNoDataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn ProductName;
-        private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn operationTypeDataGridViewTextBoxColumn2;
         private DataGridViewTextBoxColumn orderNoDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn productNameDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn;
         private DataGridViewTextBoxColumn operationTypeDataGridViewTextBoxColumn;
+        private Syncfusion.Windows.Forms.Tools.TabControlAdv tabControlAdv1;
+        private Syncfusion.Windows.Forms.Tools.TabPageAdv tabPageAdv1;
+        private Syncfusion.Windows.Forms.Tools.TabPageAdv tabPageAdv2;
+        private DataGridView dataGridView1;
+        private DataGridViewTextBoxColumn orderNoDataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn customerDataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn qtyDataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn ProductName;
+        private DataGridViewTextBoxColumn deliveryDateDataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn operationTypeDataGridViewTextBoxColumn2;
     }
 }

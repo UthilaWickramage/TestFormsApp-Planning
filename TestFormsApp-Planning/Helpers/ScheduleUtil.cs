@@ -290,5 +290,16 @@ namespace TestFormsApp_Planning.Helpers
         //    }
         //    return false;
         //}
+
+
+        public double FindQtyBetweenStartTimeAndSelectedTime(OrderAllocation orderAllocation, DateTime selectedDate)
+        {
+            double durationInHours = orderAllocation.DurationInHours;
+            double qty = double.Parse(orderAllocation.Qty);
+
+          double hours =   (selectedDate - orderAllocation.StartTime).TotalHours;
+            MessageBox.Show(hours.ToString());
+            return hours;
+        }
     }
 }
