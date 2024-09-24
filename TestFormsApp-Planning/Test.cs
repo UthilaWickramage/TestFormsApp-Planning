@@ -205,6 +205,7 @@ namespace TestFormsApp_Planning
                     }
                 }
                 dataGridView1.DataSource = uniqueOrderList;
+               
                 dataGridView2.DataSource = uniqueScheduledOrderList;
 
             }
@@ -365,8 +366,13 @@ namespace TestFormsApp_Planning
         private async void calendar1_ItemModified(object sender, MindFusion.Scheduling.WinForms.ItemModifiedEventArgs e)
         {
             OrderAllocation oa = (OrderAllocation)e.Item;
+            
+
+
             calendar1.Schedule.Items.Remove(oa);
+
             var isEmptyDay = calendar1.Schedule.Items.Any(i => i != oa && i.EndTime.Date == oa.StartTime.Date && i.Contacts.FirstOrDefault() == oa.Contacts.FirstOrDefault());
+
 
             if (!isEmptyDay)
             {
@@ -414,7 +420,7 @@ namespace TestFormsApp_Planning
                 .Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id);
 
                 var r = result.Where(r => r.WorkStation.WorkStationId.ToString() == contact.Id).FirstOrDefault();
-
+                DateTime StartTime;
                 if (r == null)
                 {
                     MessageBox.Show("Invalid Workstation");
@@ -422,10 +428,45 @@ namespace TestFormsApp_Planning
                     return;
                 }
 
+                var isEmptyDay = calendar1.Schedule.Items.Any(i => i.EndTime.Date == dropDateTime.Date && i.Contacts.FirstOrDefault() == contact);
+
+
+                if (!isEmptyDay)
+                {
+
+                    DialogResult dr = MessageBox.Show(
+                        "Do you want to move this to start of the day", // Message
+                        "Confirmation",            // Title
+                        MessageBoxButtons.YesNo,    // Buttons (Yes and No)
+                        MessageBoxIcon.Question     // Icon (Question mark)
+                        );
+
+                    if (dr == DialogResult.Yes)
+                    {
+                        StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
+
+                    }
+                    else
+                    {
+                        StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, dropDateTime.Hour, dropDateTime.Minute, dropDateTime.Second);
+
+                    }
+                }
+                else
+                {
+                    StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, dropDateTime.Hour, dropDateTime.Minute, dropDateTime.Second);
+
+                }
+
+
+
+
                 var c = orderList.Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id && o.WorkStation.WorkStationId.ToString() == contact.Id).FirstOrDefault();
 
+
+
+
                 OrderAllocation orderAllocation = new OrderAllocation();
-                DateTime StartTime = new DateTime(dropDateTime.Year, dropDateTime.Month, dropDateTime.Day, 0, 0, 0);
 
                 orderAllocation.StartTime = StartTime;
                 orderAllocation.OrderTitle = order.OrderNo;
@@ -446,9 +487,17 @@ namespace TestFormsApp_Planning
                 DateTime visibleStartDateTime = _util.MapToVisibleRange(CustomDays, StartTime, contact);
                 DateTime visibleEndDateTime = _util.MapToVisibleRange(CustomDays, endTime, contact);
 
+
+                // Method to adjust overlapping items based on a new time range.
+
+                // Example usage in your main code where the new item is being added.
+                AdjustOverlappingItems(StartTime, endTime, orderAllocation, visibleStartDateTime, visibleEndDateTime);
+
+
                 orderAllocation.EndTime = endTime;
-                orderAllocation.VisibleStartTime = visibleStartDateTime;
                 orderAllocation.VisibleEndTime = visibleEndDateTime;
+                orderAllocation.VisibleStartTime = visibleStartDateTime;
+
                 orderAllocation.Qty = order.Qty.ToString();
                 orderAllocation.DurationInHours = double.Parse(durationInHours.ToString());
                 orderAllocation.Customer = order.Customer;
@@ -480,6 +529,144 @@ namespace TestFormsApp_Planning
 
 
         }
+        List<OrderAllocation> alreadyChecked = new List<OrderAllocation>();
+
+        private void AdjustOverlappingItems(DateTime startTime, DateTime endTime, OrderAllocation newOrderAllocation, DateTime visibleStartTime, DateTime visibleEndTime)
+        {
+            alreadyChecked.Add(newOrderAllocation);
+            List<OrderAllocation> overlappingItemsAfter = new List<OrderAllocation>();
+            List<OrderAllocation> overlappingItemsBefore = new List<OrderAllocation>();
+
+            // Find all overlapping items based on the new item's time.
+            foreach (OrderAllocation oa in calendar1.Schedule.Items)
+            {
+                // Check if the existing item's time range overlaps with the new item.
+
+
+                if ((startTime < oa.EndTime && endTime > oa.StartTime) && oa.Contacts.FirstOrDefault() == newOrderAllocation.Contacts.FirstOrDefault())
+                {
+                    if (oa.StartTime >= startTime)
+                    {
+                        overlappingItemsAfter.Add(oa);
+                    }
+                    else
+                    {
+                        overlappingItemsBefore.Add(oa);
+                    }
+                }
+            }
+
+            if (overlappingItemsAfter.Count != 0 || overlappingItemsBefore.Count != 0)
+            {
+                // Remove overlapping items from the calendar temporarily.
+                foreach (OrderAllocation oa in overlappingItemsAfter.Concat(overlappingItemsBefore))
+                {
+                    calendar1.Schedule.Items.Remove(oa);
+                }
+
+
+                // Sort overlapping items.
+                overlappingItemsAfter = overlappingItemsAfter.OrderBy(oa => oa.StartTime).ToList();
+                overlappingItemsBefore = overlappingItemsBefore.OrderBy(oa => oa.StartTime).ToList();
+                DateTime afterCurrentDT;
+
+                // Handle items that start before the new item.
+                if (overlappingItemsBefore.Count > 0)
+                {
+                    DateTime beforeCurrentDT = overlappingItemsBefore[0].StartTime;
+
+                    foreach (OrderAllocation oa in overlappingItemsBefore)
+                    {
+                        oa.StartTime = beforeCurrentDT;
+
+                        // Calculate new end time based on duration.
+                        double d = _util.CalculateDays(oa.StartTime, double.Parse(oa.DurationInHours.ToString()), oa.Contacts.FirstOrDefault(), CustomDays);
+                        DateTime et = _util.CalculateEndDateConsideringHolidays(oa.StartTime, decimal.Parse(d.ToString()));
+
+                        // Map to visible range.
+                        DateTime vst = _util.MapToVisibleRange(CustomDays, oa.StartTime, oa.Contacts.FirstOrDefault());
+                        DateTime vet = _util.MapToVisibleRange(CustomDays, et, oa.Contacts.FirstOrDefault());
+
+                        oa.EndTime = et;
+                        oa.VisibleStartTime = vst;
+                        oa.VisibleEndTime = vet;
+                        MessageBox.Show(oa.StartTime + " " + oa.EndTime);
+
+                        // Add the updated item back to the calendar.
+                        calendar1.Schedule.Items.Add(oa);
+
+                        // Update beforeCurrentDT to the new end time.
+                        beforeCurrentDT = et;
+                    }
+
+                    // Update the new order allocation with the new start time after shifting previous items.
+                    newOrderAllocation.StartTime = beforeCurrentDT;
+
+                    // Calculate new end time for the new item.
+                    double d1 = _util.CalculateDays(newOrderAllocation.StartTime, double.Parse(newOrderAllocation.DurationInHours.ToString()), newOrderAllocation.Contacts.FirstOrDefault(), CustomDays);
+                    DateTime et1 = _util.CalculateEndDateConsideringHolidays(newOrderAllocation.StartTime, decimal.Parse(d1.ToString()));
+
+                    // Map to visible range.
+                    DateTime vst1 = _util.MapToVisibleRange(CustomDays, newOrderAllocation.StartTime, newOrderAllocation.Contacts.FirstOrDefault());
+                    DateTime vet1 = _util.MapToVisibleRange(CustomDays, et1, newOrderAllocation.Contacts.FirstOrDefault());
+
+                    newOrderAllocation.EndTime = et1;
+                    newOrderAllocation.VisibleStartTime = vst1;
+                    newOrderAllocation.VisibleEndTime = vet1;
+
+                    afterCurrentDT = et1;
+                }
+                else
+                {
+                    afterCurrentDT = endTime;
+                    newOrderAllocation.EndTime = endTime;
+                    newOrderAllocation.VisibleEndTime = visibleEndTime;
+                    newOrderAllocation.VisibleStartTime = visibleStartTime;
+                }
+
+                OrderAllocation lastItem = null;
+                // Handle items that start after the new item.
+                foreach (OrderAllocation oa in overlappingItemsAfter)
+                {
+                    // Update start time based on the end time of the last processed item.
+                    oa.StartTime = afterCurrentDT;
+
+                    // Calculate new end time based on duration.
+                    double d = _util.CalculateDays(oa.StartTime, double.Parse(oa.DurationInHours.ToString()), oa.Contacts.FirstOrDefault(), CustomDays);
+                    DateTime et = _util.CalculateEndDateConsideringHolidays(oa.StartTime, decimal.Parse(d.ToString()));
+
+                    // Map to visible range.
+                    DateTime vst = _util.MapToVisibleRange(CustomDays, oa.StartTime, oa.Contacts.FirstOrDefault());
+                    DateTime vet = _util.MapToVisibleRange(CustomDays, et, oa.Contacts.FirstOrDefault());
+
+                    oa.EndTime = et;
+                    oa.VisibleStartTime = vst;
+                    oa.VisibleEndTime = vet;
+                    // MessageBox.Show(oa.StartTime + " " + oa.EndTime + " "+ oa.DurationInHours);
+
+                    // Add the updated item back to the calendar.
+                    calendar1.Schedule.Items.Add(oa);
+
+                    // Update afterCurrentDT for the next item.
+                    afterCurrentDT = et;
+                    lastItem = oa;
+
+                }
+
+                if (!alreadyChecked.Any(a => a == lastItem))
+                {
+
+                    AdjustOverlappingItems(lastItem.StartTime, afterCurrentDT, lastItem, visibleStartTime, visibleEndTime);
+
+                }
+            }
+           
+
+
+
+        }
+
+
 
 
 
@@ -625,6 +812,7 @@ namespace TestFormsApp_Planning
                     }
                     else
                     {
+
                         scheduleDetails.Qty = double.Parse(oa.Qty);
                         scheduleDetails.DurationInHours = oa.DurationInHours;
                         scheduleDetails.StartTime = oa.StartTime;
@@ -713,7 +901,6 @@ namespace TestFormsApp_Planning
             label9.Text = orderAllocation.OrderTitle;
             label8.Text = orderAllocation.Qty;
             label7.Text = orderAllocation.Customer;
-            ////label10.Text = orderAllocation.WorkStationName;
             label16.Text = orderAllocation.DurationInHours.ToString();
             DateOnly date1 = new DateOnly(orderAllocation.deliveryDate.Year, orderAllocation.deliveryDate.Month, orderAllocation.deliveryDate.Day);
             DateOnly date2 = new DateOnly(orderAllocation.VisibleStartTime.Year, orderAllocation.VisibleStartTime.Month, orderAllocation.VisibleStartTime.Day);
@@ -1104,5 +1291,7 @@ namespace TestFormsApp_Planning
             TextRenderer.DrawText(e.Graphics, tabPage.Text, tabControl1.Font, tabRect, tabTextColor, TextFormatFlags.Left);
 
         }
+
+       
     }
 }
