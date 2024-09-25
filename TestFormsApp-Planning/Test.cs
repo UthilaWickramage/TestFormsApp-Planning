@@ -124,15 +124,16 @@ namespace TestFormsApp_Planning
             using (var context = new ScheduleDBContext())
             {
                 var orders = context.Orders.Include(o => o.Product).ThenInclude(p => p.OutputRates).ToList();
-
                 dataGridView1.AutoGenerateColumns = false;
-
+                Console.WriteLine(orders.Count);
+                Console.WriteLine(orders);
                 foreach (var order in orders)
                 {
                     foreach (var output_rates in order.Product.OutputRates)
                     {
                         var workstation = context.WorkStations.Find(output_rates.WorkstationId);
                         var operation_type = context.OperationTypes.Find(output_rates.OperationTypeId);
+                        
                         Classes.Operation o = new Classes.Operation();
                         o.OperationId = output_rates.Output_Rate_Id;
                         o.Customer = order.CustomerName;
@@ -184,7 +185,8 @@ namespace TestFormsApp_Planning
 
                     // Check if an entry with the same ProductId and OperationTypeId exists
                     if (!uniqueOrderList.Any(o => o.Product.Product_Id == order.Product.Product_Id &&
-                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id
+                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id &&
+                                                  o.WorkStation.WorkStationId == order.WorkStation.WorkStationId
 
                                                   ))
                     {
@@ -197,22 +199,34 @@ namespace TestFormsApp_Planning
 
                     // Check if an entry with the same ProductId and OperationTypeId exists
                     if (!uniqueScheduledOrderList.Any(o => o.Product.Product_Id == order.Product.Product_Id &&
-                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id
+                                                  o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id &&
+                                                  o.WorkStation.WorkStationId == order.WorkStation.WorkStationId
 
                                                   ))
                     {
                         uniqueScheduledOrderList.Add(order);
                     }
                 }
-                dataGridView1.DataSource = uniqueOrderList;
+
+                loadDataToDataGridView1();
+                loadDataToDataGridView2();
                
-                dataGridView2.DataSource = uniqueScheduledOrderList;
 
             }
         }
 
+        private void loadDataToDataGridView1()
+        {
 
+            dataGridView1.DataSource = uniqueOrderList;
 
+          
+        }
+
+        private void loadDataToDataGridView2()
+        {
+            dataGridView2.DataSource = uniqueScheduledOrderList;
+        }
 
         private void LoadCustomDays()
         {
@@ -319,6 +333,7 @@ namespace TestFormsApp_Planning
 
         private void button2_Click(object sender, EventArgs e)
         {
+          
             AddTask form = new AddTask();
             form.StartPosition = FormStartPosition.CenterScreen;
             form.FormClosed += (s, args) => loadOrders();
@@ -416,6 +431,8 @@ namespace TestFormsApp_Planning
                 DateTime dropDateTime = calendar1.GetDateAt(dropPoint);
                 Contact contact = calendar1.GetContactAt(dropPoint);
 
+                
+
                 var result = orderList
                 .Where(o => o.Product.Product_Id == order.Product.Product_Id && o.Operation_Type.Operation_Type_Id == order.Operation_Type.Operation_Type_Id);
 
@@ -491,7 +508,9 @@ namespace TestFormsApp_Planning
                 // Method to adjust overlapping items based on a new time range.
 
                 // Example usage in your main code where the new item is being added.
-                AdjustOverlappingItems(StartTime, endTime, orderAllocation, visibleStartDateTime, visibleEndDateTime);
+                //AdjustOverlappingItems(StartTime, endTime, orderAllocation, visibleStartDateTime, visibleEndDateTime);
+
+
 
 
                 orderAllocation.EndTime = endTime;
@@ -512,6 +531,13 @@ namespace TestFormsApp_Planning
                 orderAllocation.WorkStation = order.WorkStation;
                 orderAllocation.Operation_Type = order.Operation_Type;
                 orderAllocation.Order = order.Order;
+
+                OverlapUtil util = new OverlapUtil();
+
+                //calendar1.Schedule.GetAllItems(DateTime.MinValue,DateTime. contact);
+
+                //util.FindOverlappingItemBefore();
+
                 calendar1.Schedule.Items.Add(orderAllocation);
                 calendar1.Invalidate();
                 undo.Enabled = true;

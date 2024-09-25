@@ -790,10 +790,10 @@
             tabPageAdv2.Controls.Add(dataGridView2);
             tabPageAdv2.Image = null;
             tabPageAdv2.ImageSize = new Size(20, 20);
-            tabPageAdv2.Location = new Point(1, 33);
+            tabPageAdv2.Location = new Point(1, 0);
             tabPageAdv2.Name = "tabPageAdv2";
             tabPageAdv2.ShowCloseButton = true;
-            tabPageAdv2.Size = new Size(1359, 189);
+            tabPageAdv2.Size = new Size(1359, 222);
             tabPageAdv2.TabIndex = 2;
             tabPageAdv2.Text = "Scheduled Operations";
             tabPageAdv2.ThemesEnabled = false;
@@ -836,7 +836,7 @@
             dataGridViewCellStyle6.WrapMode = DataGridViewTriState.True;
             dataGridView2.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(1359, 189);
+            dataGridView2.Size = new Size(1359, 222);
             dataGridView2.TabIndex = 0;
             dataGridView2.MouseDown += dataGridView2_MouseDown;
             // 
